@@ -1,0 +1,15 @@
+{namespace sav=Tx_SavLibraryPlus_ViewHelpers}
+<f:if condition="{field.whereTagKey} == {field.whereTagAscendingOrderKey}" >
+<f:then>
+<sav:link.action action="list{field.inEditMode}" arguments="{whereTagKey:field.whereTagDescendingOrderKey}">
+<span>{field.value}</span>
+</sav:link.action>
+</f:then>
+<f:else>
+<sav:link.action action="list{field.inEditMode}" arguments="{whereTagKey:field.whereTagAscendingOrderKey}">
+<span>{field.value}</span>
+</sav:link.action>
+</f:else>
+</f:if>
+
+

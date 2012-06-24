@@ -1,0 +1,20 @@
+{namespace sav=Tx_SavLibraryPlus_ViewHelpers}
+    <div class="titleBar">
+      <f:if condition="{configuration.general.title}">
+      <div class="titleLabel"><f:if condition="{configuration.general.titleNeedsFormat}"><f:then><sav:html>{configuration.general.title}</sav:html></f:then><f:else>{configuration.general.title}</f:else></f:if></div>
+      </f:if>
+      <div class="right"></div>
+      <div class="titleIconRight">
+      <f:if condition="{configuration.general.addPrintIcon}">
+        <sav:link.action action="list" additionalParams="{print:1}">
+          <f:image class="print" src="{sav:buildSrc(fileName:'Resources/Private/Icons/print.gif')}" alt="{sav:translate(key:'button.print')}" title="{sav:translate(key:'button.print')}" />
+        </sav:link.action>
+      </f:if>
+      <f:if condition="{configuration.general.helpPage} > 0">
+        <f:link.page pageUid="{configuration.general.helpPage}">
+          <f:image class="help" src="{sav:buildSrc(fileName:'Resources/Private/Icons/help.gif')}" onclick="vHWin=window.open('index.php?id={configuration.general.helpPage}&amp;help=1','viewHelp','height=500,width=600,status=0,menubar=0,scrollbars=1'); vHWin.focus();return false;" alt="{sav:translate(key:'button.help')}" title="{sav:translate(key:'button.help')}" />
+        </f:link.page>
+      </f:if>
+      <f:form.submit value="{sav:translate(key:'button.submit')}" onclick="update();" />
+      </div>
+    </div>

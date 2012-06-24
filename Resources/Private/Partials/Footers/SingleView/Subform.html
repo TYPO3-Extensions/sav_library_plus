@@ -1,0 +1,36 @@
+{namespace sav=Tx_SavLibraryPlus_ViewHelpers}
+    <div class="footer">
+    <f:if condition="{configuration.general.lastPageInSubform} > 0">
+      <sav:link.action action="firstPageInSubform" arguments="{subformUidLocal:configuration.general.subformUidLocal,subformFieldKey:configuration.general.subformFieldKey}">
+        <f:image class="backwardFirstPage" src="{sav:buildSrc(fileName:'Resources/Private/Icons/backwardFirstPage.gif')}" alt="{f:translate(key:'button.backwardFirstPage')}" title="{f:translate(key:'button.backwardFirstPage')}" />
+      </sav:link.action>
+      <f:if condition="{configuration.general.pageInSubform} > 0">
+        <f:then>
+        <sav:link.action action="previousPageInSubform" arguments="{subformFieldKey:configuration.general.subformFieldKey}">
+          <f:image class="backwardPage" src="{sav:buildSrc(fileName:'Resources/Private/Icons/backwardPage.gif')}" alt="{f:translate(key:'button.backwardPage')}" title="{f:translate(key:'button.backwardPage')}" />
+        </sav:link.action>
+        </f:then>
+        <f:else>
+          <f:image class="backwardPage" src="{sav:buildSrc(fileName:'Resources/Private/Icons/backwardPageNotPossible.gif')}" alt="{f:translate(key:'button.backwardPageNotPossible')}" title="{f:translate(key:'button.backwardPageNotPossible')}" />
+        </f:else>
+      </f:if>
+      <f:for each="{configuration.general.pagesInSubform}" as="page" key="pageKey">
+        <sav:link.action action="changePageInSubform" arguments="{pageInSubform:pageKey,subformFieldKey:configuration.general.subformFieldKey}" class="{f:if(condition:'{configuration.general.pageInSubform} == {pageKey}',then:'selected',else:'notSelected')}">
+          {page}
+        </sav:link.action>
+      </f:for>
+      <f:if condition="{configuration.general.pageInSubform} < {configuration.general.lastPageInSubform}">
+        <f:then>
+        <sav:link.action action="nextPageInSubform" arguments="{subformFieldKey:configuration.general.subformFieldKey}">
+          <f:image class="forwardPage" src="{sav:buildSrc(fileName:'Resources/Private/Icons/forwardPage.gif')}" alt="{f:translate(key:'button.forwardPage')}" title="{f:translate(key:'button.forwardPage')}" />
+        </sav:link.action>
+        </f:then>
+        <f:else>
+          <f:image class="forwardPage" src="{sav:buildSrc(fileName:'Resources/Private/Icons/forwardPageNotPossible.gif')}" alt="{f:translate(key:'button.forwardPageNotPossible')}" title="{f:translate(key:'button.forwardPageNotPossible')}" />
+        </f:else>
+      </f:if>
+      <sav:link.action action="lastPageInSubform" arguments="{subformUidLocal:configuration.general.subformUidLocal,subformFieldKey:configuration.general.subformFieldKey}">
+        <f:image class="forwardLastPage" src="{sav:buildSrc(fileName:'Resources/Private/Icons/forwardLastPage.gif')}" alt="{f:translate(key:'button.forwardLastPage')}" title="{f:translate(key:'button.forwardLastPage')}" />
+      </sav:link.action>
+    </f:if>
+    </div>

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<T3locallang>
+	<meta type="array">
+		<type>CSH</type>
+		<csh_table></csh_table>
+		<description>CSH labels for extensions built for the SAV Library Plus</description>
+		<labelContext type="array">
+		</labelContext>
+	</meta>
+	<data type="array">
+		<languageKey index="default" type="array">
+			<label index="helpGeneral.description">Help for General Tab</label>
+			<label index="helpGeneral.details">
+				&lt;b&gt;Select form&lt;/b&gt;
+        use this selector to select the form name. Let use recall that the &quot;SAV Library&quot; makes it possible to build several forms associated with the same extension, thus providing different views of your tables.
+
+        &lt;b&gt;Show all if no filter&lt;/b&gt;
+        If set, all items are displayed if no filter is applied, for example by means of the &quot;sav_filter_abc&quot; extension.
+        
+        &lt;b&gt;If no information available&lt;/b&gt;
+        Use the selector to choose what to display when no information are available.
+        
+        &lt;b&gt;Max number of items&lt;/b&gt;
+        Maximum number of items that will be displayed in a page. If set to 0, all items are displayed.      
+      </label>
+			<label index="helpInputControls.description">Help for Input Controls Tab</label>
+			<label index="helpInputControls.details">
+				&lt;b&gt;Input on form&lt;/b&gt;
+        If set, Front End inputs are allowed.
+        
+        &lt;b&gt;Allowed groups&lt;/b&gt;
+        If you select user groups, user must belong to one of these groups to be allowed to input data in the Front End.
+        
+        &lt;b&gt;Input Admin field&lt;/b&gt;
+        Put here a field under the form &quot;tablename.fieldname&quot; (if you use only &quot;fieldname&quot;, the main table is taken as &quot;tablename&quot;).
+        This will restrict the input to users that have &quot;Admin&quot; right for this field in their TS Config.
+        For example, if one user has &quot;extKey_Admin=value1,value2&quot; in his TS Config, he will be allowed to edit or delete items for which &quot;fieldname&quot; is equal to &quot;value1&quot; or &quot;value2&quot; for the extension &quot;extKey&quot;.
+        The fields or the folders which have the attribute &quot;editAdminPlus= 1;&quot; can be modified if the user has the &quot;Admin+&quot;&quot; rights. For example, if the TS Config is &quot;extKey_Admin=value1+,value2&quot; , the user is an &quot;Admin+&quot; for the records where &quot;fieldname&quot; is equal to &quot;value1&quot; and just &quot;Admin&quot; for the records where &quot;fieldname&quot; is equal to &quot;value2&quot;.
+        Users become &quot;Super Admin&quot; for the extension &quot;extKey&quot; their TS Config is &quot;extKey_Admin=*&quot;&quot;.
+
+        &lt;b&gt;No &quot;new&quot; button&lt;/b&gt;
+        No new button is added to the form. It means that you can modify existing records but you cannot create new record.
+        
+        &lt;b&gt;No &quot;delete&quot; button&lt;/b&gt;
+        A delete button will not be added in front of the records in &quot;show All&quot; views.
+
+        &lt;b&gt;No &quot;edit&quot; button&lt;/b&gt;
+        An edit button will not be added in front of the records in &quot;show All&quot; views.
+
+        &lt;b&gt;Add a &quot;delete&quot; button only for records created by the user&lt;/b&gt;
+        Add a &quot;delete&quot; button only for records created by the user.
+        
+        &lt;b&gt;Input start date&lt;/b&gt;
+        If set, inputs in the Front End will not be possible before this date.
+        
+        &lt;b&gt;Input end date&lt;/b&gt;
+        If set, inputs in the Front End will not be possible after this date.
+
+        &lt;b&gt;Apply date limit&lt;/b&gt;
+        Use the selector to set either &quot;Nobody&quot;, &quot;All&quot;, &quot;Admin plus users&quot;, &quot;All excludind Super Admin&quot;. The date limit is applied according to this selector.
+      </label>
+			<label index="helpAdvanced.description">Help for Advanced Tab</label>
+			<label index="helpAdvanced.details">
+				&lt;b&gt;Permanent filter&lt;/b&gt;
+        You can use this field to add a where clause that will be added to the where clause of the form query.
+
+        &lt;b&gt;Add a fragment (# content id) to links&lt;/b&gt;
+        The content id is added as a fragment to the links.
+        
+        &lt;b&gt;Allow the use of the &quot;query&quot; property&lt;/b&gt;
+        The &quot;query&quot; property makes it possible to execute queries in &quot;input&quot; or &quot;update&quot; forms.
+        Because any query may be executed, for security reason, only admin users can check this field must when this property is needed.
+        
+        &lt;b&gt;Allow the use of the exec function in export&lt;/b&gt;
+        The use of the php exec function is allowed in export which makes the execution of text processors possible, for example.
+
+        &lt;b&gt;Storage page&lt;/b&gt;
+        This option makes it possible to store your record in a storage page, for example a &quot;sysfolder&quot;, otherwise records are stored in the current page.
+        When this option is used, records are fetched in the storage page and in the pages defined in the &quot;starting point&quot; if any.
+      </label>
+			<label index="helpHelpPages.description">Help for Help Pages Tab</label>
+			<label index="helpHelpPages.details">
+        &lt;b&gt;Help page for the list view&lt;/b&gt;
+        Use this selector to choose a page of your site which will be use as an help page for the list view of your extension. In this case, an icon is displayed in the title bar of your extension.
+
+        &lt;b&gt;Help page for the single view&lt;/b&gt;
+        Use this selector to choose a page of your site which will be use as an help page for the single view of your extension. In this case, an icon is displayed in the title bar of your extension.
+
+        &lt;b&gt;Help page for the edit view&lt;/b&gt;
+        Use this selector to choose a page of your site which will be use as an help page for the edit view of your extension. In this case, an icon is displayed in the title bar of your extension.
+    </label>      
+		</languageKey>
+	</data>
+	<orig_hash type="array">
+	</orig_hash>
+	<orig_text type="array">
+	</orig_text>
+</T3locallang>
