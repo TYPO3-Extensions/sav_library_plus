@@ -112,11 +112,22 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
    */ 
   protected function buildWhereClause() {
 
+  	// Gets the extension configuration manager
+  	$extensionConfigurationManager = $this->getController()->getExtensionConfigurationManager();
+
+  	// Initializes teh WHERE clause
     $whereClause = $this->getController()->getUriManager()->getPostVariablesItem('whereClause');
     if (empty($whereClause)) {
     	$whereClause = parent::buildWhereClause(); 
     }
+  	    
+    // Adds the enable fields conditions for the main table
+    $mainTable = $this->queryConfigurationManager->getMainTable();
+    $whereClause .= $extensionConfigurationManager->getExtensionContentObject()->enableFields($mainTable);
     
+		// Adds the allowed pages condition
+    $whereClause .= $this->getAllowedPages($mainTable);
+        
     return $whereClause;
   }  
   
