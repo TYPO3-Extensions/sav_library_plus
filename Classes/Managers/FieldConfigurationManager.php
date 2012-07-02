@@ -136,7 +136,6 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
     $this->querier = $querier;
   }   
   
-  
 	/**
 	 * Gets the querier
 	 * 
@@ -151,7 +150,6 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
   		return $this->querier;
   	}
   }  
-
 
 	/**
 	 * Injects the kickstarter field configuration
@@ -312,7 +310,7 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
 
     // Adds the required attribute
     $fieldConfiguration['required'] = $fieldConfiguration['required'] || preg_match('/required/', $fieldConfiguration['eval'])>0;
-    
+   
     // Adds special attributes 
     $querier = $this->getQuerier();
     if (empty($querier) === false) {
@@ -378,7 +376,6 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
     return $fieldConfiguration;
   }
 
-  
 	/**
 	 * Builds the value content.
 	 *
@@ -516,8 +513,8 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
     	}
 		}	
 		return $value;
-	}
-	  
+	}	
+	
 	/**
 	 * Builds the class for the label.
 	 *
@@ -724,112 +721,127 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
 	public function cutIf() {
 
     if ($this->kickstarterFieldConfiguration['cutif']) {
-
-    	// Gets the querier
-    	$querier = $this->getController()->getQuerier();
-    	
-      // Matchs the pattern
-      preg_match_all(self::CUT_IF_PATTERN, $this->kickstarterFieldConfiguration['cutif'], $matches);
-      
-      // Processes the expressions
-      foreach($matches['expression'] as $matchKey => $match) {
-        // Processes the left hand side
-        $lhs = $matches['lhs'][$matchKey];
-        switch ($lhs) {
-          case 'group':
-          	$isGroupCondition = true;
-            if (empty($querier) === false) {
-      				$lhsValue = $querier->getFieldValueFromCurrentRow($querier->buildFullFieldName('usergroup'));
-    				} else {
-    					return false;
-    				}
-            break;
-          case 'usergroup':
-          	$isGroupCondition = true;
-  		      $lhsValue = $GLOBALS['TSFE']->fe_user->user['usergroup'];
-            break;
-          default:
-						// Gets the value        	
-            if (empty($querier) === false) {
-      				$lhsValue = $querier->getFieldValueFromCurrentRow($querier->buildFullFieldName($lhs));
-    				} else {
-    					return false;
-    				}
-        }
-        // Processes the right hand side
-        $rhs = $matches['rhs'][$matchKey];
- 
-        // Processes special markers
-        switch ($rhs) {
-        	case 'EMPTY':
-        		$condition = empty($lhsValue);
-        		break;
-        	case '###user###':
-        		$condition = ($lhsValue == $GLOBALS['TSFE']->fe_user->user['uid']);
-        		break;
-        	case '###cruser###':
-        		$viewer = $this->getController()->getViewer();
-        		// Skips the cutter if it is a new view since cruser8id will be set when saved
-         		if (empty($viewer) === false && $viewer->isNewView() === true) {
-      				continue;
-    				} else {
-    					$condition = ($lhsValue == $GLOBALS['TSFE']->fe_user->user['uid']);
-    				}
-        		break; 
-        	default:
-        		if ($isGroupCondition !== true) {
-         			$rhsValue = $rhs;       			
-        		} else {
-            	$rows = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows(
-              	/* SELECT */	'uid',
-        				/* FROM   */	'fe_groups',
-        	 			/* WHERE  */	'title="' . $rhs . '"'
-  		      	); 
-  		      	$rhsValue = $rows[0]['uid'];        			
-        		}
-        		break;       		
-        }
-    
-        // Processes the condition
-        switch ($matches['operator'][$matchKey]) {
-          case '=':
-          	if ($isGroupCondition !== true) {
-            	$condition = ($lhsValue == $rhsValue);
-          	} else {
-          		$condition = (in_array($rhsValue, $lhsValue) == true);
-          	}
-            break;
-          case '!=':
-            if ($isGroupCondition !== true) {
-            	$condition = ($lhsValue != $rhsValue);
-          	} else {
-          		$condition = (in_array($rhsValue, explode(',', $lhsValue)) == false);
-          	}          	
-            break;
-        }
-
-        // Processes the connector
-        $connector = $matches['connector'][$matchKey];
-      
-        switch ($connector) {
-          case '|':
-          case 'or':
-            $cut = $cut || $condition;
-            break;
-          case '&':
-          case 'and':
-            $cut = $cut && $condition;
-            break;
-          case '':
-            $cut = $condition;
-            break;
-        }
-      }
-   
-      return $cut;
+    	return $this->processFieldCondition($this->kickstarterFieldConfiguration['cutif']);
     } else {
       return FALSE;
     }
 	}
 
+	/**
+	 * Processes a field condition
+	 *
+	 * @param string $fieldCondition
+	 *
+	 * @return boolean True if the field condition is satisfied
+	 */
+	public function processFieldCondition($fieldCondition) {
+
+		// Initializes the result
+		$result = NULL;
+		
+		// Gets the querier
+    $querier = $this->getController()->getQuerier();
+    	
+    // Matchs the pattern
+    preg_match_all(self::CUT_IF_PATTERN, $fieldCondition, $matches);
+     
+    // Processes the expressions
+    foreach($matches['expression'] as $matchKey => $match) {
+      // Processes the left hand side
+      $lhs = $matches['lhs'][$matchKey];
+      switch ($lhs) {
+				case 'group':
+					$isGroupCondition = true;
+          if (empty($querier) === false) {
+      			$lhsValue = $querier->getFieldValueFromCurrentRow($querier->buildFullFieldName('usergroup'));
+    			} else {
+    				return false;
+    			}
+          break;
+        case 'usergroup':
+          $isGroupCondition = true;
+  		    $lhsValue = $GLOBALS['TSFE']->fe_user->user['usergroup'];
+          break;
+        default:
+					// Gets the value        	
+          if (empty($querier) === false) {
+      			$lhsValue = $querier->getFieldValueFromCurrentRow($querier->buildFullFieldName($lhs));
+    			} else {
+    				return false;
+    			}
+      }
+      // Processes the right hand side
+      $rhs = $matches['rhs'][$matchKey];
+ 
+      // Processes special markers
+      switch ($rhs) {
+        case 'EMPTY':
+        	$condition = empty($lhsValue);
+        	break;
+        case '###user###':
+        	$condition = ($lhsValue == $GLOBALS['TSFE']->fe_user->user['uid']);
+        	break;
+        case '###cruser###':
+        	$viewer = $this->getController()->getViewer();
+        	// Skips the condition if it is a new view since cruser_id will be set when saved
+         	if (empty($viewer) === false && $viewer->isNewView() === true) {
+      			continue;
+    			} else {
+    				$condition = ($lhsValue == $GLOBALS['TSFE']->fe_user->user['uid']);
+    			}
+        	break; 
+        default:
+        	if ($isGroupCondition !== true) {
+         		$rhsValue = $rhs;       			
+        	} else {
+            $rows = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows(
+              /* SELECT */	'uid',
+        			/* FROM   */	'fe_groups',
+        	 		/* WHERE  */	'title="' . $rhs . '"'
+  		      ); 
+  		      $rhsValue = $rows[0]['uid'];        			
+        	}
+        	break;       		
+      }
+    
+      // Processes the condition
+      switch ($matches['operator'][$matchKey]) {
+        case '=':
+          if ($isGroupCondition !== true) {
+            $condition = ($lhsValue == $rhsValue);
+          } else {
+          	$condition = (in_array($rhsValue, explode(',', $lhsValue)) === true);
+          }
+          break;
+        case '!=':
+          if ($isGroupCondition !== true) {
+            $condition = ($lhsValue != $rhsValue);
+          } else {
+          	$condition = (in_array($rhsValue, explode(',', $lhsValue)) === false);
+          }          	
+          break;
+      }
+
+      // Processes the connector
+      $connector = $matches['connector'][$matchKey];
+      
+      switch ($connector) {
+        case '|':
+        case 'or':
+          $result = ($result === NULL ? $condition : $cut || $condition);
+          break;
+        case '&':
+        case 'and':
+          $result = ($result === NULL ? $condition : $cut && $condition);
+          break;
+        case '':
+          $result = $condition;
+          break;
+       }
+     }
+   
+     return $result;
+	}
+	
+	
 }

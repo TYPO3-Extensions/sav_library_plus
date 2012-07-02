@@ -173,35 +173,35 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
 		// Checks if error exists
 		if (self::$doNotUpdateOrInsert === true) {
 			Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.dataNotSaved'); 			    		
-		}		
-		
-    if (empty($variablesToUpdateOrInsert) === false) {
-  		foreach ($variablesToUpdateOrInsert as $tableName => $variableToUpdateOrInsert) {
-        if (empty($tableName) === false){
-    		  foreach ($variableToUpdateOrInsert as $uid => $fields) {
-            if ($uid > 0) {
-              // Updates the fields
-              $this->updateFields($tableName, $fields, $uid);
-            } else {
-              // Inserts the fields
-              $this->insertFields($tableName, $fields);
-            }
-          }
-        }
-      }
-    }
+		}	else {	
+			// No error, inserts or updates the data
+	    if (empty($variablesToUpdateOrInsert) === false) {
+	  		foreach ($variablesToUpdateOrInsert as $tableName => $variableToUpdateOrInsert) {
+	        if (empty($tableName) === false){
+	    		  foreach ($variableToUpdateOrInsert as $uid => $fields) {
+	            if ($uid > 0) {
+	              // Updates the fields
+	              $this->updateFields($tableName, $fields, $uid);
+	            } else {
+	              // Inserts the fields
+	              $this->insertFields($tableName, $fields);
+	            }
+	          }
+	        }
+	      }
+	    }
 
-    // Post-processing
-    if (empty($this->postProcessingList) === false) {
-      foreach($this->postProcessingList as $postProcessingItem) {
-        $this->fieldConfiguration = $postProcessingItem['fieldConfiguration'];
-        $method = $postProcessingItem['method'];
-        $value = $postProcessingItem['value'];
-        $this->$method($value);
-      }
-    }  
+	    // Post-processing
+	    if (empty($this->postProcessingList) === false) {
+	      foreach($this->postProcessingList as $postProcessingItem) {
+	        $this->fieldConfiguration = $postProcessingItem['fieldConfiguration'];
+	        $method = $postProcessingItem['method'];
+	        $value = $postProcessingItem['value'];
+	        $this->$method($value);
+	      }
+	    }
+		}	      
   }
-
 
 	/**
 	 * Pre-processor which calls the method according to the type
@@ -719,7 +719,7 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
 	 * @return boolean
 	 */
   protected function isRequired() {
-  	return ($this->fieldConfiguration['required'] || strpos($this->fieldConfiguration['eval'], 'required') !== false);	
+  	return ($this->fieldConfiguration['required'] || preg_match('/required/', $this->fieldConfiguration['eval'])>0);	
   }
 
 	/**

@@ -77,7 +77,7 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
 			/* ORDER BY */  $this->buildOrderByClause(),
 			/* LIMIT    */  $this->buildLimitClause()
 		);
-   
+  
     // Exports the data in CSV
     if (count($this->getController()->getUriManager()->getPostVariablesItem('fields')) > 0) {
     	$exportStatus = $this->exportDataInCsv();
@@ -115,7 +115,7 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
   	// Gets the extension configuration manager
   	$extensionConfigurationManager = $this->getController()->getExtensionConfigurationManager();
 
-  	// Initializes teh WHERE clause
+  	// Initializes the WHERE clause
     $whereClause = $this->getController()->getUriManager()->getPostVariablesItem('whereClause');
     if (empty($whereClause)) {
     	$whereClause = parent::buildWhereClause(); 
