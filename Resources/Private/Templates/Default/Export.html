@@ -188,7 +188,15 @@
           <div class="value"><textarea name="{configuration.general.formName}[orderedFieldList]" rows="5" cols="70" onchange="document.changed=1;" />{configuration.exportConfiguration.orderedFieldList}</textarea></div>
         </div>    
       </div> 
-                
+
+      <sav:comment><!-- Displays the TypoScript Configuration --></sav:comment>
+      <div class="item">
+        <div class="field">
+          <div class="label"><sav:translate key="itemviewer.fieldsConfiguration" /></div>
+          <div class="value"><textarea name="{configuration.general.formName}[fieldsConfiguration]" rows="2" cols="70" onchange="document.changed=1;" />{configuration.exportConfiguration.fieldsConfiguration}</textarea></div>
+        </div>    
+      </div> 
+                      
     </div>
     <f:render partial="Footers/EditView/Default.html" arguments="{configuration:configuration}" />
   </sav:form>

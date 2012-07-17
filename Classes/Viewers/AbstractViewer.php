@@ -423,9 +423,10 @@ abstract class Tx_SavLibraryPlus_Viewers_AbstractViewer {
 	 * @return string the rendered item
 	 */
   public function renderItem($fieldKey) {
-
+  	
     if (array_key_exists ($fieldKey, $this->folderFieldsConfiguration) === true) {
       $itemConfiguration = $this->folderFieldsConfiguration[$fieldKey];
+
       // The item configuration should not be empty.
     	if(empty($itemConfiguration)) {
     		// It occurs when ###fieldName### is used and "fieldName" is not in the main table

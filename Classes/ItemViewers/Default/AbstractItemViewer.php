@@ -183,6 +183,15 @@ abstract class Tx_SavLibraryPlus_ItemViewers_Default_AbstractItemViewer {
     }
     
     $content = $this->getLeftValue() . $content . $this->getRightValue();
+
+    // Applies a TypoScript StdWrap to the item, if any
+    $stdWrapItem = $this->getItemConfiguration('stdwrapitem');
+    if (empty($stdWrapItem) === false) {
+    	$TSparser = t3lib_div::makeInstance('t3lib_TSparser');
+    	$TSparser->parse($stdWrapItem);
+    	$contentObject = $this->getController()->getExtensionConfigurationManager()->getExtensionContentObject();
+    	$content = $contentObject->stdWrap($content, $TSparser->setup);
+    }
     
     return $content;
   }

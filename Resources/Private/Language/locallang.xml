@@ -211,6 +211,7 @@
 			<label index="itemviewer.includeAllFields">Include all fields</label>
 			<label index="itemviewer.exportFieldNames">Export field names</label>
 			<label index="itemviewer.orderedFieldList">Order of the fields</label>
+			<label index="itemviewer.fieldsConfiguration">Fields configuration</label>
 			
 			<label index="formView.required">*</label>
 						

@@ -296,7 +296,8 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
     $fieldConfiguration = array_merge($fieldConfiguration, $this->kickstarterFieldConfiguration);
     
     // Adds the configuration from the page TypoScript configuration
-    $viewConfigurationFieldFromPageTypoScriptConfiguration = $this->getController()->getPageTypoScriptConfigurationManager()->getViewConfigurationFieldFromPageTypoScriptConfiguration($fieldName);
+    $fullFieldName = $tableName . '.' . $fieldName;
+    $viewConfigurationFieldFromPageTypoScriptConfiguration = $this->getController()->getPageTypoScriptConfigurationManager()->getViewConfigurationFieldFromPageTypoScriptConfiguration($fullFieldName);
     if(is_array($viewConfigurationFieldFromPageTypoScriptConfiguration)) {
     	$fieldConfiguration = array_merge($fieldConfiguration, $viewConfigurationFieldFromPageTypoScriptConfiguration);
     }
@@ -355,7 +356,7 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
     $fieldConfiguration['cutDivItemInner'] = $this->getCutDivItemInner();
     $fieldConfiguration['cutDivItemEnd'] = $this->getCutDivItemEnd();
     $fieldConfiguration['cutLabel'] = $this->getCutLabel();
-        
+    
     // Gets the value from the TypoScript stdwrap property, if any
     if ($this->kickstarterFieldConfiguration['stdwrapvalue']) {
     	$fieldConfiguration['value'] = $this->getValueFromTypoScriptStdwrap($fieldConfiguration['value']);

@@ -218,10 +218,10 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
     if (empty($exportFieldNames) === false && empty($xmlFile)) {
   		$values = array();
       $orderedFieldList = explode(';', preg_replace('/[\n\r]/', '', $this->getController()->getUriManager()->getPostVariablesItem('orderedFieldList')));     
-			$fields = $this->getController()->getUriManager()->getPostVariablesItem('fields');
+      $fields = $this->getController()->getUriManager()->getPostVariablesItem('fields');
       $fieldNames = array_merge($orderedFieldList, array_diff(array_keys($fields), $orderedFieldList));
     	foreach($fieldNames as $fieldNameKey => $fieldName) {
-        if ($fields[$fieldName]) {
+        if ($fields[$fieldName]['selected'] || $fields[$fieldName]['render']) {
           $values[] = $fieldName;
         }
       }
@@ -420,6 +420,17 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
 		$fields = $this->getController()->getUriManager()->getPostVariablesItem('fields');
     $fieldNames = array_merge($orderedFieldList, array_diff(array_keys($fields), $orderedFieldList));
     
+    // Gets the fields configuration
+    $fieldsConfiguration = explode(';', preg_replace('/[\n\r]/', '', $this->getController()->getUriManager()->getPostVariablesItem('fieldsConfiguration')));
+    
+		$additionalFieldsConfiguration = array();
+		foreach ($fieldsConfiguration as $fieldConfiguration) {
+			if (empty($fieldConfiguration) === false) {
+				preg_match('/(\w+\.\w+)\.([^=]+)\s*=\s*(.*)/', $fieldConfiguration, $matches);
+				$additionalFieldsConfiguration[$matches[1]][trim(strtolower($matches[2]))] = $matches[3];
+			}			
+		}
+
     foreach ($fieldNames as $fieldNameKey => $fieldName) {
     	// Checks if the field is selected
     	if ($fields[$fieldName]['selected']) {
@@ -436,7 +447,11 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
     			if (is_array($basicFieldConfiguration)) {
     				$fieldConfiguration = array_merge($fieldConfiguration, $basicFieldConfiguration);
     			}
-   		
+    		  // Adds the additional field configuration
+    		  if (is_array($additionalFieldsConfiguration[$fieldName])) {
+			    	$fieldConfiguration = array_merge($fieldConfiguration, $additionalFieldsConfiguration[$fieldName]);
+    		  }
+		       		
 					// Checks if the fieldType is set		
 					if (isset($fieldConfiguration['fieldType'])) {
 						// Adds the value to the field configuration
@@ -450,7 +465,7 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
 	      		$markers['###' . $fieldName . '###'] = $itemViewer->render();   
 					} else {
 						// Raw rendering
-    			$markers['###' . $fieldName . '###'] = $this->getFieldValueFromCurrentRow($fieldName);		
+    				$markers['###' . $fieldName . '###'] = $this->getFieldValueFromCurrentRow($fieldName);		
 					}   			    			
     		}
     	}
