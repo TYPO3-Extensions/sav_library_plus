@@ -23,7 +23,7 @@
 ***************************************************************/
 
 /**
- * Abstract class list Viewer.
+ * Abstract class Viewer.
  * 
  * @package SavLibraryPlus
  * @version $ID:$
