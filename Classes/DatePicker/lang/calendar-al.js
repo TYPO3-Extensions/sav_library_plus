@@ -23,6 +23,10 @@ Calendar._SDN = new Array
 "Sht",
 "Die");
 
+//First day of the week. "0" means display Sunday first, "1" means display
+//Monday first, etc.
+Calendar._FD = 1;
+
 // muajt
 Calendar._MN = new Array
 ("Janar",

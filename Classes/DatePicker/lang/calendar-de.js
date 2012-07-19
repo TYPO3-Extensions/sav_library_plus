@@ -43,6 +43,10 @@ Calendar._SDN = new Array
  "Sa",
  "So");
 
+//First day of the week. "0" means display Sunday first, "1" means display
+//Monday first, etc.
+Calendar._FD = 1;
+
 // full month names
 Calendar._MN = new Array
 ("Januar",
@@ -93,7 +97,7 @@ Calendar._TT["ABOUT_TIME"] = "\n\n" +
 "- oder klicken Sie mit festgehaltener Shift-Taste um diese zu verringern\n" +
 "- oder klicken und festhalten f\u00fcr Schnellauswahl.";
 
-Calendar._TT["TOGGLE"] = "Ersten Tag der Woche w\u00e4hlen";
+//Calendar._TT["TOGGLE"] = "Ersten Tag der Woche w\u00e4hlen";
 Calendar._TT["PREV_YEAR"] = "Voriges Jahr (Festhalten f\u00fcr Schnellauswahl)";
 Calendar._TT["PREV_MONTH"] = "Voriger Monat (Festhalten f\u00fcr Schnellauswahl)";
 Calendar._TT["GO_TODAY"] = "Heute ausw\u00e4hlen";
