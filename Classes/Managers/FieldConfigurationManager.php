@@ -829,11 +829,11 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
       switch ($connector) {
         case '|':
         case 'or':
-          $result = ($result === NULL ? $condition : $cut || $condition);
+          $result = ($result === NULL ? $condition : $result || $condition);
           break;
         case '&':
         case 'and':
-          $result = ($result === NULL ? $condition : $cut && $condition);
+          $result = ($result === NULL ? $condition : $result && $condition);
           break;
         case '':
           $result = $condition;
