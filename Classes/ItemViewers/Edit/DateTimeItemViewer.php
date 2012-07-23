@@ -46,13 +46,13 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_DateTimeItemViewer extends Tx_SavLibrar
     $htmlArray = array();
 
     // Sets the format
-    $format = ($this->getItemConfiguration('format') ? $this->getItemConfiguration('format') : '%d/%m/%Y %H:%M');
+    $format = ($this->getItemConfiguration('format') ? $this->getItemConfiguration('format') : $this->getDefaultDateTimeFormat());
 
     // Sets the value
     $value = (
       $this->getItemConfiguration('value') ?
       strftime($format, $this->getItemConfiguration('value')) :
-      ($this->getItemConfiguration('nodefault') ? '' : strftime($format, time()))
+      ($this->getItemConfiguration('nodefault') ? '' : strftime($format))
     );
 
     $htmlArray[] = Tx_SavLibraryPlus_Utility_HtmlElements::htmlInputTextElement(
@@ -73,7 +73,7 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_DateTimeItemViewer extends Tx_SavLibrar
     $htmlArray[] = $datePicker->buildDatePickerSetup(
       array(
         'id' => strtr($this->getItemConfiguration('itemName'), '[]', '__'),
-        'format' => ($this->getItemConfiguration('format') ? $this->getItemConfiguration('format') : '%d/%m/%Y %H:%M'),
+        'format' => $format,
         'showsTime' => true,
         'iconPath' => $iconPath,
       )

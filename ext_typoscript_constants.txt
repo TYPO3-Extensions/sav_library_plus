@@ -1,7 +1,7 @@
 /***************************************************************
  * Copyright notice
  *
- * (c) 2009 Yolf (Laurent Foulloy) <yolf.typo3@orange.fr>
+ * (c) 2009 Laurent Foulloy <yolf.typo3@orange.fr>
  * All rights reserved
  *
  * This script is part of the TYPO3 project. The TYPO3 project is 
@@ -22,14 +22,14 @@
  ***************************************************************/
 
 /**
- * Default TS constants - Extension 'SAV Library'
+ * Default TS constants - Extension 'SAV Library Plus'
  *
  * @author		Yolf <yolf.typo3@orange.fr>
  * @version		0.0
  */
 
 
-plugin.sav_library_plus {
-  	# cat=sav_library/paths; type=string; label= extension path relative to typo3temp
+plugin.tx_savlibraryplus {
+  	# cat=sav_library_plus/paths; type=string; label= extension path relative to typo3temp
   extDir = ../typo3conf/ext/sav_library_plus/
 }

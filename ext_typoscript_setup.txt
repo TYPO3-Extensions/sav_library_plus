@@ -29,7 +29,7 @@
  */
 
 
-plugin.sav_library_plus {
+plugin.tx_savlibraryplus {
 		
   // Default CSS styling
   _CSS_DEFAULT_STYLE (
@@ -217,7 +217,7 @@ plugin.sav_library_plus {
     .savLibraryPlus DIV.folderTabs {
       float:left;
       width:100%;
-      background:#ffffff url({$plugin.sav_library_plus.extDir}Resources/Private/Styles/Images/folderTabBorder.gif) repeat-x bottom;
+      background:#ffffff url({$plugin.tx_savlibraryplus.extDir}Resources/Private/Styles/Images/folderTabBorder.gif) repeat-x bottom;
       color:inherit;
       margin-top:1px;
       padding:0px;
@@ -235,14 +235,14 @@ plugin.sav_library_plus {
     }
     .savLibraryPlus DIV.folderTabs LI A {
       float:left;
-      background:url({$plugin.sav_library_plus.extDir}Resources/Private/Styles/Images/folderTabRight.gif) no-repeat right top;
+      background:url({$plugin.tx_savlibraryplus.extDir}Resources/Private/Styles/Images/folderTabRight.gif) no-repeat right top;
       border-bottom:1px solid #84B0C7;
       font-weight:bold;
       text-decoration:none;
     }
     .savLibraryPlus DIV.folderTabs LI A SPAN {
       display:block;
-      background:url({$plugin.sav_library_plus.extDir}Resources/Private/Styles/Images/folderTabLeft.gif) no-repeat left top;
+      background:url({$plugin.tx_savlibraryplus.extDir}Resources/Private/Styles/Images/folderTabLeft.gif) no-repeat left top;
       padding:5px 9px;
       white-space:nowrap;
     }
