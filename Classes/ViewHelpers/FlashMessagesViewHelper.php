@@ -97,8 +97,9 @@ class Tx_SavLibraryPlus_ViewHelpers_FlashMessagesViewHelper extends Tx_Fluid_Vie
 	 * @return string
 	 */
 	protected function renderUl(array $flashMessages) {		
+
 		$this->tag->setTagName('ul');
-		if ($this->arguments->hasArgument('class')) {
+		if ($this->hasArgumentCompatibleMethod('class')) {
 			$this->tag->addAttribute('class', $this->arguments['class']);
 		}
 		$tagContent = '';
@@ -120,6 +121,23 @@ class Tx_SavLibraryPlus_ViewHelpers_FlashMessagesViewHelper extends Tx_Fluid_Vie
 		return $this->tag->render();
 	}
 	
+	/**
+	 * Gets the hasArgument method for compatiblity
+	 *
+	 * @param string argument
+	 * @return string
+	 */	
+	protected function hasArgumentCompatibleMethod($argument) {		
+
+	  if (method_exists($this, 'hasArgument')){
+    	// For 4.6 and higher
+    	return $this->hasArgument($argument);
+    } else {
+    	// For 4.5
+    	return $this->arguments->hasArgument($argument);    	
+    }	
+	}
+		
 }
 
 ?>

@@ -94,15 +94,7 @@ class Tx_SavLibraryPlus_ViewHelpers_FormViewHelper extends Tx_Fluid_ViewHelpers_
     // Sets the noCacheHash based on the extension type
     $noCacheHash = !Tx_SavLibraryPlus_Managers_ExtensionConfigurationManager::isUserPlugin();
     
-    if (method_exists($this, 'hasArgument')){
-    	// For 4.6 and higher
-    	$hasArgumentActionUri = $this->hasArgument('actionUri');
-    } else {
-    	// For 4.5
-    	$hasArgumentActionUri = $this->arguments->hasArgument('actionUri');    	
-    }
-    
-		if ($hasArgumentActionUri) {
+		if ($this->hasArgumentCompatibleMethod('actionUri')) {
 			$formActionUri = $this->arguments['actionUri'];
 		} else {
 			$uriBuilder = $this->controllerContext->getUriBuilder();
@@ -142,8 +134,22 @@ class Tx_SavLibraryPlus_ViewHelpers_FormViewHelper extends Tx_Fluid_ViewHelpers_
 		return $this->tag->render();
 	}
 
+	/**
+	 * Gets the hasArgument method for compatiblity
+	 *
+	 * @param string argument
+	 * @return string
+	 */	
+	protected function hasArgumentCompatibleMethod($argument) {		
 
-	
+	  if (method_exists($this, 'hasArgument')){
+    	// For 4.6 and higher
+    	return $this->hasArgument($argument);
+    } else {
+    	// For 4.5
+    	return $this->arguments->hasArgument($argument);    	
+    }	
+	}
 	
 }
 

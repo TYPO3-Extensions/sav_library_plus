@@ -509,7 +509,6 @@ abstract class Tx_SavLibraryPlus_ItemViewers_Default_AbstractItemViewer {
    */
   public function getDefaultDateFormat() {
   	// Gets the default formats
-  	$localeDefaultDateFormat = '%x';
   	$extensionDefaultDateFormat = $this->getController()->getExtensionConfigurationManager()->getDefaultDateFormat();
   	$libraryDefaultDateFormat = Tx_SavLibraryPlus_Managers_LibraryConfigurationManager::getDefaultDateFormat();
 
@@ -519,7 +518,7 @@ abstract class Tx_SavLibraryPlus_ItemViewers_Default_AbstractItemViewer {
   	} elseif ($libraryDefaultDateFormat !== NULL) {
   		$defaultDateFormat = $libraryDefaultDateFormat;  		
   	} else {
-  		$defaultDateFormat = $localeDefaultDateFormat;
+  		$defaultDateFormat = '%d/%m/%Y';
   	}
   	return $defaultDateFormat;
   } 
@@ -533,7 +532,6 @@ abstract class Tx_SavLibraryPlus_ItemViewers_Default_AbstractItemViewer {
    */
   public function getDefaultDateTimeFormat() {
   	// Gets the default formats
-  	$localeDefaultDateTimeFormat = '%c';
   	$extensionDefaultDateTimeFormat = $this->getController()->getExtensionConfigurationManager()->getDefaultDateTimeFormat();
   	$libraryDefaultDateTimeFormat = Tx_SavLibraryPlus_Managers_LibraryConfigurationManager::getDefaultDateTimeFormat();
 
@@ -543,7 +541,7 @@ abstract class Tx_SavLibraryPlus_ItemViewers_Default_AbstractItemViewer {
   	} elseif ($libraryDefaultDateTimeFormat !== NULL) {
   		$defaultDateTimeFormat = $libraryDefaultDateTimeFormat;  		
   	} else {
-  		$defaultDateTimeFormat = $localeDefaultDateTimeFormat;
+  		$defaultDateTimeFormat = '%d/%m/%Y %H:%M';
   	}
   	return $defaultDateTimeFormat;
   } 	
