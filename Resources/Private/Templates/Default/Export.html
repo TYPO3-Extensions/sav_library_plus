@@ -22,20 +22,20 @@
           </div> 
                  
           <sav:comment><!-- Displays the load configuration button --></sav:comment>   
-          <sav:form.image name="formAction][exportLoadConfiguration" src="{sav:buildSrc(fileName:'Resources/Private/Icons/exportLoadConfiguration.gif')}" alt="{sav:translate(key:'button.exportLoadConfiguration')}" title="{sav:translate(key:'button.exportLoadConfiguration')}" additionalAttributes="{onclick:'submit();'}" />
+          <sav:form.image name="formAction][exportLoadConfiguration" src="{sav:getIcon(fileName:'exportLoadConfiguration.gif')}" alt="{sav:translate(key:'button.exportLoadConfiguration')}" title="{sav:translate(key:'button.exportLoadConfiguration')}" additionalAttributes="{onclick:'submit();'}" />
       
           <sav:comment><!-- Displays the save configuration button --></sav:comment>   
-          <sav:form.image name="formAction][exportSaveConfiguration" src="{sav:buildSrc(fileName:'Resources/Private/Icons/exportSaveConfiguration.gif')}" alt="{sav:translate(key:'button.exportSaveConfiguration')}" title="{sav:translate(key:'button.exportSaveConfiguration')}" additionalAttributes="{onclick:'submit();'}" />
+          <sav:form.image name="formAction][exportSaveConfiguration" src="{sav:getIcon(fileName:'exportSaveConfiguration.gif')}" alt="{sav:translate(key:'button.exportSaveConfiguration')}" title="{sav:translate(key:'button.exportSaveConfiguration')}" additionalAttributes="{onclick:'submit();'}" />
       
           <sav:comment><!-- Displays the delete configuration button --></sav:comment>   
-          <sav:form.image name="formAction][exportDeleteConfiguration" src="{sav:buildSrc(fileName:'Resources/Private/Icons/exportDeleteConfiguration.gif')}" alt="{sav:translate(key:'button.exportDeleteConfiguration')}" title="{sav:translate(key:'button.exportDeleteConfiguration')}" additionalAttributes="{onclick:'submit();'}" />
+          <sav:form.image name="formAction][exportDeleteConfiguration" src="{sav:getIcon(fileName:'exportDeleteConfiguration.gif')}" alt="{sav:translate(key:'button.exportDeleteConfiguration')}" title="{sav:translate(key:'button.exportDeleteConfiguration')}" additionalAttributes="{onclick:'submit();'}" />
           
           <sav:comment><!-- Displays the delete configuration button --></sav:comment>           
           <input type="text" name="{configuration.general.formName}[configurationName]" value="{configuration.exportConfiguration.configurationName}" size="50" />
 
           <sav:comment><!-- Displays the toggle display button --></sav:comment> 
           <f:alias map="{label:'{f:if(condition:configuration.exportConfiguration.displaySelectedFields,then:\'button.exportToggleDisplayAllFields\',else:\'button.exportToggleDisplaySelectedFields\')}'}">  
-          <sav:form.image name="formAction][exportToggleDisplay" src="{sav:buildSrc(fileName:'Resources/Private/Icons/exportToggleDisplay.gif')}" alt="{sav:translate(key:label)}" title="{sav:translate(key:label)}" additionalAttributes="{onclick:'submit();'}" />
+          <sav:form.image name="formAction][exportToggleDisplay" src="{sav:getIcon(fileName:'exportToggleDisplay.gif')}" alt="{sav:translate(key:label)}" title="{sav:translate(key:label)}" additionalAttributes="{onclick:'submit();'}" />
           <input type="hidden" value="{configuration.exportConfiguration.displaySelectedFields}" name="{configuration.general.formName}[displaySelectedFields]"/>         
           </f:alias>
         </div>

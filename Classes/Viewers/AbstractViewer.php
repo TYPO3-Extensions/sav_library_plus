@@ -399,7 +399,7 @@ abstract class Tx_SavLibraryPlus_Viewers_AbstractViewer {
     $view->setTemplatePathAndFilename($this->getFileName($this->templateFile));
     $view->setLayoutRootPath($this->getDirectoryName($this->layoutRootPath));
     $view->setPartialRootPath($this->getDirectoryName($this->partialRootPath));
-    
+   
     // Adds the short form name to the general configuration
     $this->addToViewConfiguration('general',
       array(

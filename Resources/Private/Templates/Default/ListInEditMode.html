@@ -13,12 +13,12 @@
         <div class="itemIconLeft {f:if(condition:configuration.general.hideIconLeft,then:'listHidden')}">
         <f:if condition="{field.editButtonIsAllowed}">
           <sav:link.action action="edit" arguments="{uid:field.uid}" noCacheHash="1">
-            <f:image src="{sav:buildSrc(fileName:'Resources/Private/Icons/edit.gif')}" alt="{sav:translate(key:'button.edit')}" title="{sav:translate(key:'button.edit')}" />
+            <f:image src="{sav:getIcon(fileName:'edit.gif')}" alt="{sav:translate(key:'button.edit')}" title="{sav:translate(key:'button.edit')}" />
           </sav:link.action>
         </f:if>
         <f:if condition="{field.deleteButtonIsAllowed}">
           <sav:link.action action="delete" arguments="{uid:field.uid}" noCacheHash="1">
-            <f:image src="{sav:buildSrc(fileName:'Resources/Private/Icons/delete.gif')}" alt="{sav:translate(key:'button.delete')}" title="{sav:translate(key:'button.delete')}" />
+            <f:image src="{sav:getIcon(fileName:'delete.gif')}" alt="{sav:translate(key:'button.delete')}" title="{sav:translate(key:'button.delete')}" />
           </sav:link.action>
         </f:if>
         </div>

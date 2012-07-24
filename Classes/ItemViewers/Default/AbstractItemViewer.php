@@ -491,60 +491,11 @@ abstract class Tx_SavLibraryPlus_ItemViewers_Default_AbstractItemViewer {
     // Gets the format
 	  $format = $this->getItemConfiguration('format' . $special);
 	  if (empty($format) === true) {
-      $format = ($this->getItemConfiguration('eval' . $special) == 'datetime' ? $this->getDefaultDateTimeFormat() : $this->getDefaultDateFormat());
+      $format = ($this->getItemConfiguration('eval' . $special) == 'datetime' ? $this->getController()->getDefaultDateTimeFormat() : $this->getController()->getDefaultDateFormat());
     }
 
 		return strftime($format, $timeStamp);
 	}
-  
-  /**
-   * Gets the default date format:
-   * - From the extension TypoScript configuration if any,
-   * - From the library TypoScript configuration if any,
-   * - From the locale
-   *
-   * @param none
-   *
-   * @return string
-   */
-  public function getDefaultDateFormat() {
-  	// Gets the default formats
-  	$extensionDefaultDateFormat = $this->getController()->getExtensionConfigurationManager()->getDefaultDateFormat();
-  	$libraryDefaultDateFormat = Tx_SavLibraryPlus_Managers_LibraryConfigurationManager::getDefaultDateFormat();
-
-  	// Defines which format to return
-  	if ($extensionDefaultDateFormat !== NULL) {
-  		$defaultDateFormat = $extensionDefaultDateFormat;
-  	} elseif ($libraryDefaultDateFormat !== NULL) {
-  		$defaultDateFormat = $libraryDefaultDateFormat;  		
-  	} else {
-  		$defaultDateFormat = '%d/%m/%Y';
-  	}
-  	return $defaultDateFormat;
-  } 
-
-   /**
-   * Gets the dateTime format from the library TypoScript configuration if any.
-   *
-   * @param none
-   *
-   * @return string
-   */
-  public function getDefaultDateTimeFormat() {
-  	// Gets the default formats
-  	$extensionDefaultDateTimeFormat = $this->getController()->getExtensionConfigurationManager()->getDefaultDateTimeFormat();
-  	$libraryDefaultDateTimeFormat = Tx_SavLibraryPlus_Managers_LibraryConfigurationManager::getDefaultDateTimeFormat();
-
-  	// Defines which format to return
-  	if ($extensionDefaultDateTimeFormat !== NULL) {
-  		$defaultDateTimeFormat = $extensionDefaultDateTimeFormat;
-  	} elseif ($libraryDefaultDateTimeFormat !== NULL) {
-  		$defaultDateTimeFormat = $libraryDefaultDateTimeFormat;  		
-  	} else {
-  		$defaultDateTimeFormat = '%d/%m/%Y %H:%M';
-  	}
-  	return $defaultDateTimeFormat;
-  } 	
-	
+  	
 }
 ?>

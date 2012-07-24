@@ -46,7 +46,7 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_DateItemViewer extends Tx_SavLibraryPlu
     $htmlArray = array();
 
     // Sets the format
-    $format = ($this->getItemConfiguration('format') ? $this->getItemConfiguration('format') : $this->getDefaultDateFormat());
+    $format = ($this->getItemConfiguration('format') ? $this->getItemConfiguration('format') : $this->getController()->getDefaultDateFormat());
 
     // Sets the value
     $value = (

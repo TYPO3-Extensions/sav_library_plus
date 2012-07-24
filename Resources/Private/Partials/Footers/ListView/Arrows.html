@@ -2,12 +2,12 @@
     <div class="footer">
     <f:if condition="{configuration.general.page} > 0">
       <sav:link.action action="previousPage">
-        <f:image class="previousPage" src="{sav:buildSrc(fileName:'Resources/Private/Icons/previous.gif')}" alt="{f:translate(key:'button.previous')}" title="{f:translate(key:'button.previous')}" />
+        <f:image class="previousPage" src="{sav:getIcon(fileName:'previous.gif')}" alt="{f:translate(key:'button.previous')}" title="{f:translate(key:'button.previous')}" />
       </sav:link.action>
     </f:if>
     <f:if condition="{configuration.general.page} < {configuration.general.lastPage}">
       <sav:link.action action="nextPage">
-        <f:image class="nextPage" src="{sav:buildSrc(fileName:'Resources/Private/Icons/next.gif')}" alt="{f:translate(key:'button.next')}" title="{f:translate(key:'button.next')}" />
+        <f:image class="nextPage" src="{sav:getIcon(fileName:'next.gif')}" alt="{f:translate(key:'button.next')}" title="{f:translate(key:'button.next')}" />
       </sav:link.action>
     </f:if>
     </div>

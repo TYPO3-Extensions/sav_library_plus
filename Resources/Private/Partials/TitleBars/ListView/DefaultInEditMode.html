@@ -3,7 +3,7 @@
       <f:if condition="{configuration.general.newButtonIsAllowed}">
       <div class="titleIconLeft">
       <sav:link.action action="new" noCacheHash="1" arguments="{uid:0}">
-        <f:image class="new" src="{sav:buildSrc(fileName:'Resources/Private/Icons/new.gif')}" alt="{sav:translate(key:'button.new')}" title="{sav:translate(key:'button.new')}" />
+        <f:image class="new" src="{sav:getIcon(fileName:'new.gif')}" alt="{sav:translate(key:'button.new')}" title="{sav:translate(key:'button.new')}" />
       </sav:link.action>
       </div>
       </f:if>
@@ -14,12 +14,12 @@
       <div class="titleIconRight">
       <f:if condition="{configuration.general.helpPage} > 0">
         <f:link.page pageUid="{configuration.general.helpPage}">
-          <f:image class="help" src="{sav:buildSrc(fileName:'Resources/Private/Icons/help.gif')}" onclick="vHWin=window.open('index.php?id={configuration.general.helpPage}&amp;help=1','viewHelp','height=500,width=600,status=0,menubar=0,scrollbars=1'); vHWin.focus();return false;" alt="{sav:translate(key:'button.help')}" title="{sav:translate(key:'button.help')}" />
+          <f:image class="help" src="{sav:getIcon(fileName:'help.gif')}" onclick="vHWin=window.open('index.php?id={configuration.general.helpPage}&amp;help=1','viewHelp','height=500,width=600,status=0,menubar=0,scrollbars=1'); vHWin.focus();return false;" alt="{sav:translate(key:'button.help')}" title="{sav:translate(key:'button.help')}" />
         </f:link.page>
       </f:if>
       <f:if condition="{configuration.general.userIsAllowedToInputData}">
         <sav:link.action action="list">
-          <f:image class="leaveEditMode" src="{sav:buildSrc(fileName:'Resources/Private/Icons/leaveEditMode.gif')}" alt="{sav:translate(key:'button.leaveEditMode')}" title="{sav:translate(key:'button.leaveEditMode')}" />
+          <f:image class="leaveEditMode" src="{sav:getIcon(fileName:'leaveEditMode.gif')}" alt="{sav:translate(key:'button.leaveEditMode')}" title="{sav:translate(key:'button.leaveEditMode')}" />
         </sav:link.action>
       </f:if>
       </div>

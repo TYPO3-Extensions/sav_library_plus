@@ -32,34 +32,26 @@
  * @scope prototype
  * @entity
  */
-class Tx_SavLibraryPlus_ViewHelpers_BuildSrcViewHelper extends Tx_Fluid_Core_ViewHelper_AbstractViewHelper {
+class Tx_SavLibraryPlus_ViewHelpers_GetIconViewHelper extends Tx_Fluid_Core_ViewHelper_AbstractViewHelper {
 
 	/**
 	 * Renders the content.
 	 *
 	 * @param string $fileName relative file name.
-	 * @param string $extensionKey The extension key.
 	 * @return string Rendered string
 	 *
 	 * @author Laurent Foulloy <yolf.typo3@orange.fr>
 	 */
-	public function render($fileName, $extensionKey = NULL) {
-
-    // Checks if the file Name exists in the extension
-    if ($extensionKey !== NULL && t3lib_extMgm::isLoaded($extensionKey)) {
-      $filePath = t3lib_extMgm::siteRelPath($extensionKey) . $fileName;
-      if (file_exists($filePath)) {
-        return $filePath;
-      }
-    }
+	public function render($fileName) {
 
     // Checks if the file Name exists in the SAV Library Plus
-    $filePath = t3lib_extMgm::siteRelPath('sav_library_plus') . $fileName;
+    $filePath = Tx_SavLibraryPlus_Managers_LibraryConfigurationManager::getIconsDirectory($fileName) . $fileName;
+
     if (file_exists($filePath)) {
       return $filePath;
+    } else {
+	    return NULL;
     }
-
-    return NULL;
 	}
 }
 

@@ -780,7 +780,7 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
 
 		// Provides a default format
     if (!$this->getFieldConfigurationAttribute('format')) {
-      $format = ($this->getFieldConfigurationAttribute('eval') == 'date' ? '%d/%m/%Y' : '%d/%m/%Y %H:%M');
+      $format = ($this->getFieldConfigurationAttribute('eval') == 'datetime' ? $this->getController()->getDefaultDateTimeFormat() : $this->getController()->getDefaultDateFormat());
     } else {
       $format = $this->getFieldConfigurationAttribute('format');
     }
@@ -805,6 +805,7 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
 
     // Builds the expression to match the string according to the format
     preg_match_all('/%([deHImMSYy])([^%]*)/', $format, $matchesFormat);
+
     $exp = '/';
     foreach ($matchesFormat[1] as $key => $match) {
       $exp .= $var[$matchesFormat[1][$key]]['pattern'] .
