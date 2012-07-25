@@ -465,12 +465,15 @@ abstract class Tx_SavLibraryPlus_Viewers_AbstractViewer {
 				$extensionPath = t3lib_extMgm::extPath($extensionKey);
 				$newFileName = substr($extensionPath, strlen(PATH_site)) . $script;
 			}
-			if (!@is_file(PATH_site . $newFileName)) {
-				throw new Tx_SavLibraryPlus_Exception('The file "' . htmlspecialchars(PATH_site . $newFileName) . '" does not exist');
-			} else {
-				return $newFileName;
-			}
+		} else {
+			$newFileName = $fileName;
 		}
+		
+		if (!@is_file(PATH_site . $newFileName)) {
+			throw new Tx_SavLibraryPlus_Exception('The file "' . htmlspecialchars(PATH_site . $newFileName) . '" does not exist');
+		} else {
+			return $newFileName;
+		} 
   }
 
 	/**
