@@ -50,7 +50,7 @@ class Tx_SavLibraryPlus_ItemViewers_Default_RelationManyToManyAsSubformItemViewe
     $controller =  t3lib_div::makeInstance('Tx_SavLibraryPlus_Controller_Controller');
     $extensionConfigurationManager = $controller->getExtensionConfigurationManager();
 	  $extensionConfigurationManager->injectExtension($this->getController()->getExtensionConfigurationManager()->getExtension());
-	  $extensionConfigurationManager->injectTypoScriptConfiguration(array());
+	  $extensionConfigurationManager->injectTypoScriptConfiguration(Tx_SavLibraryPlus_Managers_ExtensionConfigurationManager::getTypoScriptConfiguration());
     $controller->initialize();
 
     // Builds the querier
