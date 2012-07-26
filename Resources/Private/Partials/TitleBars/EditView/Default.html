@@ -17,9 +17,11 @@
           <f:image class="help" src="{sav:getIcon(fileName:'help.gif')}" onclick="vHWin=window.open('index.php?id={configuration.general.helpPage}&amp;help=1','viewHelp','height=500,width=600,status=0,menubar=0,scrollbars=1'); vHWin.focus();return false;" alt="{sav:translate(key:'button.help')}" title="{sav:translate(key:'button.help')}" />
         </f:link.page>
       </f:if>
+      <f:if condition="{configuration.general.isNewView} == 0">
         <sav:link.action action="single"  additionalAttributes="{onclick:'return submitIfChanged();'}" noCacheHash="1">
           <f:image class="show" src="{sav:getIcon(fileName:'show.gif')}" alt="{sav:translate(key:'button.show')}" title="{sav:translate(key:'button.show')}"  />
         </sav:link.action>
+      </f:if>
         <sav:link.action action="closeInEditMode"  additionalAttributes="{onclick:'return submitIfChanged();'}"  noCacheHash="1">
           <f:image class="close" src="{sav:getIcon(fileName:'close.gif')}" alt="{sav:translate(key:'button.close')}" title="{sav:translate(key:'button.close')}"  />
         </sav:link.action>
