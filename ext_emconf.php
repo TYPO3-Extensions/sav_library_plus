@@ -12,7 +12,7 @@
 
 $EM_CONF[$_EXTKEY] = array(
 	'title' => 'SAV Library Plus',
-	'description' => 'The SAV Library Plus is the new SAV Library for TYPO3 4.5. Used with the SAV Library Kickstarter, it makes it possible to directly build extensions without any PHP coding, thanks to simple configuration parameters using the Kickstarter as an extension editor. Multiple views of the data including forms can be generated.',
+	'description' => 'The SAV Library Plus is the new SAV Library for TYPO3 4.5. Used with the SAV Library Kickstarter, it makes it possible to directly build extensions without any PHP coding, thanks to simple configuration parameters using the SAV Library Kickstarter as an extension editor. Multiple views of the data including forms can be generated.',
 	'category' => 'misc',
 	'author' => 'Laurent Foulloy',
 	'author_email' => 'yolf.typo3@orange.fr',

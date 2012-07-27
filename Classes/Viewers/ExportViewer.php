@@ -36,7 +36,7 @@ class Tx_SavLibraryPlus_Viewers_ExportViewer extends Tx_SavLibraryPlus_Viewers_A
    *
    * @var string
    */
-  protected $templateFile = 'EXT:sav_library_plus/Resources/Private/Templates/Default/Export.html';
+  protected $templateFile = 'Export.html';
 	
   /**
    * Renders the view

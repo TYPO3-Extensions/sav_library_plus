@@ -37,7 +37,7 @@ class Tx_SavLibraryPlus_Viewers_ErrorViewer extends Tx_SavLibraryPlus_Viewers_Ab
    *
    * @var string
    */
-  protected $templateFile = 'EXT:sav_library_plus/Resources/Private/Templates/Default/Error.html';
+  protected $templateFile = 'Error.html';
   
   /**
    * Renders the view

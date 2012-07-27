@@ -279,6 +279,7 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
     // Sets table name and field name
     $tableName = $this->kickstarterFieldConfiguration['tableName'];
     $fieldName = $this->kickstarterFieldConfiguration['fieldName'];
+    $fullFieldName = $tableName . '.' . $fieldName;
 
     // Intializes the field configuration
     $fieldConfiguration = array();
@@ -294,9 +295,14 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
        
     // Adds the configuration from the kickstarter
     $fieldConfiguration = array_merge($fieldConfiguration, $this->kickstarterFieldConfiguration);
-    
+
+    // Adds the configuration from the extension TypoScript configuration
+	  $viewConfigurationFieldFromTypoScriptConfiguration = $this->getController()->getExtensionConfigurationManager()->getViewConfigurationFieldFromTypoScriptConfiguration($fullFieldName);
+    if(is_array($viewConfigurationFieldFromTypoScriptConfiguration)) {
+    	$fieldConfiguration = array_merge($fieldConfiguration, $viewConfigurationFieldFromTypoScriptConfiguration);
+    }
+        
     // Adds the configuration from the page TypoScript configuration
-    $fullFieldName = $tableName . '.' . $fieldName;
     $viewConfigurationFieldFromPageTypoScriptConfiguration = $this->getController()->getPageTypoScriptConfigurationManager()->getViewConfigurationFieldFromPageTypoScriptConfiguration($fullFieldName);
     if(is_array($viewConfigurationFieldFromPageTypoScriptConfiguration)) {
     	$fieldConfiguration = array_merge($fieldConfiguration, $viewConfigurationFieldFromPageTypoScriptConfiguration);

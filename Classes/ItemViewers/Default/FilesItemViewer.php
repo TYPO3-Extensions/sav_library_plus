@@ -169,7 +169,7 @@ class Tx_SavLibraryPlus_ItemViewers_Default_FilesItemViewer extends Tx_SavLibrar
       );
     } else {
       // The file does not exist, the default image (unknown) is used.
-      $libraryDefaultFile = $this->getController()->getLibraryConfigurationManager()->getImagesDirectory('unknown.gif') . 'unknown.gif';
+      $libraryDefaultFile = Tx_SavLibraryPlus_Managers_LibraryConfigurationManager::getImageRootPath('unknown.gif') . 'unknown.gif';
       $defaultFile = ($this->getItemConfiguration('default') ? $this->getItemConfiguration('default') : $libraryDefaultFile);
       $typoScriptConfiguration = array(
         'params' => 'class="fileImage"',
@@ -240,10 +240,10 @@ class Tx_SavLibraryPlus_ItemViewers_Default_FilesItemViewer extends Tx_SavLibrar
       $pathParts = pathinfo($this->fileName);
       $iconTypeFileName = $pathParts['extension'] . '.gif';
       
-      // Gets the file  from the library directory if it exists or from the typo3
-      $iconsDirectory = $this->getController()->getLibraryConfigurationManager()->getIconsDirectory();
-      if (file_exists($iconsDirectory . 'FileIcons/' . $iconTypeFileName)) {
-        $iconFileName = $iconsDirectory . 'FileIcons/' . $iconTypeFileName;
+      // Gets the file from the library directory if it exists or from the typo3
+      $iconRootPath = Tx_SavLibraryPlus_Managers_LibraryConfigurationManager::getIconRootPath();
+      if (file_exists($iconRootPath . 'FileIcons/' . $iconTypeFileName)) {
+        $iconFileName = $iconRootPath . 'FileIcons/' . $iconTypeFileName;
       } elseif (file_exists('typo3/gfx/fileicons/' . $iconTypeFileName)) {
         $iconFileName = 'typo3/gfx/fileicons/' . $iconTypeFileName;
       }

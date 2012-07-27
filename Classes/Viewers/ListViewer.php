@@ -50,7 +50,7 @@ class Tx_SavLibraryPlus_Viewers_ListViewer extends Tx_SavLibraryPlus_Viewers_Abs
    *
    * @var string
    */
-  protected $templateFile = 'EXT:sav_library_plus/Resources/Private/Templates/Default/List.html';
+  protected $templateFile = 'List.html';
   
   /**
    * The previous folder fields configuration
@@ -297,7 +297,7 @@ class Tx_SavLibraryPlus_Viewers_ListViewer extends Tx_SavLibraryPlus_Viewers_Abs
 
             // Creates the view
             $view = t3lib_div::makeInstance('Tx_Fluid_View_StandaloneView');
-            $view->setTemplatePathAndFilename($this->getFileName('EXT:sav_library_plus/Resources/Private/Partials/TitleBars/OrderLinks/'. ucfirst($orderLinkInTitle) . '.html'));
+            $view->setTemplatePathAndFilename($this->getPartialRootPath() . '/TitleBars/OrderLinks/'. ucfirst($orderLinkInTitle) . '.html');
 
             // Assigns the view configuration
             $view->assign('field', array(

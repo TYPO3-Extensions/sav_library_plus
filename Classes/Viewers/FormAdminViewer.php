@@ -36,7 +36,7 @@ class Tx_SavLibraryPlus_Viewers_FormAdminViewer extends Tx_SavLibraryPlus_Viewer
    *
    * @var string
    */
-  protected $templateFile = 'EXT:sav_library_plus/Resources/Private/Templates/Default/FormAdmin.html';
+  protected $templateFile = 'FormAdmin.html';
   
   /**
 	 * Parses the ###field[]### markers

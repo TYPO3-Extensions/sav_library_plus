@@ -50,7 +50,7 @@ class Tx_SavLibraryPlus_Viewers_FormViewer extends Tx_SavLibraryPlus_Viewers_Abs
    *
    * @var string
    */
-  protected $templateFile = 'EXT:sav_library_plus/Resources/Private/Templates/Default/Form.html';
+  protected $templateFile = 'Form.html';
   
   /**
    * The query configuration manager

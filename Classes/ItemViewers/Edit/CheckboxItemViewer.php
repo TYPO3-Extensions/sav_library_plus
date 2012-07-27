@@ -126,8 +126,8 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_CheckboxItemViewer extends Tx_SavLibrar
   		Tx_SavLibraryPlus_Controller_FlashMessages::addError(error.noAttributeInField, array('fieldforcheckmail', $this->getItemConfiguration('fieldName')));
   		return '';
   	}
-  	// Gets the icon directory
-  	$iconsDirectory = $this->getController()->getLibraryConfigurationManager()->getIconsDirectory('checkboxSelected.gif');
+  	// Gets the icon root path
+  	$iconRootPath = Tx_SavLibraryPlus_Managers_LibraryConfigurationManager::getIconRootPath('checkboxSelected.gif');
   	
   	// Gets the value associated with the field
   	$querier = $this->getController()->getQuerier();
@@ -140,7 +140,7 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_CheckboxItemViewer extends Tx_SavLibrar
 		    $content = Tx_SavLibraryPlus_Utility_HtmlElements::htmlImgElement(
 		      array(
 		        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('class', 'mailButton'),
-		        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('src', $iconsDirectory . 'newMailOff.gif'),
+		        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('src', $iconRootPath . 'newMailOff.gif'),
 		        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('title', Tx_Extbase_Utility_Localization::translate('button.mail', 'sav_library_plus')),
 		        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('alt', Tx_Extbase_Utility_Localization::translate('button.mail', 'sav_library_plus')),
 		      )
@@ -150,7 +150,7 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_CheckboxItemViewer extends Tx_SavLibrar
 		    $content = Tx_SavLibraryPlus_Utility_HtmlElements::htmlInputImageElement(
 		      array(
 		        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('class', 'mailButton'),
-		        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('src', $iconsDirectory . 'newMail.gif'),
+		        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('src', $iconRootPath . 'newMail.gif'),
 	        	Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('name', Tx_SavLibraryPlus_Controller_AbstractController::getFormName() . '[formAction][saveAndSendMail][' . $this->getCryptedFullFieldName() . ']'),	        
 		        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('title', Tx_Extbase_Utility_Localization::translate('button.mail', 'sav_library_plus')),
 		        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('alt', Tx_Extbase_Utility_Localization::translate('button.mail', 'sav_library_plus')),
@@ -162,7 +162,7 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_CheckboxItemViewer extends Tx_SavLibrar
 	    $content = Tx_SavLibraryPlus_Utility_HtmlElements::htmlImgElement(
 	      array(
 	        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('class', 'mailButton'),
-	        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('src', $iconsDirectory . 'newMailOff.gif'),
+	        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('src', $iconRootPath . 'newMailOff.gif'),
 	        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('title', Tx_Extbase_Utility_Localization::translate('button.mail', 'sav_library_plus')),
 	        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('alt', Tx_Extbase_Utility_Localization::translate('button.mail', 'sav_library_plus')),
 	      )

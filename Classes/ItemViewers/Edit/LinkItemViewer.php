@@ -45,14 +45,14 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_LinkItemViewer extends Tx_SavLibraryPlu
     $value = ($value == NULL ? '' : $value);
 
     if ($this->getItemConfiguration('generatertf')) {
-  		// Gets the icon directory
-  		$iconsDirectory = $this->getController()->getLibraryConfigurationManager()->getIconsDirectory('generateRtf.gif');   
+  		// Gets the icon root path
+  		$iconRootPath = Tx_SavLibraryPlus_Managers_LibraryConfigurationManager::getIconRootPath('generateRtf.gif');   
   		   
   		// Adds an input image element
 		  $content = Tx_SavLibraryPlus_Utility_HtmlElements::htmlInputImageElement(
 		    array(
 					Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('class', 'generateRtfButton'),
-		      Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('src', $iconsDirectory . 'generateRtf.gif'),
+		      Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('src', $iconRootPath . 'generateRtf.gif'),
 	        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('name', Tx_SavLibraryPlus_Controller_AbstractController::getFormName() . '[formAction][saveAndGenerateRtf][' . $this->getCryptedFullFieldName() . ']'),	        
 		      Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('title', Tx_Extbase_Utility_Localization::translate('button.generateRtf', 'sav_library_plus')),
 		      Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('alt', Tx_Extbase_Utility_Localization::translate('button.generateRtf', 'sav_library_plus')),

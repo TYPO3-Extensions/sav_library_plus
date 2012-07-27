@@ -43,7 +43,7 @@ class Tx_SavLibraryPlus_Viewers_SingleViewer extends Tx_SavLibraryPlus_Viewers_A
    *
    * @var string
    */
-  protected $templateFile = 'EXT:sav_library_plus/Resources/Private/Templates/Default/Single.html';
+  protected $templateFile = 'Single.html';
 
   /**
    * Renders the view

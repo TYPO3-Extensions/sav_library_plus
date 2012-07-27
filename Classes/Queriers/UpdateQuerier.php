@@ -109,10 +109,16 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
 
     // Checks if the user is authenticated
     if($this->getController()->getUserManager()->userIsAuthenticated() === false) {
-      Tx_SavLibraryPlus_Controller_FlashMessages::addError('fatal.notAuthenticated');
-      return false;
+      return Tx_SavLibraryPlus_Controller_FlashMessages::addError('fatal.notAuthenticated');
     }
-		
+    
+    // Gets the POST variables
+    $this->postVariables = $this->getController()->getUriManager()->getPostVariables();
+    if ($this->postVariables === NULL) {
+    	return;
+    }
+    unset($this->postVariables['formAction']);
+        	
     // Gets the library configuration manager
     $libraryConfigurationManager = $this->getController()->getLibraryConfigurationManager();
 
@@ -135,10 +141,6 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
     
     // Gets the fields configuration for the folder
     $folderFieldsConfiguration = $fieldConfigurationManager->getFolderFieldsConfiguration($activeFolder, true);
-
-    // Gets the POST variables
-    $this->postVariables = $this->getController()->getUriManager()->getPostVariables();
-    unset($this->postVariables['formAction']);
 
 		// Processes the regular fields. Explode the key to get the table and field names
 		$variablesToUpdate = array();

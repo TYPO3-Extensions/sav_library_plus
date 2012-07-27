@@ -36,7 +36,7 @@ class Tx_SavLibraryPlus_Viewers_SubformEditViewer extends Tx_SavLibraryPlus_View
    *
    * @var string
    */
-  protected $templateFile = 'EXT:sav_library_plus/Resources/Private/Templates/Default/SubformEdit.html';
+  protected $templateFile = 'SubformEdit.html';
 
   /**
    * Renders the view

@@ -36,7 +36,7 @@ class Tx_SavLibraryPlus_Viewers_ListInEditModeViewer extends Tx_SavLibraryPlus_V
    *
    * @var string
    */
-  protected $templateFile = 'EXT:sav_library_plus/Resources/Private/Templates/Default/ListInEditMode.html';
+  protected $templateFile = 'ListInEditMode.html';
   
   /**
    * Edit mode flag

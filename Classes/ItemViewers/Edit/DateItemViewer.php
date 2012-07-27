@@ -67,8 +67,8 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_DateItemViewer extends Tx_SavLibraryPlu
     );
 
     // Gets the icon path
-    $iconsDirectory = $this->getController()->getLibraryConfigurationManager()->getIconsDirectory('calendar.gif');
-    $iconPath = $iconsDirectory . 'calendar.gif';
+    $iconRootPath = Tx_SavLibraryPlus_Managers_LibraryConfigurationManager::getIconRootPath('calendar.gif');
+    $iconPath = $iconRootPath . 'calendar.gif';
 
     $htmlArray[] = $datePicker->buildDatePickerSetup(
       array(

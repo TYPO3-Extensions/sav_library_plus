@@ -51,6 +51,20 @@ abstract class Tx_SavLibraryPlus_Viewers_AbstractViewer {
    * @var string
    */
   protected $layoutRootPath = 'EXT:sav_library_plus/Resources/Private/Layouts';
+  
+  /**
+   * The default template root directory
+   *
+   * @var string
+   */
+  protected $defaultTemplateRootPath = 'EXT:sav_library_plus/Resources/Private/Templates/Default';  
+
+  /**
+   * The template root directory
+   *
+   * @var string
+   */
+  protected $templateRootPath;  
 
   /**
    * The template file
@@ -200,6 +214,83 @@ abstract class Tx_SavLibraryPlus_Viewers_AbstractViewer {
     // Gets the view configuration
     $this->libraryViewConfiguration =  $this->libraryConfigurationManager->getViewConfiguration($this->viewIdentifier);
   }
+     				
+	/**
+	 * Sets the partial root path
+	 *
+	 * @param string $partialRootPath
+	 *
+	 * @return none
+	 */
+  public function setPartialRootPath($partialRootPath) {
+  	$this->partialRootPath = $partialRootPath;
+  } 
+
+	/**
+	 * Gets the partial root path
+	 *
+	 * @param none
+	 *
+	 * @return string
+	 */
+  public function getPartialRootPath() {
+  	return $this->getDirectoryName($this->partialRootPath);
+  }   
+  
+	/**
+	 * Sets the layout root path
+	 *
+	 * @param string $layoutRootPath
+	 *
+	 * @return none
+	 */
+  public function setLayoutRootPath($layoutRootPath) {
+  	$this->layoutRootPath = $layoutRootPath;
+  }
+
+	/**
+	 * Gets the layout root path
+	 *
+	 * @param none
+	 *
+	 * @return string
+	 */
+  public function getLayoutRootPath() {
+  	return $this->getDirectoryName($this->layoutRootPath);
+  }   
+  
+	/**
+	 * Sets the template root path
+	 *
+	 * @param string $templateRootPath
+	 *
+	 * @return none
+	 */
+  public function setTemplateRootPath($templateRootPath) {
+  	$this->templateRootPath = $templateRootPath;
+  }
+
+	/**
+	 * Gets the template root path
+	 *
+	 * @param none
+	 *
+	 * @return string
+	 */
+  public function getTemplateRootPath() {
+  	return $this->getDirectoryName($this->templateRootPath);
+  }   
+
+	/**
+	 * Gets the default template root path
+	 *
+	 * @param none
+	 *
+	 * @return string
+	 */
+  public function getDefaultTemplateRootPath() {
+  	return $this->getDirectoryName($this->defaultTemplateRootPath);
+  }    
 
 	/**
 	 * Sets the template file
@@ -211,29 +302,33 @@ abstract class Tx_SavLibraryPlus_Viewers_AbstractViewer {
   public function setTemplateFile($templateFile) {
   	$this->templateFile = $templateFile;
   }
-     				
-	/**
-	 * Sets the partial root path
-	 *
-	 * @param string $partialRootPath
-	 *
-	 * @return none
-	 */
-  public function setPartialRootPath($partialRootPath) {
-  	$this->partialRootPath = $partialRootPath;
-  }
-
-	/**
-	 * Sets the layout root path
-	 *
-	 * @param string $layoutRootPath
-	 *
-	 * @return none
-	 */
-  public function setLayoutRootPath($layoutRootPath) {
-  	$this->layoutRootPath = $layoutRootPath;
-  }
   
+  /**
+	 * Gets the template file
+	 *
+	 * @param none
+	 *
+	 * @return string
+	 */
+  public function getTemplateFile() {
+  	$templateRootPath = $this->getTemplateRootPath();
+
+  	// Returns the template file in the template root path if it exists
+  	$templateFile = $templateRootPath . '/' . $this->templateFile;
+  	if (@is_file(PATH_site . $templateFile) === true) {
+  		return $templateFile;
+  	} else {
+  		// Returns the file in the default template root path
+  		$defaultTemplateRootPath = $this->getDefaultTemplateRootPath();
+  		$templateFile = $defaultTemplateRootPath . '/' . $this->templateFile;  
+  		if (@is_file(PATH_site . $templateFile) === true) {
+  			return $templateFile;
+  		} else {  
+				throw new Tx_SavLibraryPlus_Exception('The file "' . htmlspecialchars(PATH_site . $templateFile) . '" does not exist');  			
+  		}				
+  	}
+  }  
+
 	/**
 	 * Gets the view type
 	 *
@@ -390,15 +485,19 @@ abstract class Tx_SavLibraryPlus_Viewers_AbstractViewer {
 	 * @return string the rendered view
 	 */
   public function renderView() {
-  	
-  	// Sets the view configuration files from the page Typoscript Configuration if any
-  	$this->getController()->getPageTypoScriptConfigurationManager()->setViewConfigurationFilesFromPageTypoScriptConfiguration();
-
+  	 	
+  	// Sets the view configuration files
+  	$this->setViewConfigurationFilesFromTypoScriptConfiguration();
+ 	
     // Creates the view
     $view = t3lib_div::makeInstance('Tx_Fluid_View_StandaloneView');
-    $view->setTemplatePathAndFilename($this->getFileName($this->templateFile));
-    $view->setLayoutRootPath($this->getDirectoryName($this->layoutRootPath));
-    $view->setPartialRootPath($this->getDirectoryName($this->partialRootPath));
+    
+    // Sets the file template
+    $view->setTemplatePathAndFilename($this->getTemplateFile());
+    
+    // Sets the layout and the partial root paths
+    $view->setLayoutRootPath($this->getLayoutRootPath());
+    $view->setPartialRootPath($this->getPartialRootPath());
    
     // Adds the short form name to the general configuration
     $this->addToViewConfiguration('general',
@@ -415,6 +514,25 @@ abstract class Tx_SavLibraryPlus_Viewers_AbstractViewer {
 		return $view->render();    
   }
 
+	/**
+	 * Sets the view configuration files:
+	 * - from the Page TypoScript Configuration if any
+	 * - else from the extension TypoScript Configuration if any,
+	 * - else from the library TypoScript Configuration if any,
+	 * - else default configuration files are used.
+	 *
+	 * @param none
+	 *
+	 * @return string the rendered view
+	 */
+  public function setViewConfigurationFilesFromTypoScriptConfiguration() {  
+  	// Sets the template root path with the default
+  	$this->templateRootPath = $this->defaultTemplateRootPath;  	
+  	$this->getController()->getPageTypoScriptConfigurationManager()->setViewConfigurationFilesFromPageTypoScriptConfiguration();
+  	$this->getController()->getExtensionConfigurationManager()->setViewConfigurationFilesFromTypoScriptConfiguration();
+  	$this->getController()->getLibraryConfigurationManager()->setViewConfigurationFilesFromTypoScriptConfiguration();  
+  }  
+  
 	/**
 	 * Renders an item
 	 *
@@ -451,52 +569,21 @@ abstract class Tx_SavLibraryPlus_Viewers_AbstractViewer {
   }
 
 	/**
-	 * Gets a file name
-	 *
-	 * @param string $fileName The file name
-	 *
-	 * @return string the TYPO3 file name
-	 */
-  protected function getFileName($fileName) {
-		if (!strcmp(substr($fileName, 0, 4), 'EXT:')) {
-			$newFileName = '';
-			list($extensionKey, $script) = explode('/', substr($fileName, 4), 2);
-			if ($extensionKey && t3lib_extMgm::isLoaded($extensionKey)) {
-				$extensionPath = t3lib_extMgm::extPath($extensionKey);
-				$newFileName = substr($extensionPath, strlen(PATH_site)) . $script;
-			}
-		} else {
-			$newFileName = $fileName;
-		}
-		
-		if (!@is_file(PATH_site . $newFileName)) {
-			throw new Tx_SavLibraryPlus_Exception('The file "' . htmlspecialchars(PATH_site . $newFileName) . '" does not exist');
-		} else {
-			return $newFileName;
-		} 
-  }
-
-	/**
 	 * Gets a directory name
 	 *
 	 * @param string $directoryName The directory name
 	 *
 	 * @return string the TYPO3 directory name
 	 */
-  protected function getDirectoryName($directoryName) {
-		if (!strcmp(substr($directoryName, 0, 4), 'EXT:')) {
-			$newDirectoryName = '';
-			list($extensionKey, $script) = explode('/', substr($directoryName, 4), 2);
-			if ($extensionKey && t3lib_extMgm::isLoaded($extensionKey)) {
-				$extensionPath = t3lib_extMgm::extPath($extensionKey);
-				$newDirectoryName = substr($extensionPath, strlen(PATH_site)) . $script;
-			}
-			if (!@is_dir(PATH_site . $newDirectoryName)) {
-				throw new Tx_SavLibraryPlus_Exception('The directory "' . htmlspecialchars(PATH_site . $newDirectoryName) . '" does not exist');
-			} else {
-				return $newDirectoryName;
-			}
-		}
+  public function getDirectoryName($directoryName) {
+  	
+  	$absoluteDirectoryName = t3lib_div::getFileAbsFileName($directoryName);
+  	// Checks if the directory exists
+		if (!@is_dir($absoluteDirectoryName)) {
+			throw new Tx_SavLibraryPlus_Exception(Tx_SavLibraryPlus_Controller_FlashMessages::translate('error.directoryDoesNotExist', array(htmlspecialchars($cascadingStyleSheetAbsoluteFileName))));
+		} else {
+			return substr($absoluteDirectoryName, strlen(PATH_site));
+		}  	
   }
 
 	/**
@@ -576,7 +663,7 @@ abstract class Tx_SavLibraryPlus_Viewers_AbstractViewer {
     }
 
     // Gets the plugin TypoScript configuration
-    $formTypoScriptConfiguration = $pluginTypoScriptConfiguration[$this->getController()->getFormConfigurationManager()->getFormTitle() . '.']; 
+    $formTypoScriptConfiguration = $pluginTypoScriptConfiguration[Tx_SavLibraryPlus_Managers_FormConfigurationManager::getFormTitle() . '.']; 
     if (is_array($formTypoScriptConfiguration) === false) {
     	return;
     }    

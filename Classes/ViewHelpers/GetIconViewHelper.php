@@ -45,7 +45,7 @@ class Tx_SavLibraryPlus_ViewHelpers_GetIconViewHelper extends Tx_Fluid_Core_View
 	public function render($fileName) {
 
     // Checks if the file Name exists in the SAV Library Plus
-    $filePath = Tx_SavLibraryPlus_Managers_LibraryConfigurationManager::getIconsDirectory($fileName) . $fileName;
+    $filePath = Tx_SavLibraryPlus_Managers_LibraryConfigurationManager::getIconRootPath($fileName) . $fileName;
 
     if (file_exists($filePath)) {
       return $filePath;

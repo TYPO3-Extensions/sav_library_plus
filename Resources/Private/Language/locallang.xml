@@ -55,12 +55,13 @@
 			<label index="error.aliasValueMissingInReqValue">The query associated with the property &quot;reqValue&quot; in the field &quot;%s&quot; must contain the alias &quot;value&quot;.</label>	
 			<label index="error.cannotCreateDirectoryInUpload">Error: the upload folder "%" has not been created.</label>	
 			<label index="error.configurationNeeded">A configuration file is needed and the defaut file was not found. Please contact the WebMaster.</label>
+			<label index="error.directoryDoesNotExist">Directory %s does not exist.</label>
 			<label index="error.dataNotSaved">Data contain atleast one error and were not saved.</label>
 			<label index="error.extensionNotAllowed">Error: invalid file type.</label>
 			<label index="error.fieldRequired">Error: the field "%s" should not be empty.</label>
 			<label index="error.fieldVoid">Error: the field must not be empty.</label>
 			<label index="error.fieldIncorrectValue">Error: incorrect value for this field.</label>
-			<label index="error.fileDoesNotExist">File does not exist: %s.</label>
+			<label index="error.fileDoesNotExist">File %s does not exist.</label>
 			<label index="error.fileOpenError">File open error: %s.</label>
 			<label index="error.fileReadError">File read error: %s.</label>
 			<label index="error.fileWriteError">File write error: %s.</label>

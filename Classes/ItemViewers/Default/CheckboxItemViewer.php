@@ -85,13 +85,13 @@ class Tx_SavLibraryPlus_ItemViewers_Default_CheckboxItemViewer extends Tx_SavLib
   	if (empty($imageFileName)) {
   		$imageFileName = 'checkboxSelected.gif';
   	}
-  	// Gets the icons directory for the file name
-    $iconsDirectory = $this->getController()->getLibraryConfigurationManager()->getIconsDirectory($imageFileName);  
+  	// Gets the icons root path for the file name
+    $iconRootPath = Tx_SavLibraryPlus_Managers_LibraryConfigurationManager::getIconRootPath($imageFileName);  
     // Renders the content
     $content = Tx_SavLibraryPlus_Utility_HtmlElements::htmlImgElement(
       array(
         Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('class', 'checkboxSelected'),
-        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('src', $iconsDirectory . $imageFileName),
+        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('src', $iconRootPath . $imageFileName),
         Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('title', Tx_Extbase_Utility_Localization::translate('itemviewer.checkboxSelected', 'sav_library_plus')),
         Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('alt', Tx_Extbase_Utility_Localization::translate('itemviewer.checkboxSelected', 'sav_library_plus')),
       )
@@ -118,13 +118,13 @@ class Tx_SavLibraryPlus_ItemViewers_Default_CheckboxItemViewer extends Tx_SavLib
   		}
   	}
   	
-  	// Gets the icons directory for the file name
-    $iconsDirectory = $this->getController()->getLibraryConfigurationManager()->getIconsDirectory($imageFileName);
+  	// Gets the icon root path for the file name
+    $iconRootPath = Tx_SavLibraryPlus_Managers_LibraryConfigurationManager::getIconRootPath($imageFileName);
     // Renders the content
     $content = Tx_SavLibraryPlus_Utility_HtmlElements::htmlImgElement(
       array(
         Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('class', 'checkboxNotSelected'),
-        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('src', $iconsDirectory . $imageFileName),
+        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('src', $iconRootPath . $imageFileName),
         Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('title', Tx_Extbase_Utility_Localization::translate('itemviewer.checkboxNotSelected', 'sav_library_plus')),
         Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('alt', Tx_Extbase_Utility_Localization::translate('itemviewer.checkboxNotSelected', 'sav_library_plus')),
       )

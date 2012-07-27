@@ -43,7 +43,7 @@ class Tx_SavLibraryPlus_Viewers_EditViewer extends Tx_SavLibraryPlus_Viewers_Abs
    *
    * @var string
    */
-  protected $templateFile = 'EXT:sav_library_plus/Resources/Private/Templates/Default/Edit.html';
+  protected $templateFile = 'Edit.html';
  
   /**
    * Renders the view
