@@ -51,7 +51,7 @@ class Tx_SavLibraryPlus_DatePicker_DatePicker {
 
   public function buildDatePickerSetup($datePickerConfiguration) {
     $datePickerSetup[] = '<a href="#">';
-    $datePickerSetup[] = '<img id="button_' . $datePickerConfiguration['id'] . '" src="' . $datePickerConfiguration['iconPath'] . '" alt="" title="" />';
+    $datePickerSetup[] = '<img class="datePickerCalendar" id="button_' . $datePickerConfiguration['id'] . '" src="' . $datePickerConfiguration['iconPath'] . '" alt="" title="" />';
     $datePickerSetup[] = '</a>';
     $datePickerSetup[] = '<script type="text/javascript">';
     $datePickerSetup[] = '/*<![CDATA[*/';
