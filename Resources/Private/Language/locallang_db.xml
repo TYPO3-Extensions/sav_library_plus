@@ -6,7 +6,7 @@
 	</meta>
 	<data type="array">
 		<languageKey index="default" type="array">
-			<label index="tx_savlibraryplus_export_configuration">SAV Library (Export configuration)</label>
+			<label index="tx_savlibraryplus_export_configuration">SAV Library Plus (Export configuration)</label>
 			<label index="tx_savlibraryplus_export_configuration.name">Name</label>
 			<label index="tx_savlibraryplus_export_configuration.cid">Content uid</label>
 			<label index="tx_savlibraryplus_export_configuration.configuration">Configuration</label>

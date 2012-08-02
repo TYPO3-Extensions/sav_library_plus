@@ -2,7 +2,7 @@
 <T3locallang>
 	<meta type="array">
 		<type>module</type>
-		<description>Language labels for &quot;sav_library&quot;</description>
+		<description>Language labels for "sav_library"</description>
 	</meta>
 	<data type="array">
 		<languageKey index="default" type="array">
@@ -17,23 +17,23 @@
 			<label index="pi_flexform.dateUserRestriction">Apply date limits to</label>
 			<label index="pi_flexform.dateUserRestriction.I.0">Nobody</label>
 			<label index="pi_flexform.dateUserRestriction.I.1">All</label>
-			<label index="pi_flexform.dateUserRestriction.I.2">&quot;Admin plus&quot; users</label>
-			<label index="pi_flexform.dateUserRestriction.I.3">All excluding &quot;Super Admin&quot;</label>
-			<label index="pi_flexform.showNoAvailableInformation">In no information available</label>
+			<label index="pi_flexform.dateUserRestriction.I.2">"Admin plus" users</label>
+			<label index="pi_flexform.dateUserRestriction.I.3">All excluding "Super Admin"</label>
+			<label index="pi_flexform.showNoAvailableInformation">If no information available</label>
 			<label index="pi_flexform.showNoAvailableInformation.I.0">Show a message</label>
 			<label index="pi_flexform.showNoAvailableInformation.I.1">Do not show a message</label>
 			<label index="pi_flexform.showNoAvailableInformation.I.2">Do not show the extension</label>
 			<label index="pi_flexform.maxItems">Max number of items</label>
 			<label index="pi_flexform.sheetTitle.sInput">Input controls</label>
-			<label index="pi_flexform.noNewButton">No &quot;new&quot; button</label>
-			<label index="pi_flexform.noEditButton">No &quot;edit&quot; button</label>
-			<label index="pi_flexform.noDeleteButton">No &quot;delete&quot; button</label>
-			<label index="pi_flexform.deleteButtonOnlyForCreationUser">Add a &quot;delete&quot; button only for records created by the user</label>
-			<label index="pi_flexform.submitButton">Add a &quot;submit&quot; button (to be used with a form)</label>
+			<label index="pi_flexform.noNewButton">No "new" button</label>
+			<label index="pi_flexform.noEditButton">No "edit" button</label>
+			<label index="pi_flexform.noDeleteButton">No "delete" button</label>
+			<label index="pi_flexform.deleteButtonOnlyForCreationUser">Add a "delete" button only for records created by the user</label>
+			<label index="pi_flexform.submitButton">Add a "submit" button (to be used with a form)</label>
 			<label index="pi_flexform.sheetTitle.sAdvanced">Advanced</label>
 			<label index="pi_flexform.permanentFilter">Permanent filter</label>
-			<label index="pi_flexform.addFragment">Add a fragment(#content id) to links</label>
-			<label index="pi_flexform.allowQueryProperty">Allow the use of the &quot;query&quot; property</label>
+			<label index="pi_flexform.addFragment">Add a fragment (#content id) to links</label>
+			<label index="pi_flexform.allowQueryProperty">Allow the use of the "query" property</label>
 			<label index="pi_flexform.allowExec">Allow the use of the exec function in export</label>		
 			<label index="pi_flexform.help">Help</label>
 			<label index="pi_flexform.storagePage">Storage page</label>
@@ -52,11 +52,11 @@
 			<label index="warning.save">Save this record?</label>
 			<label index="warning.noRecord">No record returned.</label>
 			
-			<label index="error.aliasValueMissingInReqValue">The query associated with the property &quot;reqValue&quot; in the field &quot;%s&quot; must contain the alias &quot;value&quot;.</label>	
-			<label index="error.cannotCreateDirectoryInUpload">Error: the upload folder "%" has not been created.</label>	
+			<label index="error.aliasValueMissingInReqValue">The query associated with the property "reqValue" in the field "%s" must contain the alias "value".</label>	
+			<label index="error.cannotCreateDirectoryInUpload">Error: the upload folder "%s" has not been created.</label>	
 			<label index="error.configurationNeeded">A configuration file is needed and the defaut file was not found. Please contact the WebMaster.</label>
 			<label index="error.directoryDoesNotExist">Directory %s does not exist.</label>
-			<label index="error.dataNotSaved">Data contain atleast one error and were not saved.</label>
+			<label index="error.dataNotSaved">Data contain at least one error and were not saved.</label>
 			<label index="error.extensionNotAllowed">Error: invalid file type.</label>
 			<label index="error.fieldRequired">Error: the field "%s" should not be empty.</label>
 			<label index="error.fieldVoid">Error: the field must not be empty.</label>
@@ -74,16 +74,16 @@
 			<label index="error.incorrectFieldKey">Please contact the Webmaster. An incorrect field key was detected. It may occur when a ###fieldName### tag is used and "fieldName" is not in the main table. In that case ###tableName.fieldName### must be used.</label>			
 			<label index="error.incorrectSession">Error: incorrect session. Close your brower and try again.</label>
 			<label index="error.incorrectExtensionConfiguration">Incorrect configuration of the plugin: %s. Edit and save the plugin configuration to take the flexform parameters into consideration.</label>
-			<label index="error.incorrectRTFSaveFileName">Save file name is missing ( saveFileRTF=filename; is missing in the field configuration).</label>
+			<label index="error.incorrectRTFSaveFileName">Save file name is missing (saveFileRTF=filename; is missing in the field configuration).</label>
 			<label index="error.incorrectRTFTemplateFileConfig">Incorrect RTF template configuration (templateRTF=filename; is missing in the field configration).</label>
 			<label index="error.incorrectRTFTemplateFileExtension">Incorrect RTF template file extension.</label>
 			<label index="error.incorrectRTFTemplateFileName">Unknown RTF template file. Check the path.</label>
 			<label index="error.incorrectQuery">Error in the query associated with the view: %s.</label>
-			<label index="error.incorrectQueryInsertNew">Error in creating the new record. It may occur if you try to insert a field which does not exist in the table (e.g. field with the type &quot;Shown only in SAV Form&quot;).</label>
-			<label index="error.incorrectQueryInReqValue">Error in the query associated with the property &quot;reqValue&quot; in the field: %s.</label>
-			<label index="error.incorrectQueryInQueryProperty">Error in the query associated with the property &quot;query&quot;.</label>
-			<label index="error.incorrectQueryInContent">Error in the query associated with the property &quot;content&quot; in the field: %s.</label>
-			<label index="error.incorrectQueryForeignTable">The &quot;foreign table&quot; field in the query must start either by inner join, left join, right join or by a comma.</label>
+			<label index="error.incorrectQueryInsertNew">Error in creating the new record. It may occur if you try to insert a field which does not exist in the table (e.g. field with the type "Shown only in SAV Form").</label>
+			<label index="error.incorrectQueryInReqValue">Error in the query associated with the property "reqValue" in the field: %s.</label>
+			<label index="error.incorrectQueryInQueryProperty">Error in the query associated with the property "query".</label>
+			<label index="error.incorrectQueryInContent">Error in the query associated with the property "content" in the field: %s.</label>
+			<label index="error.incorrectQueryForeignTable">The "foreign table" field in the query must start either by inner join, left join, right join or by a comma.</label>
 			<label index="error.incorrectVersion">Please contact the Webmaster. Extension and library do not have the same version. Open the extension with the kickstater and save it.</label>
 			<label index="error.incorrectXmlFile">The XML file contains syntax errors: %s.</label>
 			<label index="error.incorrectXmlProducedFile">The XML file produced during the export contains syntax errors. It may come from your template xml file: %s.</label>
@@ -95,11 +95,9 @@
 			<label index="error.isValidPattern">The input does not verify the expected pattern.</label>
 			<label index="error.isValidQuery">The input does not verify the query verifier.</label>
 			<label index="error.maxFileSizeExceededInUpload">The size of the file exceeds the allowed size.</label>
-			<label index="error.missingDot">Separate the field name from the table name by a dot &quot;.&quot; in: %s.</label>
-			<label index="error.missingEqualSign">The sign = is missing in parameter: %s.</label>
 			<label index="error.missingLabel">Please contact the webMaster. Missing label: %s.</label>
 			<label index="error.mkdirIncorrect">Error: mkdir aborted.</label>
-			<label index="error.noAttributeInField">Please contact the Webmaster. The attribute &quot;%&quot; was not set in the field &quot;%s&quot;.</label>
+			<label index="error.noAttributeInField">Please contact the Webmaster. The attribute "%s" was not set in the field "%s".</label>
 			<label index="error.noEmailReceiver">The email cannot be sent because there is no email receiver.</label>						
 			<label index="error.noFieldSelectedInForm">Please contact the Webmaster. No field was selected in the form. Select at least a field with the kickstarter.</label>
 			<label index="error.noFieldSelectedInSubForm">Please contact the Webmaster. No field was selected in the subform. Select at least a field with the kickstarter.</label>
@@ -107,7 +105,7 @@
 			<label index="error.noWhereTag">Error: no WHERE Tag defined for the field "%s" or "%s".</label>
 			<label index="error.notSavedElapsedTime">Your latest changes could not been saved because the allocated time for inputs was over.</label>
 			<label index="error.onlySelectQueryAllowed">Error: only SELECT query is allowed in the field: %s.</label>
-			<label index="error.queryPropertyNotAllowed">Error: the use of the &quot;query&quot; property is not allowed in this extension.</label>
+			<label index="error.queryPropertyNotAllowed">Error: the use of the "query" property is not allowed in this extension.</label>
 			<label index="error.savJpGraphFieldIsEmpty">Error: the field "%s" should not be empty to display the graph.</label>
 			<label index="error.savJpGraphNotLoaded">Extension sav_jpgraph must be loaded to use graphs.</label>
 			<label index="error.savJpGraphTemplateNotSet">A graph template must be set using the attribute "graphTemplate".</label>
@@ -118,24 +116,23 @@
 			<label index="error.unknownConfigurationFile">The configuration file "%s" is unknown.</label>
 			<label index="error.unknownFieldName">Please contact the Webmaster. The field "%s" is unknown or undefined.</label>
       <label index="error.unknownFormAction">The action "%s" is unknown.</label>
-			<label index="error.unknownFunction">Please contact the Webmaster. The following function "%" is unknown.</label>
+			<label index="error.unknownFunction">Please contact the Webmaster. The following function "%s" is unknown.</label>
 			<label index="error.unknownFormParam">The following parameter is unknown: %s.</label>
-			<label index="error.unknownFunctionInWhere">The following function, used in a WHERE clause(###func:whereClause###), is not defined: %s.</label>
+			<label index="error.unknownFunctionInWhere">The following function, used in a WHERE clause (###func:whereClause###), is not defined: %s.</label>
 			<label index="error.unknownMarker">The following marker is unknown: %s.</label>
 			<label index="error.unknownType">Please contact the Webmaster. The type "%s" is unknown.</label>
 			<label index="error.unknownPageTypoScriptConfiguration">Unknown "%s" page TypoScript configuration for "%s".</label>			
-			<label index="error.unknownSetMethodForPageTypoScriptConfiguration">Unknown "%s" page TypoScript configuration method for "%s".</label>					
 			<label index="error.uploadAborted">Error: Upload aborted.</label>
 			<label index="error.verifierUnknown">Extension configuration error: unknown verifier.</label>
 			<label index="error.verifierInvalidIntervalParameter">Extension configuration error: invalid interval.</label>
-			<label index="error.xmlIdMissing">An xml &quot;sav_id&quot; attribute must be used with the following &quot;sav_type&quot; attribute: %s.</label>
+			<label index="error.xmlIdMissing">An xml "sav_id" attribute must be used with the following "sav_type" attribute: %s.</label>
 			<label index="error.xmlError">Error: %s in line %s.</label>
 			<label index="error.xmlErrorFile">see the file</label>
 
 			<label index="fatal.incorrectConfiguration">Fatal error: error in the configuration.</label>
 			<label index="fatal.incorrectTypo3Version">Fatal error: TYPO3 version must be at leat 4.5 to use Sav Libray Plus.</label>
 			<label index="fatal.noFormSelectedInFlexform">Fatal error: you do not have selected a form in the flexform.</label>		
-			<label index="fatal.incorrectTCA">Fatal error. The main table has an incorrect TCA. You may not have not used the correct name in the &quot;Main table&quot; field of the query associated with your form.</label>
+			<label index="fatal.incorrectTCA">Fatal error. The main table has an incorrect TCA. You may not have not used the correct name in the "Main table" field of the query associated with your form.</label>
 			<label index="fatal.notAuthenticated">Fatal error. You must be authenticated to save these data.</label>
 			<label index="fatal.notAllowedToEnterInFormAdministration">Fatal error. You are not allowed to enter in the form administration.</label>
 			
@@ -179,13 +176,6 @@
 			
 			<label index="icon.required">Required field</label>
 			<label index="icon.new">New</label>
-			<label index="itemviewer.days.0">Monday</label>
-			<label index="itemviewer.days.1">Twesday</label>
-			<label index="itemviewer.days.2">Wednesday</label>
-			<label index="itemviewer.days.3">Thursday</label>
-			<label index="itemviewer.days.4">Friday</label>
-			<label index="itemviewer.days.5">Saturday</label>
-			<label index="itemviewer.days.6">Sunday</label>
 			<label index="itemviewer.checkboxSelected">Selected</label>
 			<label index="itemviewer.checkboxNotSelected">Not selected</label>
 			<label index="itemviewer.radioButtonSelected">Selected</label>

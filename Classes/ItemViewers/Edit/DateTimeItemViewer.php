@@ -39,10 +39,7 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_DateTimeItemViewer extends Tx_SavLibrar
    * @return string
    */
   protected function renderItem() {
-  
-    $datePicker = t3lib_div::makeInstance('Tx_SavLibraryPlus_DatePicker_DatePicker');
-    $datePicker->setAdditionalHeader();
-  
+
     $htmlArray = array();
 
     // Sets the format
@@ -70,7 +67,11 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_DateTimeItemViewer extends Tx_SavLibrar
     $iconRootPath = Tx_SavLibraryPlus_Managers_LibraryConfigurationManager::getIconRootPath('calendar.gif');
     $iconPath = $iconRootPath . 'calendar.gif';
 
-    $htmlArray[] = $datePicker->buildDatePickerSetup(
+    // Creates the date picker
+    $datePicker = t3lib_div::makeInstance('Tx_SavLibraryPlus_DatePicker_DatePicker');
+  
+    // Renders the date picker
+    $htmlArray[] = $datePicker->render(
       array(
         'id' => strtr($this->getItemConfiguration('itemName'), '[]', '__'),
         'format' => $format,

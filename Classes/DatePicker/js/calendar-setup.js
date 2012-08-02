@@ -68,6 +68,10 @@ Calendar.setup = function (params) {
 	param_default("eventName",       "click");
 	param_default("ifFormat",        "%Y/%m/%d");
 	param_default("daFormat",        "%Y/%m/%d");
+//------------ BEGIN: Modified by Laurent Foulloy ------------		
+	param_default("ttFormat",        Calendar._TT["TT_DATE_FORMAT"]);	
+	param_default("tbFormat",        "%B, %Y");	
+//------------ END:   Modified by Laurent Foulloy ------------		
 	param_default("singleClick",     true);
 	param_default("disableFunc",     null);
 	param_default("dateStatusFunc",  params["disableFunc"]);	// takes precedence if both are defined
@@ -143,6 +147,9 @@ Calendar.setup = function (params) {
 		if (params.ifFormat) {
 			cal.setDateFormat(params.ifFormat);
 		}
+		if (params.ifFormat) {
+			cal.setTtDateFormat(params.zFormat);
+		}		
 		if (params.inputField && typeof params.inputField.value == "string") {
 			cal.parseDate(params.inputField.value);
 		}
@@ -189,6 +196,11 @@ Calendar.setup = function (params) {
 		cal.setDateStatusHandler(params.dateStatusFunc);
 		cal.getDateText = params.dateText;
 		cal.setDateFormat(dateFmt);
+//------------ BEGIN: Modified by Laurent Foulloy ------------			
+		cal.setTtDateFormat(params.ttFormat);
+		cal.setTbDateFormat(params.tbFormat);
+//------------ END:   Modified by Laurent Foulloy ------------			
+		
 		if (mustCreate)
 			cal.create();
 		cal.refresh();

@@ -30,7 +30,10 @@ Calendar = function (firstDayOfWeek, dateStr, onSelected, onClose) {
 	this.minYear = 1970;
 	this.maxYear = 2050;
 	this.dateFormat = Calendar._TT["DEF_DATE_FORMAT"];
+//------------ BEGIN: Modified by Laurent Foulloy ------------		
 	this.ttDateFormat = Calendar._TT["TT_DATE_FORMAT"];
+	this.tbDateFormat = "%B, %Y";	
+//------------ END:   Modified by Laurent Foulloy ------------		
 	this.isPopup = true;
 	this.weekNumbers = true;
 	this.firstDayOfWeek = typeof firstDayOfWeek == "number" ? firstDayOfWeek : Calendar._FD; // 0 for Sunday, 1 for Monday, etc.
@@ -1185,7 +1188,11 @@ Calendar.prototype._init = function (firstDayOfWeek, date) {
 		if (!(hasdays || this.showsOtherMonths))
 			row.className = "emptyrow";
 	}
-	this.title.innerHTML = Calendar._MN[month] + ", " + year;
+//------------ BEGIN: Modified by Laurent Foulloy ------------	
+//	this.title.innerHTML = Calendar._MN[month] + ", " + year;
+	this.title.innerHTML = this.date.print(this.tbDateFormat);
+//------------ END:   Modified by Laurent Foulloy ------------	
+	
 	this.onSetTime();
 	this.table.style.visibility = "visible";
 	this._initMultipleDates();
@@ -1449,7 +1456,12 @@ Calendar.prototype.setDateFormat = function (str) {
 Calendar.prototype.setTtDateFormat = function (str) {
 	this.ttDateFormat = str;
 };
-
+//------------ BEGIN: Modified by Laurent Foulloy ------------	
+/** Customizes the title bar date format. */
+Calendar.prototype.setTbDateFormat = function (str) {
+	this.tbDateFormat = str;
+};
+//------------ END:   Modified by Laurent Foulloy ------------	
 /**
  *  Tries to identify the date represented in a string.  If successful it also
  *  calls this.setDate which moves the calendar to the given date.
