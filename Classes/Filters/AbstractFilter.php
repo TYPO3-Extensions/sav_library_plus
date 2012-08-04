@@ -51,6 +51,7 @@ abstract class Tx_SavLibraryPlus_Filters_AbstractFilter extends tslib_pibase {
   protected $debugQuery = false;                       // Debug the query if set to true. FOR DEVELLOPMENT ONLY !!!
   protected $forceSetSessionFields = false;            // Force the execution of setSessionFields
   protected $setFilterSelected = true;                 // If false the filter is not selected
+  protected $iconRootPath;														 // The iconRootPath if any.
 
   // Session variables
   protected $sessionFilter = array();                  // Filters data
@@ -138,21 +139,29 @@ abstract class Tx_SavLibraryPlus_Filters_AbstractFilter extends tslib_pibase {
     // Merges the flexform configuration with the plugin configuration
     $this->conf = array_merge($this->conf, $this->flexConf);   
     
-    // Includes the default style sheet if none was provided
+    // Includes the default style sheet if none was provided. 
+    // stylesheet is the new configuration attribute, fileCSS is kept for compatibility.
 		if (!isset($GLOBALS['TSFE']->additionalHeaderData[$this->extKey])) {
-		  if (!$this->conf['fileCSS']) {
+		  if (!$this->conf['fileCSS'] && !$this->conf['stylesheet']) {
 		    if (file_exists(t3lib_extMgm::siteRelPath($this->extKey) . 'res/' . $this->extKey . '.css')) {
           $css = '<link rel="stylesheet" type="text/css" href="' . t3lib_extMgm::siteRelPath($this->extKey) . 'res/' . $this->extKey . '.css" />';
         }
-      } elseif (file_exists($this->conf['fileCSS'])) {
+		  } elseif  (file_exists($this->conf['fileCSS'])) {
         $css = '<link rel="stylesheet" type="text/css" href="' . $this->conf['fileCSS'] . '" />';
+      } elseif (file_exists($this->conf['stylesheet'])) {
+        $css = '<link rel="stylesheet" type="text/css" href="' . $this->conf['stylesheet'] . '" />';
 		  } else {
         $this->addError('error.incorrectCSS');
         return false;
       }
 
       $GLOBALS['TSFE']->additionalHeaderData[$this->extKey] = $this->TAB . $css;
-		}    
+		}   
+
+		// Sets the icon root path if any
+		if (empty($this->conf['iconRootPath']) === false) {
+			$this->iconRootPath = $this->conf['iconRootPath'];
+		}
     return true;		
   }
   
