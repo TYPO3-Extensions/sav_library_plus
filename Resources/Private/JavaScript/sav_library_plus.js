@@ -3,7 +3,7 @@
 // PickList II script (aka Menu Swapper)- By Phil Webb (http://www.philwebb.com)
 // Visit JavaScript Kit (http://www.javascriptkit.com) for this JavaScript and 100s more
 // Please keep this notice intact
-// Modified by Yolf <yolf.typo3@orange.fr>
+// Modified by Laureny Foulloy <yolf.typo3@orange.fr>
 
   // Compare functions
   function sortAlpha(a,b){

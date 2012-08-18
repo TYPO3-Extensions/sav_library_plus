@@ -93,6 +93,13 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
    * @var array
    */
   protected $queryConfiguration = NULL;
+  
+  /**
+   * The update querier
+   *
+   * @var Tx_SavLibraryPlus_Queriers_UpdateQuerier
+   */
+  protected $updateQuerier = NULL;
 
   /**
    * The pages to clear
@@ -104,7 +111,7 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
 	/**
 	 * Injects the controller
 	 *
-	 * @param $controller Tx_SavLibraryPlus_Controller_AbstractController The controller
+	 * @param Tx_SavLibraryPlus_Controller_AbstractController $controller The controller
 	 *
 	 * @return  none
 	 */
@@ -115,7 +122,7 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
 	/**
 	 * Injects the query configuration
 	 *
-	 * @param $controller Tx_SavLibraryPlus_Controller_AbstractController The controller
+	 * @param none
 	 *
 	 * @return  none
 	 */
@@ -132,6 +139,17 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
     $this->queryConfigurationManager->injectQueryConfiguration($this->queryConfiguration);
   }
 
+	/**
+	 * Injects the update querier
+	 *
+	 * @param Tx_SavLibraryPlus_Queriers_UpdateQuerier $updateQuerier
+	 *
+	 * @return  none
+	 */
+  public function injectUpdateQuerier($updateQuerier) {
+    $this->updateQuerier = $updateQuerier;
+  }  
+  
   /**
    * Processes the query
    *
@@ -195,7 +213,18 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
   public function setCurrentRowId($rowId) {
     $this->currentRowId = $rowId;
   }
-
+  
+ 	/**
+	 * Gets the current row identifier
+	 *
+	 * @param none
+	 *
+	 * @return integer
+	 */
+  public function getCurrentRowId() {
+    return $this->currentRowId;
+  }
+  
 	/**
 	 * Gets the rows
 	 *
@@ -299,7 +328,64 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
   public function getController() {
     return $this->controller;
   }
+
+	/**
+	 * Gets the update querier
+	 *
+	 * @param none
+	 *
+	 * @return Tx_SavLibraryPlus_Queriers_UpdateQuerier 
+	 */
+  public function getUpdateQuerier() {
+    return $this->updateQuerier;
+  }  
   
+ 	/**
+	 * Checks if the was at leat one error during the update.
+	 *
+	 * @param none
+	 *
+	 * @return boolean
+	 */		
+	public function errorDuringUpdate() {
+		$updateQuerier = $this->getUpdateQuerier();
+		if ($updateQuerier !== NULL) {
+			return $updateQuerier->errorDuringUpdate();
+		}	else {
+			return false;
+		}
+	}	 
+	
+	/**
+	 * Gets the value content from the POST variable after processing by the update querier.
+	 * It is called when an error occurs in order to retrieve the user's inputs.
+	 *
+	 * @param string $fieldName
+	 *
+	 * @return mixed
+	 */	
+	public function getFieldValueFromProcessedPostVariables($fieldName) {
+		$uid = $this->getFieldValueFromCurrentRow(preg_replace('/\.\w+$/', '.uid', $fieldName));
+    $processedPostVariable = $this->getUpdateQuerier()->getProcessedPostVariable($fieldName, $uid);
+    $value = $processedPostVariable['value'];
+		return $value;
+	}	
+
+	/**
+	 * Gets the error code from the POST variable after processing by the update querier.
+	 * It is called when an error occurs in order to retrieve the user's inputs.
+	 *
+	 * @param string $fieldName
+	 *
+	 * @return integer
+	 */	
+	public function getFieldErrorCodeFromProcessedPostVariables($fieldName) {
+		$uid = $this->getFieldValueFromCurrentRow(preg_replace('/\.\w+$/', '.uid', $fieldName));
+    $processedPostVariable = $this->getUpdateQuerier()->getProcessedPostVariable($fieldName, $uid);
+    $errorCode = $processedPostVariable['errorCode'];
+		return $errorCode;
+	}		
+	
 	/**
 	 * Gets the query configuration manager
 	 *

@@ -32,6 +32,13 @@
 class Tx_SavLibraryPlus_ItemViewers_Default_RelationManyToManyAsDoubleSelectorboxItemViewer extends Tx_SavLibraryPlus_ItemViewers_Default_AbstractItemViewer {
 
   /**
+   * The Foreign Table Select Querier
+   *
+   * @var Tx_SavLibraryPlus_Queriers_ForeignTableSelectQuerier
+   */
+  protected $foreignTableSelectQuerier; 	
+	
+  /**
    * Renders the item.
    *
    * @param none
@@ -41,11 +48,30 @@ class Tx_SavLibraryPlus_ItemViewers_Default_RelationManyToManyAsDoubleSelectorbo
   protected function renderItem() {
 
     if ($this->getItemConfiguration('MM')) {
-      return $this->renderDoubleSelectorbox('buildQueryConfigurationForTrueManyToManyRelation');
+      $this->setForeignTableSelectQuerier('buildQueryConfigurationForTrueManyToManyRelation');
     } else {
-      return $this->renderDoubleSelectorbox('buildQueryConfigurationForCommaListManyToManyRelation');
+      $this->setForeignTableSelectQuerier('buildQueryConfigurationForCommaListManyToManyRelation');
     }
+    return $this->renderDoubleSelectorbox();
   }
+
+  /**
+   * Sets the Foreign Table Select Querier.
+   *
+	 * @param $getQuerierMethod string The method name to get the querier
+   *
+   * @return string
+   */
+  protected function setForeignTableSelectQuerier($buildQueryConfigurationMethod) {
+
+    $querierClassName = 'Tx_SavLibraryPlus_Queriers_ForeignTableSelectQuerier';
+    $this->foreignTableSelectQuerier = t3lib_div::makeInstance($querierClassName);
+    $this->foreignTableSelectQuerier->injectController($this->getController());
+    
+    $this->itemConfiguration['uidLocal'] = $this->itemConfiguration['uid'];
+    $this->foreignTableSelectQuerier->$buildQueryConfigurationMethod($this->itemConfiguration);
+    $this->foreignTableSelectQuerier->injectQueryConfiguration();
+  }  
 
   /**
    * Renders the double selector box content.
@@ -57,18 +83,10 @@ class Tx_SavLibraryPlus_ItemViewers_Default_RelationManyToManyAsDoubleSelectorbo
   protected function renderDoubleSelectorbox($buildQueryConfigurationMethod) {
 
     $htmlArray = array();
-
-    // Creates the querier
-    $querierClassName = 'Tx_SavLibraryPlus_Queriers_ForeignTableSelectQuerier';
-    $querier = t3lib_div::makeInstance($querierClassName);
-    $querier->injectController($this->getController());
-    $this->itemConfiguration['uidLocal'] = $this->itemConfiguration['uid'];
-    $querier->$buildQueryConfigurationMethod($this->itemConfiguration);
-    $querier->injectQueryConfiguration();
     
     // Gets the rows
-    $querier->processQuery();
-    $rows = $querier->getRows();
+    $this->foreignTableSelectQuerier->processQuery();
+    $rows = $this->foreignTableSelectQuerier->getRows();
 
 		// Gets the label for the foreign_table
 		$label = $this->getItemConfiguration('foreign_table') . '.' . (

@@ -32,6 +32,13 @@
 class Tx_SavLibraryPlus_ItemViewers_Edit_RelationManyToManyAsDoubleSelectorboxItemViewer extends Tx_SavLibraryPlus_ItemViewers_Edit_AbstractItemViewer {
 
   /**
+   * The Foreign Table Select Querier
+   *
+   * @var Tx_SavLibraryPlus_Queriers_ForeignTableSelectQuerier
+   */
+  protected $foreignTableSelectQuerier;  	
+	
+  /**
    * Renders the item.
    *
    * @param none
@@ -41,47 +48,87 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_RelationManyToManyAsDoubleSelectorboxIt
   protected function renderItem() {
 
     if ($this->getItemConfiguration('MM')) {
-      return $this->renderDoubleSelectorbox('buildQueryConfigurationForTrueManyToManyRelation');
+      $this->setForeignTableSelectQuerier('buildQueryConfigurationForTrueManyToManyRelation');
+      if ($this->getController()->getQuerier()->errorDuringUpdate() === true) {
+      	$this->setSelectedItemsFromProcessedPostVariable();
+      } else {
+      	$this->setSelectedItems(); 
+      }     	
     } else {
-      return $this->renderDoubleSelectorbox('buildQueryConfigurationForCommaListManyToManyRelation');
+      $this->setForeignTableSelectQuerier('buildQueryConfigurationForCommaListManyToManyRelation');
+      $this->setSelectedItems();
     }
+    return $this->renderDoubleSelectorbox();
   }
 
-	/**
-	 * Renders the Double Selectorbox
-	 *
+  /**
+   * Sets the Foreign Table Select Querier.
+   *
 	 * @param $getQuerierMethod string The method name to get the querier
-	 *
-	 * @return string the rendered item
-	 */
-  protected function renderDoubleSelectorbox($buildQueryConfigurationMethod) {
+   *
+   * @return string
+   */
+  protected function setForeignTableSelectQuerier($buildQueryConfigurationMethod) {
 
-    $htmlArray = array();
-
-    // Creates the querier
     $querierClassName = 'Tx_SavLibraryPlus_Queriers_ForeignTableSelectQuerier';
-    $this->querier = t3lib_div::makeInstance($querierClassName);
-    $this->querier->injectController($this->getController());
+    $this->foreignTableSelectQuerier = t3lib_div::makeInstance($querierClassName);
+    $this->foreignTableSelectQuerier->injectController($this->getController());
     
     $this->itemConfiguration['uidLocal'] = $this->itemConfiguration['uid'];
-    $this->querier->$buildQueryConfigurationMethod($this->itemConfiguration);
-    $this->querier->injectQueryConfiguration();
-
+    $this->foreignTableSelectQuerier->$buildQueryConfigurationMethod($this->itemConfiguration);
+    $this->foreignTableSelectQuerier->injectQueryConfiguration();
+  }  
+  
+  /**
+   * Sets the selected items
+   *
+	 * @param none
+   *
+   * @return none
+   */
+	protected function setSelectedItems() { 
     // Gets the rows
-    $this->querier->processQuery();
-    $rows = $this->querier->getRows();
+    $this->foreignTableSelectQuerier->processQuery();
+    $rows = $this->foreignTableSelectQuerier->getRows();
 
-    // Builds the selected items
+		// Builds the selected items
     $this->selectedItems = array();
     foreach ($rows as $rowKey => $row) {
       $this->selectedItems[] = $row['uid'];
-    }
+    }			
+	} 
+  
+  /**
+   * Sets the selected items from the processed post variables in case of errors during update
+   *
+	 * @param none
+   *
+   * @return none
+   */
+	protected function setSelectedItemsFromProcessedPostVariable() { 
+		$updateQuerier = $this->getController()->getQuerier()->getUpdateQuerier();
+		$uid = $this->itemConfiguration['uid'];
+		$fullFieldName = $this->itemConfiguration['MM'] . '.uid_foreign';
+    $processedPostVariable = $updateQuerier->getProcessedPostVariable($fullFieldName, $uid);			
+		$this->selectedItems = $processedPostVariable['value'];		
+	} 
+	
+	/**
+	 * Renders the Double Selectorbox
+	 *
+	 * @param none
+	 *
+	 * @return string the rendered item
+	 */
+  protected function renderDoubleSelectorbox() {
 
+    $htmlArray = array();
+		
     // Gets information from the foreign table
-    $this->querier->buildQueryConfigurationForForeignTable($this->itemConfiguration);
-    $this->querier->injectQueryConfiguration();
+    $this->foreignTableSelectQuerier->buildQueryConfigurationForForeignTable($this->itemConfiguration);
+    $this->foreignTableSelectQuerier->injectQueryConfiguration();
 
-    $this->querier->processQuery();
+    $this->foreignTableSelectQuerier->processQuery();
 
     // Builds the source and destionation selectorboxes
     $htmlArray[] = $this->buildDestinationSelectorBox();
@@ -103,7 +150,7 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_RelationManyToManyAsDoubleSelectorboxIt
   public function buildDestinationSelectorBox() {
   
     // Gets the rows
-    $rows = $this->querier->getRows();
+    $rows = $this->foreignTableSelectQuerier->getRows();
 
     // Initializes the option element array
     $htmlOptionArray = array();
@@ -160,7 +207,7 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_RelationManyToManyAsDoubleSelectorboxIt
 	 */
   public function buildSourceSelectorBox() {
     // Gets the rows
-    $rows = $this->querier->getRows();
+    $rows = $this->foreignTableSelectQuerier->getRows();
 
     // Initializes the option element array
     $htmlOptionArray = array();

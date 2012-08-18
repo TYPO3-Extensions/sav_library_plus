@@ -675,6 +675,10 @@
 	margin:0px;
 	padding:5px;
 }
+.savLibraryPlus DIV.editView DIV.field DIV.error {
+	width:96px;	
+	border:2px solid red;
+}
 .savLibraryPlus DIV.editView DIV.field DIV.label IMG.required {
 	float:right;
 }
@@ -814,10 +818,14 @@
 	width:100px;
 	background-color:#d7e8e8;
 	color:#000099;
-  	font-weight:bold;
+  font-weight:bold;
  	text-align:left;
 	margin:0px;
 	padding:5px;
+}
+.savLibraryPlus DIV.editView DIV.subform DIV.items DIV.item DIV.field DIV.error {
+	width:96px;
+	border:2px solid red;
 }
 .savLibraryPlus DIV.editView DIV.subform DIV.items DIV.item DIV.field DIV.value {
 	float:left;

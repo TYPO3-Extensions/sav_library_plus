@@ -31,12 +31,24 @@
  
 class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Queriers_AbstractQuerier {
 
+  // Error constants
+  const ERROR_NONE = 0;
+  const ERROR_FIELD_REQUIRED = 1;  
+  	
 	/**
 	 * The POST variables
 	 * 
+	 * 
 	 * @var array
 	 */  
-  protected static $postVariables;  
+  protected $postVariables;  
+  
+	/**
+	 * The processed POST variables
+	 * 
+	 * @var array
+	 */  
+  public $processedPostVariables;    
   
 	/**
 	 * If true, the value is not updated nor inserted
@@ -52,6 +64,13 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
 	 */  
   public static $doNotUpdateOrInsert = false;  
   
+	/**
+	 * The error code
+	 * 
+	 * @var boolean
+	 */  
+  public static $errorCode;  
+    
   /**
    * The field configuration
    * 
@@ -98,6 +117,28 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
 		return $this->fieldConfiguration[$attributeKey];
 	}  
 
+	/**
+	 * Gets processed post variable
+	 *
+	 * @param string $fieldName
+	 *
+	 * @return mixed
+	 */
+	public function getProcessedPostVariable($fieldName, $uid) {
+		return $this->processedPostVariables[$fieldName][$uid];
+	} 
+
+	/**
+	 * Returns true if there is at least one error during update
+	 *
+	 * @param none
+	 *
+	 * @return boolean
+	 */	
+	public function errorDuringUpdate() {
+		return self::$doNotUpdateOrInsert;
+	}	
+		
   /**
    * Executes the query
    *
@@ -142,8 +183,9 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
     // Gets the fields configuration for the folder
     $folderFieldsConfiguration = $fieldConfigurationManager->getFolderFieldsConfiguration($activeFolder, true);
 
-		// Processes the regular fields. Explode the key to get the table and field names
+		// Processes the fields
 		$variablesToUpdate = array();
+
 		foreach($this->postVariables as $postVariableKey => $postVariable) {
 		  foreach ($postVariable as $uid => $value) {
 
@@ -158,23 +200,31 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
 
         // Adds the uid to the configuration
         $this->fieldConfiguration['uid'] = $uid;
+        
+        // Resets the error code
+        self::$errorCode = self::ERROR_NONE;
 
         // Makes pre-processings.
         self::$doNotAddValueToUpdateOrInsert = false;
         if ($this->verifier($value)) {
           $value = $this->preProcessor($value);
-        }
+        }      
         
-        // Adds the variables
+        // Sets the processed Post variables to retrieve for error processing if any
+        $fullFieldName = $tableName . '.' . $fieldName;
+        $this->processedPostVariables[$fullFieldName][$uid] = array('value' => $value, 'errorCode' => self::$errorCode);
+        
+        // Adds the variables        
         if (self::$doNotAddValueToUpdateOrInsert === false) {
 		      $variablesToUpdateOrInsert[$tableName][$uid][$fieldName] = $value;
-        }
+        } 
       }
 		}
 
 		// Checks if error exists
 		if (self::$doNotUpdateOrInsert === true) {
-			Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.dataNotSaved'); 			    		
+			Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.dataNotSaved'); 	
+			return false;
 		}	else {	
 			// No error, inserts or updates the data
 	    if (empty($variablesToUpdateOrInsert) === false) {
@@ -232,6 +282,7 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
 		// Checks if a required field is not empty
 		if ($this->isRequired() && empty($newValue)) {
 			self::$doNotUpdateOrInsert = true;
+			self::$errorCode = self::ERROR_FIELD_REQUIRED;
 			Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.fieldRequired', array($this->fieldConfiguration['label']));		
 		}  
 		    
@@ -347,28 +398,33 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
 
     if($this->getFieldConfigurationAttribute('MM')) {
 
-      if ($this->getFieldConfigurationAttribute('uid') > 0) {
+//      if ($this->getFieldConfigurationAttribute('uid') > 0) {
         //True MM
         // Deletes existing fields in the MM table
-        $this->deleteRecordsInRelationManyToMany($this->getFieldConfigurationAttribute('MM'), $this->getFieldConfigurationAttribute('uid'));
+//        $this->deleteRecordsInRelationManyToMany($this->getFieldConfigurationAttribute('MM'), $this->getFieldConfigurationAttribute('uid'));
 
         // Inserts the new fields
-        foreach($value as $itemKey => $item) {
-          $this->insertFieldsInRelationManyToMany($this->getFieldConfigurationAttribute('MM'), array(
-            'uid_local' => $this->getFieldConfigurationAttribute('uid'),
-            'uid_foreign' => $item,
-            'sorting' => $itemKey +1 // The order of the selector is assumed
-            )
-          );
-        }
-      } else {
+//        foreach($value as $itemKey => $item) {
+//          $this->insertFieldsInRelationManyToMany($this->getFieldConfigurationAttribute('MM'), array(
+//            'uid_local' => $this->getFieldConfigurationAttribute('uid'),
+//            'uid_foreign' => $item,
+//            'sorting' => $itemKey +1 // The order of the selector is assumed
+//            )
+//          );
+//        }
+//      } else {
+
+				$fullFieldName = $this->getFieldConfigurationAttribute('MM'). '.uid_foreign';	
+				$uid = $this->getFieldConfigurationAttribute('uid');			
+        $this->processedPostVariables[$fullFieldName][$uid] = array('value' => $value, 'errorCode' => self::$errorCode);
+    	
         $this->postProcessingList[] = array(
           'method' => 'postProcessorForRelationManyToManyAsDoubleSelectorbox',
           'value' => $value,
           'fieldConfiguration' => $this->fieldConfiguration
         );
 
-      }
+//      }
       // The value is replaced by the number of relations
       $value = count($value);
     } else {
@@ -406,10 +462,15 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
 	 */
   protected function postProcessorForRelationManyToManyAsDoubleSelectorbox($value) {
 
-	  // Gets the last inserted iud
+	  // Gets the uid
 	  $tableName = $this->getFieldConfigurationAttribute('tableName');
-		$uid = $this->newInsertedUid[$tableName];
-    
+	  if ($this->getFieldConfigurationAttribute('uid') > 0) {
+	  	$uid = $this->getFieldConfigurationAttribute('uid');
+	  } else {
+	  	// Gets the last inserted uid
+	  	$uid = $this->newInsertedUid[$tableName];
+	  }
+	  
 		// Deletes existing fields in the MM table
 	  $this->deleteRecordsInRelationManyToMany($this->getFieldConfigurationAttribute('MM'), $uid);
 

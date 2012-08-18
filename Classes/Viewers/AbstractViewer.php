@@ -118,7 +118,7 @@ abstract class Tx_SavLibraryPlus_Viewers_AbstractViewer {
   /**
    * The active folder key
    *
-   * @var array
+   * @var string
    */
   protected $activeFolderKey;
   
@@ -153,7 +153,7 @@ abstract class Tx_SavLibraryPlus_Viewers_AbstractViewer {
 	/**
 	 * Injects the controller
 	 *
-	 * @param $controller Tx_SavLibraryPlus_Controller_AbstractController the controller
+	 * @param Tx_SavLibraryPlus_Controller_AbstractController $controller The controller
 	 *
 	 * @return  array
 	 */
@@ -164,7 +164,7 @@ abstract class Tx_SavLibraryPlus_Viewers_AbstractViewer {
 	/**
 	 * Injects the library view configuration
 	 *
-	 * @param $controller Tx_SavLibraryPlus_Controller_AbstractController the controller
+	 * @param array $libraryViewConfiguration The library view configuration
 	 *
 	 * @return  array
 	 */
@@ -177,7 +177,7 @@ abstract class Tx_SavLibraryPlus_Viewers_AbstractViewer {
 	 *
 	 * @param none
 	 *
-	 * @return Tx_SavLibraryPlus_Controller_AbstractController
+	 * @return Tx_SavLibraryPlus_Controller_Controller
 	 */
   public function getController() {
     return $this->controller;
@@ -354,7 +354,7 @@ abstract class Tx_SavLibraryPlus_Viewers_AbstractViewer {
 	/**
 	 * Sets the active folder key
 	 *
-	 * @param $libraryViewConfiguration array The library view configuration
+	 * @param none
 	 *
 	 * @return none
 	 */
@@ -363,7 +363,7 @@ abstract class Tx_SavLibraryPlus_Viewers_AbstractViewer {
     $this->activeFolderKey = $this->getController()->getUriManager()->getFolderKey();
     if ($this->activeFolderKey === NULL) {
       reset($this->libraryViewConfiguration);
-      $this->activeFolderKey = key($this->libraryViewConfiguration);
+      $this->activeFolderKey = key($this->libraryViewConfiguration);      
     }
     if (empty($this->libraryViewConfiguration[$this->activeFolderKey])) {
       $this->activeFolderKey = Tx_SavLibraryPlus_Controller_AbstractController::cryptTag('0');
@@ -639,55 +639,6 @@ abstract class Tx_SavLibraryPlus_Viewers_AbstractViewer {
    */
   public function isRichTextEditorInitialized() {
     return $this->richTextEditorIsInitialized;
-  }  
-  
-  /**
-   * Gets the view configuration from the page TypoScript configuration
-   *
-   * @param none
-   *
-   * @return string The javaScript Header
-   */
-  protected function getViewConfigurationFromPageTypoScriptConfiguration() {
-		// Gets the page TypoScript configuration
-    $pageTypoScriptConfiguration = $GLOBALS['TSFE']->getPagesTSconfig();
-    if (is_array($pageTypoScriptConfiguration) === false) {
-    	return;
-    }
-   
-    // Gets the plugin TypoScript configuration
-    $extensionConfigurationManager = $this->getController()->getExtensionConfigurationManager();
-    $pluginTypoScriptConfiguration = $pageTypoScriptConfiguration[$extensionConfigurationManager->getTSconfigPluginName() . '.'];  
-    if (is_array($pluginTypoScriptConfiguration) === false) {
-    	return;
-    }
-
-    // Gets the plugin TypoScript configuration
-    $formTypoScriptConfiguration = $pluginTypoScriptConfiguration[Tx_SavLibraryPlus_Managers_FormConfigurationManager::getFormTitle() . '.']; 
-    if (is_array($formTypoScriptConfiguration) === false) {
-    	return;
-    }    
-    
-    // Gets the view TypoScript configuration    
-    $viewTypoScriptConfiguration = $formTypoScriptConfiguration[t3lib_div::lcfirst($this->viewType) . '.'];
-    if (is_array($viewTypoScriptConfiguration) === false) {
-    	return;
-    }   
-        
-    // Processes the view configuration
-    $viewConfigurations = $viewTypoScriptConfiguration['configuration.'];
-    if (is_array($viewConfigurations)) {
-    	foreach($viewConfigurations as $viewConfigurationKey => $viewConfiguration) {
-    		switch($viewConfigurationKey) {
-    			case 'templateFile':
-    			case 'partialRootPath':
-    			case 'layoutRootPath':
-    				$this->$viewConfigurationKey = $viewConfiguration;
-    				break;
-    		}
-    	}
-    }
-
   }  
   
 }

@@ -53,6 +53,9 @@ class Tx_SavLibraryPlus_Viewers_EditViewer extends Tx_SavLibraryPlus_Viewers_Abs
    * @return string The rendered view
    */
   public function render() {
+  	
+  	// Adds the javascript for the popup to save data when clicking on a folder and data were changed and not saved.  
+  	$this->addJavaScript();
    
     // Sets the library view configuration
     $this->setLibraryViewConfiguration('EditView');
@@ -103,5 +106,21 @@ class Tx_SavLibraryPlus_Viewers_EditViewer extends Tx_SavLibraryPlus_Viewers_Abs
    return $this->renderView();
   }
 
+  /**
+   * Adds javaScript for the popup
+   *
+   * @param none
+   *
+   * @return none
+   */  
+	protected function addJavaScript() {  
+  	if ($this->getController()->getQuerier()->errorDuringUpdate() === true) {
+  		$javaScript = 'document.changed = true;';
+  	} else {
+  		$javaScript = '';
+  	}
+  	Tx_SavLibraryPlus_Managers_AdditionalHeaderManager::addJavaScript('documentChanged', $javaScript);
+	}
+  
 }
 ?>

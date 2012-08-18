@@ -227,7 +227,8 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
 	/**
 	 * Builds the fields configuration for a folder.
 	 *
-	 * @param $folder array (the folder)
+	 * @param array $folder array (the folder)
+	 * @param boolean $flatten
 	 *
 	 * @return array
 	 */
@@ -331,7 +332,7 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
       $fieldBasedAttribute = $fieldConfiguration['fieldmessage'];
       if (empty($fieldBasedAttribute) === false) {
       	$fieldConfiguration['message'] = $querier->getFieldValueFromCurrentRow($querier->buildFullFieldName($fieldBasedAttribute));
-      }      
+      } 
     }
     
     // Adds the default class label
@@ -355,6 +356,9 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
 
     // Adds the default class Item
     $fieldConfiguration['classItem'] = $this->getClassItem();
+    
+    // Adds the error flag if there was at least an error during the update 
+    $fieldConfiguration['error'] = $this->getErrorFlag();
     
     // Adds the cutters (fusion and field)
     $this->setCutFlag();
@@ -404,16 +408,18 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
     	}
   	
     	$viewerCondition = $this->getController()->getviewer() !== NULL && $this->getController()->getViewer()->isNewView() === false;
- 			if($this->kickstarterFieldConfiguration['reqvalue'] && $viewerCondition === true) {
+ 			if ($this->kickstarterFieldConfiguration['reqvalue'] && $viewerCondition === true) {
 				$value = $this->getValueFromRequest();   	
- 			} else {
-      	$value = $querier->getFieldValueFromCurrentRow($fieldName);
+ 			} elseif ($querier->errorDuringUpdate() === true) {		
+				$value = $querier->getFieldValueFromProcessedPostVariables($fieldName);
+			} else {
+      	$value = $querier->getFieldValueFromCurrentRow($fieldName);					
  			}
     }
    
     return $value;    
 	} 
-
+	
 	/**
 	 * Builds the value content.
 	 *
@@ -566,11 +572,11 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
 
     // Adds subform if the type is a RelationManyToManyAsSubform
     if ($this->kickstarterFieldConfiguration['fieldType'] == 'RelationManyToManyAsSubform') {
-      $class .= ' subform';
+      $class = ' subform';
     } elseif (empty($this->kickstarterFieldConfiguration['classfield'])) {
       $class = 'field';
     } else {
-      $class = 'field ' .$this->kickstarterFieldConfiguration['classfield'];
+      $class = 'field ' . $this->kickstarterFieldConfiguration['classfield'];
     }
     
     return $class;
@@ -593,7 +599,27 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
 
     return $class;
 	}
-  
+
+	/**
+	 * Builds the error flag if any during the update.
+	 *
+	 * @param none
+	 *
+	 * @return boolean
+	 */	
+	protected function getErrorFlag() {	
+	  $querier = $this->getQuerier();
+    if (empty($querier)) {	
+			return false;
+    } elseif ($querier->errorDuringUpdate() === true) {
+    	$fieldName = $this->getFullFieldName();		
+			$errorCode = $querier->getFieldErrorCodeFromProcessedPostVariables($fieldName);
+    	return $errorCode != Tx_SavLibraryPlus_Queriers_UpdateQuerier::ERROR_NONE;
+    } else {
+    	return false;
+    }
+	}
+	
 	/**
 	 * <DIV class="label"> cutter: checks if the label must be cut
 	 * Returns true if the <DIV> must be cut.

@@ -45,14 +45,20 @@ class Tx_SavLibraryPlus_ItemViewers_Default_SelectorboxItemViewer extends Tx_Sav
     
     // Finds the selected item
     $items = $this->getItemConfiguration('items');
+    $itemFound = false;
     foreach ($items as $itemKey => $item) {
       if ($item[1] == $value) {
+      	$itemFound = true;
         break;
       }
     }
     
     // Gets the selected element
-    $content = stripslashes(Tx_Extbase_Utility_Localization::translate($item[0]));
+    if ($itemFound === true) {
+    	$content = stripslashes(Tx_Extbase_Utility_Localization::translate($item[0]));
+    } else {
+    	return '';
+    }
 
     return $content;
   }

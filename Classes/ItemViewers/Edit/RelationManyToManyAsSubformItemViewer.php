@@ -58,6 +58,7 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_RelationManyToManyAsSubformItemViewer e
     $querier = t3lib_div::makeInstance($querierClassName);
     $controller->injectQuerier($querier);
     $querier->injectController($controller);
+    $querier->injectUpdateQuerier($this->getController()->getQuerier()->getUpdateQuerier());
     $this->itemConfiguration['uidLocal'] = $this->itemConfiguration['uid'];
     $pageInSubform = Tx_SavLibraryPlus_Managers_SessionManager::getSubformFieldFromSession($cryptedFullFieldName, 'pageInSubform');
     $pageInSubform = ($pageInSubform ? $pageInSubform : 0);
