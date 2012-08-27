@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<T3locallang>
+	<meta type="array">
+		<type>CSH</type>
+		<csh_table></csh_table>
+		<description>CSH help for the folder Advanced</description>
+		<labelContext type="array">
+		</labelContext>
+	</meta>
+	<data type="array">
+		<languageKey index="default" type="array">
+		
+			<label index="LLL:EXT:sav_library_plus/Resources/Private/Language/locallang.xml:pi_flexform.sheetTitle.sAdvanced.description"></label>
+		
+			<label index="LLL:EXT:sav_library_plus/Resources/Private/Language/locallang.xml:pi_flexform.permanentFilter.description">You can use this field to add a where clause that will be added to the where clause of the form query.</label>
+
+			<label index="LLL:EXT:sav_library_plus/Resources/Private/Language/locallang.xml:pi_flexform.addFragment.description">The content id is added as a fragment to the links.</label>
+
+			<label index="LLL:EXT:sav_library_plus/Resources/Private/Language/locallang.xml:pi_flexform.allowQueryProperty.description">The "query" property makes it possible to execute queries in "input" or "update" forms.
+Because any query may be executed, for security reason, only admin users can check this field must when this property is needed.</label>
+
+			<label index="LLL:EXT:sav_library_plus/Resources/Private/Language/locallang.xml:pi_flexform.allowExec.description">The use of the php exec function is allowed in export which makes the execution of text processors possible, for example.</label>
+
+			<label index="LLL:EXT:sav_library_plus/Resources/Private/Language/locallang.xml:pi_flexform.storagePage.description">This option makes it possible to store your record in a storage page, for example a "sysfolder", otherwise records are stored in the current page.
+When this option is used, records are fetched in the storage page and in the pages defined in the "starting point" if any.</label>
+
+		</languageKey>
+	</data>
+</T3locallang>

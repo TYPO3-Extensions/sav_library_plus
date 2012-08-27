@@ -29,7 +29,6 @@
 			<label index="pi_flexform.noEditButton">No "edit" button</label>
 			<label index="pi_flexform.noDeleteButton">No "delete" button</label>
 			<label index="pi_flexform.deleteButtonOnlyForCreationUser">Add a "delete" button only for records created by the user</label>
-			<label index="pi_flexform.submitButton">Add a "submit" button (to be used with a form)</label>
 			<label index="pi_flexform.sheetTitle.sAdvanced">Advanced</label>
 			<label index="pi_flexform.permanentFilter">Permanent filter</label>
 			<label index="pi_flexform.addFragment">Add a fragment (#content id) to links</label>

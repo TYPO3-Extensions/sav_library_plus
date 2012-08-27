@@ -51,9 +51,8 @@ class Tx_SavLibraryPlus_Viewers_SubformSingleViewer extends Tx_SavLibraryPlus_Vi
     $this->setActiveFolderKey();
 
     // Creates the field configuration manager
-    $fieldConfigurationManager = t3lib_div::makeInstance('Tx_SavLibraryPlus_Managers_FieldConfigurationManager');
-    $fieldConfigurationManager->injectController($this->getController());
-
+    $this->createFieldConfigurationManager();
+    
     // Processes the rows
     $configurationRows = array();
     $rowsCount = $this->getController()->getQuerier()->getRowsCount();
@@ -62,7 +61,7 @@ class Tx_SavLibraryPlus_Viewers_SubformSingleViewer extends Tx_SavLibraryPlus_Vi
       $this->getController()->getQuerier()->setCurrentRowId($rowKey);
 
       // Gets the fields configuration for the folder
-      $this->folderFieldsConfiguration = $fieldConfigurationManager->getFolderFieldsConfiguration($this->getActiveFolder());
+      $this->folderFieldsConfiguration = $this->getFieldConfigurationManager()->getFolderFieldsConfiguration($this->getActiveFolder());
 
       // Processes the fields
       foreach ($this->folderFieldsConfiguration as $fieldConfigurationKey => $fieldConfiguration) {

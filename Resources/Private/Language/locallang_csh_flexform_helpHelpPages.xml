@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<T3locallang>
+	<meta type="array">
+		<type>CSH</type>
+		<csh_table></csh_table>
+		<description>CSH help for the folder Help Pages</description>
+		<labelContext type="array">
+		</labelContext>
+	</meta>
+	<data type="array">
+		<languageKey index="default" type="array">
+		
+			<label index="LLL:EXT:sav_library_plus/Resources/Private/Language/locallang.xml:pi_flexform.sheetTitle.sHelpPages.description"></label>
+		
+			<label index="LLL:EXT:sav_library_plus/Resources/Private/Language/locallang.xml:pi_flexform.helpPageListView.description">Use this selector to choose a page of your site which will be use as an help page for the list view of your extension. In this case, an icon is displayed in the title bar of your extension.</label>
+		
+			<label index="LLL:EXT:sav_library_plus/Resources/Private/Language/locallang.xml:pi_flexform.helpPageSingleView.description">Use this selector to choose a page of your site which will be use as an help page for the single view of your extension. In this case, an icon is displayed in the title bar of your extension.</label>
+
+			<label index="LLL:EXT:sav_library_plus/Resources/Private/Language/locallang.xml:pi_flexform.helpPageEditView.description">Use this selector to choose a page of your site which will be use as an help page for the edit view of your extension. In this case, an icon is displayed in the title bar of your extension.</label>
+  
+		</languageKey>
+	</data>
+</T3locallang>

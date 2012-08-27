@@ -40,8 +40,7 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_RelationOneToManyAsSelectorboxItemViewe
    */
   protected function renderItem() {
 
-    $htmlArray = array();
-   
+    $htmlArray = array();  
     // Builds the querier
     $querierClassName = 'Tx_SavLibraryPlus_Queriers_ForeignTableSelectQuerier';
     $querier = t3lib_div::makeInstance($querierClassName);

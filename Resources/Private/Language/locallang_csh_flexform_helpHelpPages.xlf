@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+	<file source-language="en" datatype="plaintext" original="messages" date="2012-08-25T22:24:16Z" product-name="sav_library_plus">
+		<header/>
+		<body>
+			<trans-unit id="LLL:EXT:sav_library_plus/Resources/Private/Language/locallang.xml:pi_flexform.sheetTitle.sHelpPages.description" xml:space="preserve">
+				<source></source>
+			</trans-unit>
+			<trans-unit id="LLL:EXT:sav_library_plus/Resources/Private/Language/locallang.xml:pi_flexform.helpPageListView.description" xml:space="preserve">
+				<source>Use this selector to choose a page of your site which will be use as an help page for the list view of your extension. In this case, an icon is displayed in the title bar of your extension.</source>
+			</trans-unit>
+			<trans-unit id="LLL:EXT:sav_library_plus/Resources/Private/Language/locallang.xml:pi_flexform.helpPageSingleView.description" xml:space="preserve">
+				<source>Use this selector to choose a page of your site which will be use as an help page for the single view of your extension. In this case, an icon is displayed in the title bar of your extension.</source>
+			</trans-unit>
+			<trans-unit id="LLL:EXT:sav_library_plus/Resources/Private/Language/locallang.xml:pi_flexform.helpPageEditView.description" xml:space="preserve">
+				<source>Use this selector to choose a page of your site which will be use as an help page for the edit view of your extension. In this case, an icon is displayed in the title bar of your extension.</source>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>

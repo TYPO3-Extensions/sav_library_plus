@@ -4,7 +4,15 @@ if (!defined ('TYPO3_MODE')) 	die ('Access denied.');
 // Adds user function for help in flexforms for extension depending on the SAV Library Plus
 if (!function_exists('user_savlibraryPlusHelp')) {
   function user_savlibraryPlusHelp($PA, $fobj){
-    return '';
+
+		$message = $fobj->sL('LLL:EXT:sav_library_plus/Resources/Private/Language/locallang.xml:pi_flexform.help');	
+		$cshTag = $PA['fieldConf']['config']['userFuncParameters']['cshTag'];
+		$skinnedIcon = t3lib_iconWorks::skinImg($GLOBALS['BACK_PATH'], 'gfx/helpbubble.gif', '');
+		$icon = '<img'.$skinnedIcon.' class="typo3-csh-icon" alt="' . t3lib_div::lcfirst($cshTag) . '" />';
+    return '<a href="#" onclick="vHWin=window.open(\'view_help.php?tfID=sav_library_plus_' .
+    	 t3lib_div::lcfirst($cshTag) .
+    	 '.*\',\'viewFieldHelp\',\'height=400,width=600,status=0,menubar=0,scrollbars=1\');vHWin.focus();return false;">' . 
+    	 $icon . ' '. $message . '</a>';     
   }
 }
 
@@ -30,5 +38,11 @@ $TCA['tx_savlibraryplus_export_configuration'] = array (
 		'fe_admin_fieldList' => 'hidden, fe_group, name, cid, configuration',
 	)
 );
+
+// Adds the csh for the flexform
+t3lib_extMgm::addLLrefForTCAdescr('sav_library_plus_helpGeneral', 'EXT:sav_library_plus/Resources/Private/Language/locallang_csh_flexform_helpGeneral.xml');
+t3lib_extMgm::addLLrefForTCAdescr('sav_library_plus_helpInputControls', 'EXT:sav_library_plus/Resources/Private/Language/locallang_csh_flexform_helpInputControls.xml');
+t3lib_extMgm::addLLrefForTCAdescr('sav_library_plus_helpAdvanced', 'EXT:sav_library_plus/Resources/Private/Language/locallang_csh_flexform_helpAdvanced.xml');
+t3lib_extMgm::addLLrefForTCAdescr('sav_library_plus_helpHelpPages', 'EXT:sav_library_plus/Resources/Private/Language/locallang_csh_flexform_helpHelpPages.xml');
 
 ?>

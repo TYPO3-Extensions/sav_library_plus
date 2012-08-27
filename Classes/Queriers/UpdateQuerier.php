@@ -168,7 +168,7 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
     
     // Gets the active folder key
     $activeFolderKey = Tx_SavLibraryPlus_Managers_UriManager::getFolderKey();
-    if($activeFolderKey === NULL) {
+    if($activeFolderKey === NULL || empty($viewConfiguration[$activeFolderKey])) {
       reset($viewConfiguration);
       $activeFolderKey = key($viewConfiguration);
     }

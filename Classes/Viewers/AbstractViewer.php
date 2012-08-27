@@ -95,6 +95,13 @@ abstract class Tx_SavLibraryPlus_Viewers_AbstractViewer {
   protected $libraryConfigurationManager = array();	
 
   /**
+   * The field configuration manager
+   *
+   * @var Tx_SavLibraryPlus_Managers_FieldConfigurationManager
+   */
+  protected $fieldConfigurationManager;	 
+  
+  /**
    * The view type
    *
    * @var string
@@ -329,6 +336,29 @@ abstract class Tx_SavLibraryPlus_Viewers_AbstractViewer {
   	}
   }  
 
+ 	/**
+	 * Creates the field configuration manager
+	 *
+	 * @param none
+	 *
+	 * @return none
+	 */
+  protected function createFieldConfigurationManager() {
+    $this->fieldConfigurationManager = t3lib_div::makeInstance('Tx_SavLibraryPlus_Managers_FieldConfigurationManager');
+    $this->fieldConfigurationManager->injectController($this->getController());
+  }
+
+	/**
+	 * Gets the field configuration manager
+	 *
+	 * @param none
+	 *
+	 * @return Tx_SavLibraryPlus_Managers_FieldConfigurationManager
+	 */
+  protected function getFieldConfigurationManager() {
+  	return $this->fieldConfigurationManager;
+  }    
+  
 	/**
 	 * Gets the view type
 	 *
@@ -361,12 +391,11 @@ abstract class Tx_SavLibraryPlus_Viewers_AbstractViewer {
   public function setActiveFolderKey() {
     // Gets the active folder key
     $this->activeFolderKey = $this->getController()->getUriManager()->getFolderKey();
-    if ($this->activeFolderKey === NULL) {
+
+    // Uses the key of the first view configuration if the active folder key is null or there is no view configuration for the key
+    if ($this->activeFolderKey === NULL || empty($this->libraryViewConfiguration[$this->activeFolderKey])) {
       reset($this->libraryViewConfiguration);
       $this->activeFolderKey = key($this->libraryViewConfiguration);      
-    }
-    if (empty($this->libraryViewConfiguration[$this->activeFolderKey])) {
-      $this->activeFolderKey = Tx_SavLibraryPlus_Controller_AbstractController::cryptTag('0');
     }
   }
 
@@ -426,9 +455,14 @@ abstract class Tx_SavLibraryPlus_Viewers_AbstractViewer {
     // Adds the folders configuration
     foreach($this->libraryViewConfiguration as $folderKey => $folder) {
       if ($folderKey != Tx_SavLibraryPlus_Controller_AbstractController::cryptTag('0')) {
-        $foldersConfiguration[$folderKey]['label'] = $folder['config']['label'];
+      	$fieldConfigurationManager = $this->getFieldConfigurationManager();
+      	$fieldConfigurationManager->injectKickstarterFieldConfiguration($folder['config']);
+      	if ($fieldConfigurationManager->cutIf() === false) {
+        	$foldersConfiguration[$folderKey]['label'] = $folder['config']['label'];
+      	}
       }
     }
+
     return $foldersConfiguration;
   }
   

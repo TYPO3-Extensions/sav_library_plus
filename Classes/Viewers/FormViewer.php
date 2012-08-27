@@ -95,8 +95,7 @@ class Tx_SavLibraryPlus_Viewers_FormViewer extends Tx_SavLibraryPlus_Viewers_Abs
     $templateConfigurationManager->injectTemplateConfiguration($libraryConfigurationManager->getFormViewTemplateConfiguration());
 
     // Creates the field configuration manager
-    $fieldConfigurationManager = t3lib_div::makeInstance('Tx_SavLibraryPlus_Managers_FieldConfigurationManager');
-    $fieldConfigurationManager->injectController($this->getController());
+    $this->createFieldConfigurationManager();
     
     // Gets the item template
     $itemTemplate = $templateConfigurationManager->getItemTemplate();
@@ -110,7 +109,7 @@ class Tx_SavLibraryPlus_Viewers_FormViewer extends Tx_SavLibraryPlus_Viewers_Abs
       $this->getController()->getQuerier()->setCurrentRowId($rowKey);
       
     	// Gets the fields configuration for the folder
-    	$this->folderFieldsConfiguration = $fieldConfigurationManager->getFolderFieldsConfiguration($this->getActiveFolder());
+    	$this->folderFieldsConfiguration = $this->getFieldConfigurationManager()->getFolderFieldsConfiguration($this->getActiveFolder());
 
       $listItemConfiguration = array(
         'template' => $this->parseItemTemplate($itemTemplate),

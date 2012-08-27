@@ -395,8 +395,20 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
 	 * @return string
 	 */
 	protected function getValue() { 
-	  // Gets the value
-    $querier = $this->getQuerier();
+		// Gets the querier		
+    $querier = $this->getQuerier();		
+    
+	  // Gets the value directly from the kickstarter (specific and rare case)
+	  if (empty($this->kickstarterFieldConfiguration['value']) === false) {
+	  	$value = $this->kickstarterFieldConfiguration['value'];
+	    if (empty($querier) === false) {
+      	$value = $querier->parseLocalizationTags($value);
+      	$value = $querier->parseFieldTags($value);
+	    }
+	  	return $value;
+	  }
+	  
+	  // Gets the value from the fieldname
     if (empty($querier) === false) {
     	// Checks if an alias attribute is set
     	if (empty($this->kickstarterFieldConfiguration['alias']) === false) {
@@ -755,7 +767,9 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
 
     if ($this->kickstarterFieldConfiguration['cutif']) {
     	return $this->processFieldCondition($this->kickstarterFieldConfiguration['cutif']);
-    } else {
+    } elseif ($this->kickstarterFieldConfiguration['showif']) {
+    	return !$this->processFieldCondition($this->kickstarterFieldConfiguration['showif']);
+		} else {
       return FALSE;
     }
 	}
@@ -777,7 +791,7 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
     	
     // Matchs the pattern
     preg_match_all(self::CUT_IF_PATTERN, $fieldCondition, $matches);
-     
+    
     // Processes the expressions
     foreach($matches['expression'] as $matchKey => $match) {
       // Processes the left hand side
@@ -786,7 +800,12 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
 				case 'group':
 					$isGroupCondition = true;
           if (empty($querier) === false) {
-      			$lhsValue = $querier->getFieldValueFromCurrentRow($querier->buildFullFieldName('usergroup'));
+          	$fullFieldName = $querier->buildFullFieldName('usergroup');
+          	if ($querier->fieldExistsInCurrentRow($fullFieldName) === true) {
+      				$lhsValue = $querier->getFieldValueFromCurrentRow($fullFieldName);
+          	} else {
+          		return Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.unknownFieldName', array($fullFieldName));
+          	}
     			} else {
     				return false;
     			}
@@ -798,7 +817,12 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
         default:
 					// Gets the value        	
           if (empty($querier) === false) {
-      			$lhsValue = $querier->getFieldValueFromCurrentRow($querier->buildFullFieldName($lhs));
+            $fullFieldName = $querier->buildFullFieldName($lhs);
+          	if ($querier->fieldExistsInCurrentRow($fullFieldName) === true) {
+      				$lhsValue = $querier->getFieldValueFromCurrentRow($fullFieldName);
+          	} else {
+          		return Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.unknownFieldName', array($fullFieldName));
+          	}          	
     			} else {
     				return false;
     			}

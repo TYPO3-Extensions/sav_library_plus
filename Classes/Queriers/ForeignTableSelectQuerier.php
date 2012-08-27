@@ -151,6 +151,16 @@ class Tx_SavLibraryPlus_Queriers_ForeignTableSelectQuerier extends Tx_SavLibrary
     // Builds the where clause
     $whereClause = $this->buildDefautWhereClause($fieldConfiguration);
 
+    // Adds the additional configuration WHERE clause
+    $whereClause .= (
+      $fieldConfiguration['whereselect'] ?
+      ' AND ' . $fieldConfiguration['whereselect'] :
+      ''
+    );
+     
+    // Processes the tags
+    $whereClause = $this->processWhereClauseTags($whereClause);    
+
     // Prepares the query configuration
     $this->queryConfiguration = array (
       'mainTable' => $fieldConfiguration['foreign_table'],
@@ -180,6 +190,16 @@ class Tx_SavLibraryPlus_Queriers_ForeignTableSelectQuerier extends Tx_SavLibrary
 
     // Builds the where clause
     $whereClause = $this->buildDefautWhereClause($fieldConfiguration);
+
+     // Adds the additional configuration WHERE clause
+    $whereClause .= (
+      $fieldConfiguration['whereselect'] ?
+      ' AND ' . $fieldConfiguration['whereselect'] :
+      ''
+    );
+     
+    // Processes the tags
+    $whereClause = $this->processWhereClauseTags($whereClause);      
     
     if (empty($fieldConfiguration['uidLocal'])) {
     	$this->doNotProcessQuery = true;
@@ -220,6 +240,16 @@ class Tx_SavLibraryPlus_Queriers_ForeignTableSelectQuerier extends Tx_SavLibrary
     // Builds the where clause
     $whereClause = $this->buildDefautWhereClause($fieldConfiguration);
     
+    // Adds the additional configuration WHERE clause
+    $whereClause .= (
+      $fieldConfiguration['whereselect'] ?
+      ' AND ' . $fieldConfiguration['whereselect'] :
+      ''
+    );
+     
+    // Processes the tags
+    $whereClause = $this->processWhereClauseTags($whereClause);       
+    
     // Prepares the query configuration
     $this->queryConfiguration = array (
       'mainTable' => $fieldConfiguration['foreign_table'],
@@ -244,6 +274,16 @@ class Tx_SavLibraryPlus_Queriers_ForeignTableSelectQuerier extends Tx_SavLibrary
   	
     // Builds the where clause
     $whereClause = $this->buildDefautWhereClause($fieldConfiguration);
+    
+     // Adds the additional configuration WHERE clause
+    $whereClause .= (
+      $fieldConfiguration['whereselect'] ?
+      ' AND ' . $fieldConfiguration['whereselect'] :
+      ''
+    );
+     
+    // Processes the tags
+    $whereClause = $this->processWhereClauseTags($whereClause);      
 
     // Prepares the query configuration
     $this->queryConfiguration = array (
@@ -277,6 +317,26 @@ class Tx_SavLibraryPlus_Queriers_ForeignTableSelectQuerier extends Tx_SavLibrary
     // Builds the where clause
     $whereClause = $this->buildDefautWhereClause($fieldConfiguration);
     
+    // Processes the "foreign_table_where" field configuration
+    preg_match('/^(?P<whereClause>.*?) ORDER BY (?P<orderByClause>.*)$/', $fieldConfiguration['foreign_table_where'], $match);   
+    
+    // Adds the additional configuration WHERE clause
+    $whereClause .= (
+      $fieldConfiguration['whereselect'] ?
+      ' AND ' . $fieldConfiguration['whereselect'] :
+      ' ' . $match['whereClause']
+    );
+     
+    // Processes the tags
+    $whereClause = $this->processWhereClauseTags($whereClause);   
+
+    // Builds the ORDER BY clause
+    $orderByClause = (
+      $fieldConfiguration['orderselect'] ?
+      $fieldConfiguration['orderselect'] :
+      $match['orderByClause']
+    );
+    
     // Prepares the query configuration
     $this->queryConfiguration = array (
       'mainTable' => $fieldConfiguration['foreign_table'],
@@ -290,7 +350,7 @@ class Tx_SavLibraryPlus_Queriers_ForeignTableSelectQuerier extends Tx_SavLibrary
           ''),
       'whereClause' => $whereClause,
       'groupByClause' => $fieldConfiguration['groupbyselect'],
-      'orderByClause' => $fieldConfiguration['orderselect'],
+      'orderByClause' => $orderByClause,
     );
   }
   

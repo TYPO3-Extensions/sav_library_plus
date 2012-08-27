@@ -64,11 +64,10 @@ class Tx_SavLibraryPlus_Viewers_EditViewer extends Tx_SavLibraryPlus_Viewers_Abs
     $this->setActiveFolderKey();
 
     // Creates the field configuration manager
-    $fieldConfigurationManager = t3lib_div::makeInstance('Tx_SavLibraryPlus_Managers_FieldConfigurationManager');
-    $fieldConfigurationManager->injectController($this->getController());
+    $this->createFieldConfigurationManager();
 
     // Gets the fields configuration for the folder
-    $this->folderFieldsConfiguration = $fieldConfigurationManager->getFolderFieldsConfiguration($this->getActiveFolder());
+    $this->folderFieldsConfiguration = $this->getFieldConfigurationManager()->getFolderFieldsConfiguration($this->getActiveFolder());
 
     // Processes the fields
     foreach ($this->folderFieldsConfiguration as $fieldConfigurationKey => $fieldConfiguration) {

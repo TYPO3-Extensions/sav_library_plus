@@ -1,0 +1,14 @@
+/* CSS Document */
+/* --- --- --- */
+
+/* Context sensitive help */
+.typo3-view-help {background-color:#ffffff;margin:0px;padding:10px 0px 10px 0px;}
+.typo3-view-help P {padding-left:10px;background-color:#ffffff;}
+.typo3-view-help P.c-nav {padding-left:0px;}
+.typo3-view-help .links {padding-top:5px;}
+.typo3-view-help H2.t3-row-header {margin:0px;padding:0px;background-color:#ffffff;background-image:none;}
+.typo3-view-help H2.t3-row-header SPAN.lhs {display:none;}
+.typo3-view-help H2.t3-row-header SPAN.token {display:none;}
+.typo3-view-help H2.t3-row-header SPAN.rhs {padding-left:5px;color:#000000;font-weight:bold;}
+.typo3-view-help H2.t3-row-header DIV.firstHeader {padding:0px 0px 3px 0px;background-color: #5B5B5B;background-image: -moz-linear-gradient(center top , #7F7F7F 10%, #5B5B5B 100%);text-align:center;font-size:12px;}
+.typo3-view-help H2.t3-row-header DIV.firstHeader SPAN.rhs {padding:0px;color:#ffffff;font-weight:bold;}

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<T3locallang>
+	<meta type="array">
+		<type>CSH</type>
+		<csh_table></csh_table>
+		<description>CSH help for the folder Input Controls</description>
+		<labelContext type="array">
+		</labelContext>
+	</meta>
+	<data type="array">
+		<languageKey index="default" type="array">
+
+			<label index="LLL:EXT:sav_library_plus/Resources/Private/Language/locallang.xml:pi_flexform.sheetTitle.sInput.description"></label>
+		
+			<label index="LLL:EXT:sav_library_plus/Resources/Private/Language/locallang.xml:pi_flexform.inputIsAllowed.description">If set, Front End inputs are allowed.</label>
+		
+			<label index="LLL:EXT:sav_library_plus/Resources/Private/Language/locallang.xml:pi_flexform.allowedGroups.description">If you select user groups, user must belong to one of these groups to be allowed to input data in the Front End.</label>
+
+			<label index="LLL:EXT:sav_library_plus/Resources/Private/Language/locallang.xml:pi_flexform.inputAdminField.description">Put here a field under the form "tablename.fieldname" (if you use only "fieldname", the main table is taken as "tablename").
+This will restrict the input to users that have "Admin" right for this field in their TS Config.
+For example, if one user has "extKey_Admin=value1,value2" in his TS Config, he will be allowed to edit or delete items for which "fieldname" is equal to "value1" or "value2" for the extension "extKey".
+The fields or the folders which have the attribute "editAdminPlus= 1;" can be modified if the user has the "Admin+" rights. For example, if the TS Config is "extKey_Admin=value1+,value2" , the user is an "Admin+" for the records where "fieldname" is equal to "value1" and just "Admin" for the records where "fieldname" is equal to "value2".
+Users become "Super Admin" for the extension "extKey" their TS Config is "extKey_Admin=*".</label>
+
+			<label index="LLL:EXT:sav_library_plus/Resources/Private/Language/locallang.xml:pi_flexform.noNewButton.description">No new button is added to the form. It means that you can modify existing records but you cannot create new record.</label>
+		
+			<label index="LLL:EXT:sav_library_plus/Resources/Private/Language/locallang.xml:pi_flexform.noEditButton.description">An edit button will not be added in front of the records in "List" views.</label>
+		
+			<label index="LLL:EXT:sav_library_plus/Resources/Private/Language/locallang.xml:pi_flexform.noDeleteButton.description">A delete button will not be added in front of the records in "List" views.</label>
+
+			<label index="LLL:EXT:sav_library_plus/Resources/Private/Language/locallang.xml:pi_flexform.deleteButtonOnlyForCreationUser.description">Add a "delete" button only for records created by the user.</label>
+
+			<label index="LLL:EXT:sav_library_plus/Resources/Private/Language/locallang.xml:pi_flexform.inputStartDate.description">If set, inputs in the Front End will not be possible before this date.</label>
+
+			<label index="LLL:EXT:sav_library_plus/Resources/Private/Language/locallang.xml:pi_flexform.inputEndDate.description">If set, inputs in the Front End will not be possible after this date.</label>
+
+			<label index="LLL:EXT:sav_library_plus/Resources/Private/Language/locallang.xml:pi_flexform.dateUserRestriction.description">Use the selector to set either "Nobody", "All", "Admin plus users", "All excludind Super Admin". The date limit is applied according to this selector.</label>
+
+		</languageKey>
+	</data>
+</T3locallang>

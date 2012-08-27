@@ -51,11 +51,14 @@
 /**
  * Errors or messages
  */
-.savLibraryPlus LI.error {
+.savLibraryPlus DIV.message { 
+	margin-bottom:10px;
+}
+.savLibraryPlus  DIV.message LI.error {
 	background-color:inherit;
 	color:red;
 }
-.savLibraryPlus LI.message {
+.savLibraryPlus  DIV.message LI.message {
 	background-color:inherit;
 	font-weight:bold;
 }    
@@ -688,7 +691,7 @@
 	background-color:#ffffff;
 	color:inherit;
 	margin:0px;
-	padding:0px;
+	padding:3px 0px 0px 3px;
 }
 .savLibraryPlus DIV.editView DIV.field INPUT {
 	float:left;

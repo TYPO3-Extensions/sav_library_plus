@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <xliff version="1.0">
-	<file source-language="en" datatype="plaintext" original="messages" date="2012-07-27T11:39:11Z" product-name="sav_library_plus">
+	<file source-language="en" datatype="plaintext" original="messages" date="2012-08-25T22:23:28Z" product-name="sav_library_plus">
 		<header/>
 		<body>
 			<trans-unit id="pi_flexform.sheetTitle.sDEF" xml:space="preserve">
 				<source>General</source>
-			</trans-unit>		
+			</trans-unit>
 			<trans-unit id="pi_flexform.formId" xml:space="preserve">
 				<source>Select form</source>
 			</trans-unit>
@@ -37,10 +37,10 @@
 				<source>All</source>
 			</trans-unit>
 			<trans-unit id="pi_flexform.dateUserRestriction.I.2" xml:space="preserve">
-				<source>"Admin plus" users</source>
+				<source>&quot;Admin plus&quot; users</source>
 			</trans-unit>
 			<trans-unit id="pi_flexform.dateUserRestriction.I.3" xml:space="preserve">
-				<source>All excluding "Super Admin"</source>
+				<source>All excluding &quot;Super Admin&quot;</source>
 			</trans-unit>
 			<trans-unit id="pi_flexform.showNoAvailableInformation" xml:space="preserve">
 				<source>If no information available</source>
@@ -61,19 +61,16 @@
 				<source>Input controls</source>
 			</trans-unit>
 			<trans-unit id="pi_flexform.noNewButton" xml:space="preserve">
-				<source>No "new" button</source>
+				<source>No &quot;new&quot; button</source>
 			</trans-unit>
 			<trans-unit id="pi_flexform.noEditButton" xml:space="preserve">
-				<source>No "edit" button</source>
+				<source>No &quot;edit&quot; button</source>
 			</trans-unit>
 			<trans-unit id="pi_flexform.noDeleteButton" xml:space="preserve">
-				<source>No "delete" button</source>
+				<source>No &quot;delete&quot; button</source>
 			</trans-unit>
 			<trans-unit id="pi_flexform.deleteButtonOnlyForCreationUser" xml:space="preserve">
-				<source>Add a "delete" button only for records created by the user</source>
-			</trans-unit>
-			<trans-unit id="pi_flexform.submitButton" xml:space="preserve">
-				<source>Add a "submit" button (to be used with a form)</source>
+				<source>Add a &quot;delete&quot; button only for records created by the user</source>
 			</trans-unit>
 			<trans-unit id="pi_flexform.sheetTitle.sAdvanced" xml:space="preserve">
 				<source>Advanced</source>
@@ -85,7 +82,7 @@
 				<source>Add a fragment (#content id) to links</source>
 			</trans-unit>
 			<trans-unit id="pi_flexform.allowQueryProperty" xml:space="preserve">
-				<source>Allow the use of the "query" property</source>
+				<source>Allow the use of the &quot;query&quot; property</source>
 			</trans-unit>
 			<trans-unit id="pi_flexform.allowExec" xml:space="preserve">
 				<source>Allow the use of the exec function in export</source>
@@ -133,10 +130,10 @@
 				<source>No record returned.</source>
 			</trans-unit>
 			<trans-unit id="error.aliasValueMissingInReqValue" xml:space="preserve">
-				<source>The query associated with the property "reqValue" in the field "%s" must contain the alias "value".</source>
+				<source>The query associated with the property &quot;reqValue&quot; in the field &quot;%s&quot; must contain the alias &quot;value&quot;.</source>
 			</trans-unit>
 			<trans-unit id="error.cannotCreateDirectoryInUpload" xml:space="preserve">
-				<source>Error: the upload folder "%s" has not been created.</source>
+				<source>Error: the upload folder &quot;%s&quot; has not been created.</source>
 			</trans-unit>
 			<trans-unit id="error.configurationNeeded" xml:space="preserve">
 				<source>A configuration file is needed and the defaut file was not found. Please contact the WebMaster.</source>
@@ -151,7 +148,7 @@
 				<source>Error: invalid file type.</source>
 			</trans-unit>
 			<trans-unit id="error.fieldRequired" xml:space="preserve">
-				<source>Error: the field "%s" should not be empty.</source>
+				<source>Error: the field &quot;%s&quot; should not be empty.</source>
 			</trans-unit>
 			<trans-unit id="error.fieldVoid" xml:space="preserve">
 				<source>Error: the field must not be empty.</source>
@@ -172,7 +169,7 @@
 				<source>File write error: %s.</source>
 			</trans-unit>
 			<trans-unit id="error.forbiddenFileTypeInUpload" xml:space="preserve">
-				<source>Error: the file extension "%s" is not allowed.</source>
+				<source>Error: the file extension &quot;%s&quot; is not allowed.</source>
 			</trans-unit>
 			<trans-unit id="error.incorrectAlias" xml:space="preserve">
 				<source>Error: incorrect alias: %s.</source>
@@ -190,7 +187,7 @@
 				<source>Error: unknown CSS file.</source>
 			</trans-unit>
 			<trans-unit id="error.incorrectFieldKey" xml:space="preserve">
-				<source>Please contact the Webmaster. An incorrect field key was detected. It may occur when a ###fieldName### tag is used and "fieldName" is not in the main table. In that case ###tableName.fieldName### must be used.</source>
+				<source>Please contact the Webmaster. An incorrect field key was detected. It may occur when a ###fieldName### tag is used and &quot;fieldName&quot; is not in the main table. In that case ###tableName.fieldName### must be used.</source>
 			</trans-unit>
 			<trans-unit id="error.incorrectSession" xml:space="preserve">
 				<source>Error: incorrect session. Close your brower and try again.</source>
@@ -214,19 +211,19 @@
 				<source>Error in the query associated with the view: %s.</source>
 			</trans-unit>
 			<trans-unit id="error.incorrectQueryInsertNew" xml:space="preserve">
-				<source>Error in creating the new record. It may occur if you try to insert a field which does not exist in the table (e.g. field with the type "Shown only in SAV Form").</source>
+				<source>Error in creating the new record. It may occur if you try to insert a field which does not exist in the table (e.g. field with the type &quot;Shown only in SAV Form&quot;).</source>
 			</trans-unit>
 			<trans-unit id="error.incorrectQueryInReqValue" xml:space="preserve">
-				<source>Error in the query associated with the property "reqValue" in the field: %s.</source>
+				<source>Error in the query associated with the property &quot;reqValue&quot; in the field: %s.</source>
 			</trans-unit>
 			<trans-unit id="error.incorrectQueryInQueryProperty" xml:space="preserve">
-				<source>Error in the query associated with the property "query".</source>
+				<source>Error in the query associated with the property &quot;query&quot;.</source>
 			</trans-unit>
 			<trans-unit id="error.incorrectQueryInContent" xml:space="preserve">
-				<source>Error in the query associated with the property "content" in the field: %s.</source>
+				<source>Error in the query associated with the property &quot;content&quot; in the field: %s.</source>
 			</trans-unit>
 			<trans-unit id="error.incorrectQueryForeignTable" xml:space="preserve">
-				<source>The "foreign table" field in the query must start either by inner join, left join, right join or by a comma.</source>
+				<source>The &quot;foreign table&quot; field in the query must start either by inner join, left join, right join or by a comma.</source>
 			</trans-unit>
 			<trans-unit id="error.incorrectVersion" xml:space="preserve">
 				<source>Please contact the Webmaster. Extension and library do not have the same version. Open the extension with the kickstater and save it.</source>
@@ -268,7 +265,7 @@
 				<source>Error: mkdir aborted.</source>
 			</trans-unit>
 			<trans-unit id="error.noAttributeInField" xml:space="preserve">
-				<source>Please contact the Webmaster. The attribute "%s" was not set in the field "%s".</source>
+				<source>Please contact the Webmaster. The attribute &quot;%s&quot; was not set in the field &quot;%s&quot;.</source>
 			</trans-unit>
 			<trans-unit id="error.noEmailReceiver" xml:space="preserve">
 				<source>The email cannot be sent because there is no email receiver.</source>
@@ -283,7 +280,7 @@
 				<source>Error: no form selected in the flexform of the extension: %s.</source>
 			</trans-unit>
 			<trans-unit id="error.noWhereTag" xml:space="preserve">
-				<source>Error: no WHERE Tag defined for the field "%s" or "%s".</source>
+				<source>Error: no WHERE Tag defined for the field &quot;%s&quot; or &quot;%s&quot;.</source>
 			</trans-unit>
 			<trans-unit id="error.notSavedElapsedTime" xml:space="preserve">
 				<source>Your latest changes could not been saved because the allocated time for inputs was over.</source>
@@ -292,19 +289,19 @@
 				<source>Error: only SELECT query is allowed in the field: %s.</source>
 			</trans-unit>
 			<trans-unit id="error.queryPropertyNotAllowed" xml:space="preserve">
-				<source>Error: the use of the "query" property is not allowed in this extension.</source>
+				<source>Error: the use of the &quot;query&quot; property is not allowed in this extension.</source>
 			</trans-unit>
 			<trans-unit id="error.savJpGraphFieldIsEmpty" xml:space="preserve">
-				<source>Error: the field "%s" should not be empty to display the graph.</source>
+				<source>Error: the field &quot;%s&quot; should not be empty to display the graph.</source>
 			</trans-unit>
 			<trans-unit id="error.savJpGraphNotLoaded" xml:space="preserve">
 				<source>Extension sav_jpgraph must be loaded to use graphs.</source>
 			</trans-unit>
 			<trans-unit id="error.savJpGraphTemplateNotSet" xml:space="preserve">
-				<source>A graph template must be set using the attribute "graphTemplate".</source>
+				<source>A graph template must be set using the attribute &quot;graphTemplate&quot;.</source>
 			</trans-unit>
 			<trans-unit id="error.savJpGraphTemplateUnknown" xml:space="preserve">
-				<source>The graph template "%s" is unknown.</source>
+				<source>The graph template &quot;%s&quot; is unknown.</source>
 			</trans-unit>
 			<trans-unit id="error.templateNeeded" xml:space="preserve">
 				<source>A template file is needed and the defaut template was not found. Please contact the WebMaster.</source>
@@ -313,19 +310,19 @@
 				<source>This service is temporarily unavailable due to maintenance - please come back later.</source>
 			</trans-unit>
 			<trans-unit id="error.unknownFormName" xml:space="preserve">
-				<source>Please contact the Webmaster. The form type "%s" is unknown or undefined.</source>
+				<source>Please contact the Webmaster. The form type &quot;%s&quot; is unknown or undefined.</source>
 			</trans-unit>
 			<trans-unit id="error.unknownConfigurationFile" xml:space="preserve">
-				<source>The configuration file "%s" is unknown.</source>
+				<source>The configuration file &quot;%s&quot; is unknown.</source>
 			</trans-unit>
 			<trans-unit id="error.unknownFieldName" xml:space="preserve">
-				<source>Please contact the Webmaster. The field "%s" is unknown or undefined.</source>
+				<source>Please contact the Webmaster. The field &quot;%s&quot; is unknown or undefined.</source>
 			</trans-unit>
 			<trans-unit id="error.unknownFormAction" xml:space="preserve">
-				<source>The action "%s" is unknown.</source>
+				<source>The action &quot;%s&quot; is unknown.</source>
 			</trans-unit>
 			<trans-unit id="error.unknownFunction" xml:space="preserve">
-				<source>Please contact the Webmaster. The following function "%s" is unknown.</source>
+				<source>Please contact the Webmaster. The following function &quot;%s&quot; is unknown.</source>
 			</trans-unit>
 			<trans-unit id="error.unknownFormParam" xml:space="preserve">
 				<source>The following parameter is unknown: %s.</source>
@@ -337,10 +334,10 @@
 				<source>The following marker is unknown: %s.</source>
 			</trans-unit>
 			<trans-unit id="error.unknownType" xml:space="preserve">
-				<source>Please contact the Webmaster. The type "%s" is unknown.</source>
+				<source>Please contact the Webmaster. The type &quot;%s&quot; is unknown.</source>
 			</trans-unit>
 			<trans-unit id="error.unknownPageTypoScriptConfiguration" xml:space="preserve">
-				<source>Unknown "%s" page TypoScript configuration for "%s".</source>
+				<source>Unknown &quot;%s&quot; page TypoScript configuration for &quot;%s&quot;.</source>
 			</trans-unit>
 			<trans-unit id="error.uploadAborted" xml:space="preserve">
 				<source>Error: Upload aborted.</source>
@@ -352,7 +349,7 @@
 				<source>Extension configuration error: invalid interval.</source>
 			</trans-unit>
 			<trans-unit id="error.xmlIdMissing" xml:space="preserve">
-				<source>An xml "sav_id" attribute must be used with the following "sav_type" attribute: %s.</source>
+				<source>An xml &quot;sav_id&quot; attribute must be used with the following &quot;sav_type&quot; attribute: %s.</source>
 			</trans-unit>
 			<trans-unit id="error.xmlError" xml:space="preserve">
 				<source>Error: %s in line %s.</source>
@@ -370,7 +367,7 @@
 				<source>Fatal error: you do not have selected a form in the flexform.</source>
 			</trans-unit>
 			<trans-unit id="fatal.incorrectTCA" xml:space="preserve">
-				<source>Fatal error. The main table has an incorrect TCA. You may not have not used the correct name in the "Main table" field of the query associated with your form.</source>
+				<source>Fatal error. The main table has an incorrect TCA. You may not have not used the correct name in the &quot;Main table&quot; field of the query associated with your form.</source>
 			</trans-unit>
 			<trans-unit id="fatal.notAuthenticated" xml:space="preserve">
 				<source>Fatal error. You must be authenticated to save these data.</source>
