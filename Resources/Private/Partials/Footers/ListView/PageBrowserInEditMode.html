@@ -1,9 +1,11 @@
 {namespace sav=Tx_SavLibraryPlus_ViewHelpers}
     <div class="footer">
     <f:if condition="{configuration.general.lastPage} > 0">
+      <f:if condition="{configuration.general.showFirstLastButtons}">
       <sav:link.action action="firstPageInEditMode">
         <f:image class="backwardFirstPage" src="{sav:getIcon(fileName:'backwardFirstPage.gif')}" alt="{f:translate(key:'button.backwardFirstPage')}" title="{f:translate(key:'button.backwardFirstPage')}" />
       </sav:link.action>
+      </f:if>
       <f:if condition="{configuration.general.page} > 0">
         <f:then>
         <sav:link.action action="previousPageInEditMode">
@@ -29,9 +31,11 @@
           <f:image class="forwardPage" src="{sav:getIcon(fileName:'forwardPageNotPossible.gif')}" alt="{f:translate(key:'button.forwardPageNotPossible')}" title="{f:translate(key:'button.forwardPageNotPossible')}" />
         </f:else>
       </f:if>
+      <f:if condition="{configuration.general.showFirstLastButtons}">
       <sav:link.action action="lastPageInEditMode">
         <f:image class="forwardLastPage" src="{sav:getIcon(fileName:'forwardLastPage.gif')}" alt="{f:translate(key:'button.forwardLastPage')}" title="{f:translate(key:'button.forwardLastPage')}" />
       </sav:link.action>
+      </f:if>
     </f:if>
     </div>
 

@@ -352,6 +352,7 @@ class Tx_SavLibraryPlus_Queriers_ForeignTableSelectQuerier extends Tx_SavLibrary
       'groupByClause' => $fieldConfiguration['groupbyselect'],
       'orderByClause' => $orderByClause,
     );
+    
   }
   
 }

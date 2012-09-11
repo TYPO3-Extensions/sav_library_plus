@@ -713,6 +713,11 @@
 	padding:0px;
 	margin:0px;
 }
+.savLibraryPlus DIV.editView DIV.field DIV.file SPAN.fileLink {
+	float:left;
+	padding:5px;
+	margin:0px;
+}
 .savLibraryPlus DIV.editView DIV.field SELECT.multiple {
 	float:left;
 	min-width:50px;

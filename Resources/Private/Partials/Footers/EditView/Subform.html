@@ -1,9 +1,11 @@
 {namespace sav=Tx_SavLibraryPlus_ViewHelpers}
     <div class="footer">
     <f:if condition="{configuration.general.lastPageInSubform} > 0">
+      <f:if condition="{configuration.general.showFirstLastButtons}">    
       <sav:link.action action="firstPageInSubformInEditMode" noCacheHash="1" arguments="{subformUidLocal:configuration.general.subformUidLocal,subformFieldKey:configuration.general.subformFieldKey}">
         <f:image class="backwardFirstPage" src="{sav:getIcon(fileName:'backwardFirstPage.gif')}" alt="{sav:translate(key:'button.backwardFirstPage')}" title="{sav:translate(key:'button.backwardFirstPage')}" />
       </sav:link.action>
+      </f:if>
       <f:if condition="{configuration.general.pageInSubform} > 0">
         <f:then>
         <sav:link.action action="previousPageInSubformInEditMode" noCacheHash="1" arguments="{subformFieldKey:configuration.general.subformFieldKey}">
@@ -29,8 +31,10 @@
           <f:image class="forwardPage" src="{sav:getIcon(fileName:'forwardPageNotPossible.gif')}" alt="{sav:translate(key:'button.forwardPageNotPossible')}" title="{sav:translate(key:'button.forwardPageNotPossible')}" />
         </f:else>
       </f:if>
+      <f:if condition="{configuration.general.showFirstLastButtons}">      
       <sav:link.action action="lastPageInSubformInEditMode" noCacheHash="1" arguments="{subformUidLocal:configuration.general.subformUidLocal,subformFieldKey:configuration.general.subformFieldKey}">
         <f:image class="forwardLastPage" src="{sav:getIcon(fileName:'forwardLastPage.gif')}" alt="{sav:translate(key:'button.forwardLastPage')}" title="{sav:translate(key:'button.forwardLastPage')}" />
       </sav:link.action>
+      </f:if>
     </f:if>
     </div>

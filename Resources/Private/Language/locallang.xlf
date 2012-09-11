@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <xliff version="1.0">
-	<file source-language="en" datatype="plaintext" original="messages" date="2012-08-25T22:23:28Z" product-name="sav_library_plus">
+	<file source-language="en" datatype="plaintext" original="messages" date="2012-09-10T21:32:59Z" product-name="sav_library_plus">
 		<header/>
 		<body>
 			<trans-unit id="pi_flexform.sheetTitle.sDEF" xml:space="preserve">
@@ -579,8 +579,8 @@
 			<trans-unit id="general.clickHere" xml:space="preserve">
 				<source>Click here</source>
 			</trans-unit>
-			<trans-unit id="general.clickHereToDowload" xml:space="preserve">
-				<source>Click here to download the file.</source>
+			<trans-unit id="general.clickHereToOpenInNewWindow" xml:space="preserve">
+				<source>Click here to open the file in a new window.</source>
 			</trans-unit>
 			<trans-unit id="general.noAvailableInformation" xml:space="preserve">
 				<source>No available information</source>

@@ -76,6 +76,30 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_FilesItemViewer extends Tx_SavLibraryPl
         )
       );
       
+      // Adds the hyperlink if required
+      if ($this->getItemConfiguration('addlinkineditmode') && empty($fileName) === false) {
+		    // Gets the upload folder
+		    $uploadFolder = $this->getUploadFolder();   
+		       	
+    		// Builds the typoScript configuration
+				$typoScriptConfiguration = array(
+      		'parameter'  =>  $uploadFolder . '/' . $fileName, 
+      		'fileTarget'  => $this->getItemConfiguration('target') ? $this->getItemConfiguration('target') : '_blank',						
+    		);    
+
+    		// Gets the content object
+    		$contentObject = $this->getController()->getExtensionConfigurationManager()->getExtensionContentObject();
+   
+   			// Builds the content  
+   			$message = Tx_SavLibraryPlus_Controller_FlashMessages::translate('general.clickHereToOpenInNewWindow');
+      	$content .= Tx_SavLibraryPlus_Utility_HtmlElements::htmlSpanElement(
+      		array(
+      			Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('class', 'fileLink'),
+      		),
+      		$contentObject->typolink($message, $typoScriptConfiguration)
+      	);
+      }
+      
       // Adds the DIV elements
       $htmlArray[] = Tx_SavLibraryPlus_Utility_HtmlElements::htmlDivElement(
         array(
@@ -87,6 +111,19 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_FilesItemViewer extends Tx_SavLibraryPl
 
     return $this->arrayToHTML($htmlArray);
   }
-  
+
+ 	/**
+	 * Gets the upload folder
+	 *
+	 * @param none
+	 *
+	 * @return string
+	 */
+  protected function getUploadFolder() {
+    $uploadFolder = $this->getItemConfiguration('uploadfolder');
+    $uploadFolder .= ($this->getItemConfiguration('addToUploadFolder') ? '/' . $this->getItemConfiguration('addToUploadFolder') : '');
+
+    return $uploadFolder;
+  }
 }
 ?>

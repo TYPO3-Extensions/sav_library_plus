@@ -87,8 +87,12 @@ class Tx_SavLibraryPlus_ItemViewers_Default_RelationManyToManyAsSubformItemViewe
     // Gets the subform title
     $subformTitle = $this->getItemConfiguration('subformtitle');
     if (empty($subformTitle)) {
-    	$subformTitle = $this->getItemConfiguration('label');
-    }
+    	// Gets the label cutter
+    	$cutLabel = $this->getItemConfiguration('cutlabel');
+    	if (empty($cutLabel)) {
+    		$subformTitle = $this->getItemConfiguration('label');
+    	}
+    }    
     
     // Sets the view configuration
     $fullFieldName = $this->getItemConfiguration('tableName') . '.' . $this->getItemConfiguration('fieldName');

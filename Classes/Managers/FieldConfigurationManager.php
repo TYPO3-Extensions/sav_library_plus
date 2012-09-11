@@ -381,7 +381,7 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
     $viewer = $this->getController()->getViewer();
     if (empty($viewer) === false) {
       $fieldConfiguration['wrapItem'] = $querier->parseLocalizationTags($this->kickstarterFieldConfiguration['wrapitem']);
-      $fieldConfiguration['wrapItem'] = $querier->parseFieldTags($this->kickstarterFieldConfiguration['wrapitem']);
+      $fieldConfiguration['wrapItem'] = $querier->parseFieldTags($fieldConfiguration['wrapItem']);
     }
 
     return $fieldConfiguration;

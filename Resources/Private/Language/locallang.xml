@@ -206,7 +206,7 @@
 			<label index="formView.required">*</label>
 						
 			<label index="general.clickHere">Click here</label>
-			<label index="general.clickHereToDowload">Click here to download the file.</label>
+			<label index="general.clickHereToOpenInNewWindow">Click here to open the file in a new window.</label>
 			<label index="general.noAvailableInformation">No available information</label>
 			<label index="general.new">New</label>
 		</languageKey>

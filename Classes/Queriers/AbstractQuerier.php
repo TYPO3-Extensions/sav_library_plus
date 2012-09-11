@@ -984,7 +984,6 @@ die('pb');
     
     // Processes labels associated with fields
     if (preg_match_all('/\$\$\$label\[([^\]]+)\]\$\$\$/', $value, $matches)) {
-
       foreach ($matches[1] as $matchKey => $match) {
         // Checks if the label is in locallang_db.xml, no default table is assumed
         // In that case the full name must be used, i.e. tableName.fieldName

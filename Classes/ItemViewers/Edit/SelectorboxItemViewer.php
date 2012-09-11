@@ -39,7 +39,7 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_SelectorboxItemViewer extends Tx_SavLib
    * @return string
    */
   protected function renderItem() {
-  
+ 
     $htmlArray = array();
 
     // Initializes the option element array

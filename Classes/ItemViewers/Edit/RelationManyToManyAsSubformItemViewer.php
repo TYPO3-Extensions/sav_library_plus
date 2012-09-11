@@ -52,6 +52,9 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_RelationManyToManyAsSubformItemViewer e
 	  $extensionConfigurationManager->injectExtension($this->getController()->getExtensionConfigurationManager()->getExtension());
 	  $extensionConfigurationManager->injectTypoScriptConfiguration(Tx_SavLibraryPlus_Managers_ExtensionConfigurationManager::getTypoScriptConfiguration());
     $controller->initialize();
+    
+    // Gets the maximum item number in the subform (must be called before the querier to process deprecated maxsubitems attribute)
+    $maxSubformItems = $this->getMaximumItemsInSubform();
 
     // Builds the querier
     $querierClassName = 'Tx_SavLibraryPlus_Queriers_ForeignTableSelectQuerier';
@@ -102,7 +105,11 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_RelationManyToManyAsSubformItemViewer e
     // Gets the subform title
     $subformTitle = $this->getItemConfiguration('subformtitle');
     if (empty($subformTitle)) {
-    	$subformTitle = $this->getItemConfiguration('label');
+    	// Gets the label cutter
+    	$cutLabel = $this->getItemConfiguration('cutlabel');
+    	if (empty($cutLabel)) {
+    		$subformTitle = $this->getItemConfiguration('label');
+    	}
     }    
     
     // Sets the view configuration
@@ -117,7 +124,8 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_RelationManyToManyAsSubformItemViewer e
         'subformFieldKey' => $cryptedFullFieldName,
         'subformUidLocal' => $this->getItemConfiguration('uid'),
         'pageInSubform' => $pageInSubform,
-        'maximumItemsInSubform' => $this->getItemConfiguration('maxsubformitems'),
+        'maximumItemsInSubform' => $maxSubformItems,
+      	'showFirstLastButtons' => ($this->getItemConfiguration('nofirstlast') ? 0 : 1),
         'title' => $controller->getViewer()->processTitle($subformTitle),
       	'saveAndNew' => array_key_exists($this->getItemConfiguration('foreign_table'), $this->getController()->getLibraryConfigurationManager()->getGeneralConfigurationField('saveAndNew')),
       )
@@ -126,6 +134,29 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_RelationManyToManyAsSubformItemViewer e
     $htmlArray[] = $viewer->render();
 
     return $this->arrayToHTML($htmlArray);
+  }
+
+  /**
+   * Gets the maximum number of items in a subform.
+   *
+   * @param none
+   *
+   * @return integer
+   */
+  protected function getMaximumItemsInSubform() {  
+  	// Checks if the deprecated "maxsubitems" attribute is used
+  	$maxSubItems = $this->getItemConfiguration('maxsubitems');
+  	if (empty($maxSubItems) === false) {
+  		// Replaces it by the "maxsubformitems" attribute
+  		$this->itemConfiguration['maxsubformitems'] = $maxSubItems;
+  		unset($this->itemConfiguration['maxsubitems']);
+  	}
+  	$maxSubformItems = $this->getItemConfiguration('maxsubformitems');
+ 		if (empty($maxSubformItems) === false) {
+ 			return $maxSubformItems;
+ 		} else {
+	 		return 0;
+ 		}
   }
   
 }
