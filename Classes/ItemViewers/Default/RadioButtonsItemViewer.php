@@ -114,13 +114,13 @@ class Tx_SavLibraryPlus_ItemViewers_Default_RadioButtonsItemViewer extends Tx_Sa
     // Gets the image file name
   	$imageFileName = $this->getItemConfiguration('radiobuttonselectedimage');
   	if (empty($imageFileName)) {
-  		$imageFileName = 'radioButtonSelected.gif';
+  		$imageFileName = 'radioButtonSelected';
   	}  	
-    $iconRootPath = Tx_SavLibraryPlus_Managers_LibraryConfigurationManager::getIconRootPath($imageFileName);
+
     $content = Tx_SavLibraryPlus_Utility_HtmlElements::htmlImgElement(
       array(
         Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('class', 'radioButtonSelected'),
-        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('src', $iconRootPath . $imageFileName),
+        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('src', Tx_SavLibraryPlus_Managers_LibraryConfigurationManager::getIconPath($imageFileName)),
         Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('title', Tx_Extbase_Utility_Localization::translate('itemviewer.radioButtonSelected', 'sav_library_plus')),
         Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('alt', Tx_Extbase_Utility_Localization::translate('itemviewer.radioButtonSelected', 'sav_library_plus')),
       )
@@ -140,13 +140,13 @@ class Tx_SavLibraryPlus_ItemViewers_Default_RadioButtonsItemViewer extends Tx_Sa
    	// Gets the image file name
   	$imageFileName = $this->getItemConfiguration('radiobuttonnotselectedimage');
   	if (empty($imageFileName)) {
-  		$imageFileName = 'radioButtonNotSelected.gif';
+  		$imageFileName = 'radioButtonNotSelected';
   	}  	
-    $iconRootPath = Tx_SavLibraryPlus_Managers_LibraryConfigurationManager::getIconRootPath($imageFileName);
+
     $content = Tx_SavLibraryPlus_Utility_HtmlElements::htmlImgElement(
       array(
         Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('class', 'radioButtonNotSelected'),
-        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('src', $iconRootPath . $imageFileName),
+        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('src', Tx_SavLibraryPlus_Managers_LibraryConfigurationManager::getIconPath($imageFileName)),
         Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('title', Tx_Extbase_Utility_Localization::translate('itemviewer.radioButtonNotSelected', 'sav_library_plus')),
         Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('alt', Tx_Extbase_Utility_Localization::translate('itemviewer.radioButtonNotSelected', 'sav_library_plus')),
       )

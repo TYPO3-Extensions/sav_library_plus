@@ -63,10 +63,6 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_DateTimeItemViewer extends Tx_SavLibrar
       )
     );
 
-    // Gets the icon path
-    $iconRootPath = Tx_SavLibraryPlus_Managers_LibraryConfigurationManager::getIconRootPath('calendar.gif');
-    $iconPath = $iconRootPath . 'calendar.gif';
-
     // Creates the date picker
     $datePicker = t3lib_div::makeInstance('Tx_SavLibraryPlus_DatePicker_DatePicker');
   
@@ -76,7 +72,7 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_DateTimeItemViewer extends Tx_SavLibrar
         'id' => strtr($this->getItemConfiguration('itemName'), '[]', '__'),
         'format' => $format,
         'showsTime' => true,
-        'iconPath' => $iconPath,
+        'iconPath' => Tx_SavLibraryPlus_Managers_LibraryConfigurationManager::getIconPath('calendar'),
       )
     );
 

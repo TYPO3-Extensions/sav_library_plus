@@ -83,15 +83,14 @@ class Tx_SavLibraryPlus_ItemViewers_Default_CheckboxItemViewer extends Tx_SavLib
   	// Gets the image file name
   	$imageFileName = $this->getItemConfiguration('checkboxselectedimage');
   	if (empty($imageFileName)) {
-  		$imageFileName = 'checkboxSelected.gif';
+  		$imageFileName = 'checkboxSelected';
   	}
-  	// Gets the icons root path for the file name
-    $iconRootPath = Tx_SavLibraryPlus_Managers_LibraryConfigurationManager::getIconRootPath($imageFileName);  
+
     // Renders the content
     $content = Tx_SavLibraryPlus_Utility_HtmlElements::htmlImgElement(
       array(
         Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('class', 'checkboxSelected'),
-        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('src', $iconRootPath . $imageFileName),
+        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('src', Tx_SavLibraryPlus_Managers_LibraryConfigurationManager::getIconPath($imageFileName)),
         Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('title', Tx_Extbase_Utility_Localization::translate('itemviewer.checkboxSelected', 'sav_library_plus')),
         Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('alt', Tx_Extbase_Utility_Localization::translate('itemviewer.checkboxSelected', 'sav_library_plus')),
       )
@@ -110,21 +109,19 @@ class Tx_SavLibraryPlus_ItemViewers_Default_CheckboxItemViewer extends Tx_SavLib
   protected function renderNotCheckedAsImage() {
   	// Gets the image file name
   	if ($this->getItemConfiguration('donotdisplayifnotchecked')) {
-  		$imageFileName = 'clear.gif';
+  		$imageFileName = 'clear';
   	} else {
   		$imageFileName = $this->getItemConfiguration('checkboxnotselectedimage');
   		if (empty($imageFileName)) {
-  			$imageFileName = 'checkboxNotSelected.gif';
+  			$imageFileName = 'checkboxNotSelected';
   		}
   	}
   	
-  	// Gets the icon root path for the file name
-    $iconRootPath = Tx_SavLibraryPlus_Managers_LibraryConfigurationManager::getIconRootPath($imageFileName);
     // Renders the content
     $content = Tx_SavLibraryPlus_Utility_HtmlElements::htmlImgElement(
       array(
         Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('class', 'checkboxNotSelected'),
-        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('src', $iconRootPath . $imageFileName),
+        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('src', Tx_SavLibraryPlus_Managers_LibraryConfigurationManager::getIconPath($imageFileName)),
         Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('title', Tx_Extbase_Utility_Localization::translate('itemviewer.checkboxNotSelected', 'sav_library_plus')),
         Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('alt', Tx_Extbase_Utility_Localization::translate('itemviewer.checkboxNotSelected', 'sav_library_plus')),
       )

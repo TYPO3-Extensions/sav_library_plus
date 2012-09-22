@@ -46,6 +46,9 @@ class Tx_SavLibraryPlus_Viewers_SubformEditViewer extends Tx_SavLibraryPlus_View
    * @return string The rendered view
    */
   public function render() {
+  	
+  	// Sets the view type
+    $this->viewType = 'EditView';
     
     // Sets the active folder Key
     $this->setActiveFolderKey();

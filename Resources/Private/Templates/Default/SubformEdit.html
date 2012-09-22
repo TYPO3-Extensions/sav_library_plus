@@ -11,15 +11,15 @@
             <f:if condition="{field.isFirstField}">
             <f:if condition="{configuration.general.deleteButtonIsAllowed}">
               <sav:link.action action="deleteInSubform" arguments="{subformUidForeign:field.uid,subformUidLocal:configuration.general.subformUidLocal,subformFieldKey:configuration.general.subformFieldKey}" noCacheHash="1">
-                <f:image src="{sav:getIcon(fileName:'delete.gif')}" alt="{sav:translate(key:'button.delete')}" title="{sav:translate(key:'button.delete')}" />
+                <f:image src="{sav:getIcon(fileName:'delete')}" alt="{sav:translate(key:'button.delete')}" title="{sav:translate(key:'button.delete')}" />
               </sav:link.action>
             </f:if>
             <f:if condition="{configuration.general.upDownButtonIsAllowed}">
               <sav:link.action action="upInSubform" arguments="{subformUidForeign:field.uid,subformUidLocal:configuration.general.subformUidLocal,subformFieldKey:configuration.general.subformFieldKey}" noCacheHash="1">
-                <f:image src="{sav:getIcon(fileName:'up.gif')}" alt="{sav:translate(key:'button.up')}" title="{sav:translate(key:'button.up')}" />
+                <f:image src="{sav:getIcon(fileName:'up')}" alt="{sav:translate(key:'button.up')}" title="{sav:translate(key:'button.up')}" />
               </sav:link.action>
               <sav:link.action action="downInSubform" arguments="{subformUidForeign:field.uid,subformUidLocal:configuration.general.subformUidLocal,subformFieldKey:configuration.general.subformFieldKey}" noCacheHash="1">
-                <f:image src="{sav:getIcon(fileName:'down.gif')}" alt="{sav:translate(key:'button.down')}" title="{sav:translate(key:'button.down')}" />
+                <f:image src="{sav:getIcon(fileName:'down')}" alt="{sav:translate(key:'button.down')}" title="{sav:translate(key:'button.down')}" />
               </sav:link.action>
             </f:if>
             </f:if>
@@ -29,7 +29,7 @@
           <f:if condition="{field.cutDivItemInner}!=1">
             <div class="{field.classField}">
             <f:if condition="{field.cutLabel}!=1">
-              <div class="{field.classLabel}{f:if(condition:'{field.error}',then:' error')}"{f:if(condition:'{field.styleLabel}',then:' style="{field.styleLabel}"')}>{field.label}<f:if condition="{field.required}"><f:image src="{sav:getIcon(fileName:'required.gif')}" class="required" alt="{sav:translate(key:'icon.required')}" title="{sav:translate(key:'icon.required')}" /></f:if></div>
+              <div class="{field.classLabel}{f:if(condition:'{field.error}',then:' error')}"{f:if(condition:'{field.styleLabel}',then:' style="{field.styleLabel}"')}>{field.label}<f:if condition="{field.required}"><f:image src="{sav:getIcon(fileName:'required')}" class="required" alt="{sav:translate(key:'icon.required')}" title="{sav:translate(key:'icon.required')}" /></f:if></div>
             </f:if>
               <div class="{field.classValue}"{f:if(condition:'{field.styleValue}',then:' style="{field.styleValue}"')}><sav:html>{field.value}</sav:html></div>
             </div>

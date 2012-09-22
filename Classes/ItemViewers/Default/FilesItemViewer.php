@@ -238,14 +238,14 @@ class Tx_SavLibraryPlus_ItemViewers_Default_FilesItemViewer extends Tx_SavLibrar
     if ($this->getItemConfiguration('addicon')) {
       // Gets the icon type file name
       $pathParts = pathinfo($this->fileName);
-      $iconTypeFileName = $pathParts['extension'] . '.gif';
+      $iconTypeFileName = $pathParts['extension'];
       
       // Gets the file from the library directory if it exists or from the typo3
-      $iconRootPath = Tx_SavLibraryPlus_Managers_LibraryConfigurationManager::getIconRootPath();
-      if (file_exists($iconRootPath . 'FileIcons/' . $iconTypeFileName)) {
-        $iconFileName = $iconRootPath . 'FileIcons/' . $iconTypeFileName;
-      } elseif (file_exists('typo3/gfx/fileicons/' . $iconTypeFileName)) {
-        $iconFileName = 'typo3/gfx/fileicons/' . $iconTypeFileName;
+      $iconPath = Tx_SavLibraryPlus_Managers_LibraryConfigurationManager::getIconPath('FileIcons/' . $iconTypeFileName);
+      if (file_exists($iconPath)) {
+        $iconFileName = $iconPath;
+      } elseif (file_exists('typo3/gfx/fileicons/' . $iconTypeFileName . '.gif')) {
+        $iconFileName = 'typo3/gfx/fileicons/' . $iconTypeFileName . '.gif';
       }
       
       // Adds the icon if it exists

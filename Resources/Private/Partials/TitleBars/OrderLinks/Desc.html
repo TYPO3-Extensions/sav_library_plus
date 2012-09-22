@@ -1,11 +1,11 @@
 {namespace sav=Tx_SavLibraryPlus_ViewHelpers}
 <f:if condition="{field.whereTagKey} == {field.whereTagDescendingOrderKey}" >
   <f:then>
-  <f:image class="orderDesc" src="{sav:getIcon(fileName:'orderDescSelected.gif')}" alt="{sav:translate(key:'button.orderDesc')}" title="{sav:translate(key:'button.orderDesc')}" />
+  <f:image class="orderDesc" src="{sav:getIcon(fileName:'orderDescSelected')}" alt="{sav:translate(key:'button.orderDesc')}" title="{sav:translate(key:'button.orderDesc')}" />
   </f:then>
   <f:else>
   <sav:link.action action="list{field.inEditMode}" arguments="{whereTagKey:field.whereTagDescendingOrderKey}">
-    <f:image class="orderDesc" src="{sav:getIcon(fileName:'orderDesc.gif')}" alt="{sav:translate(key:'button.orderDesc')}" title="{sav:translate(key:'button.orderDesc')}" />
+    <f:image class="orderDesc" src="{sav:getIcon(fileName:'orderDesc')}" alt="{sav:translate(key:'button.orderDesc')}" title="{sav:translate(key:'button.orderDesc')}" />
   </sav:link.action>
   </f:else>
 </f:if>

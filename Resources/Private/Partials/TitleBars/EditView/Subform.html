@@ -1,12 +1,12 @@
 {namespace sav=Tx_SavLibraryPlus_ViewHelpers}
     <div class="titleBar">
       <div class="titleIconLeft">
-      <sav:form.image name="formAction][save" src="{sav:getIcon(fileName:'save.gif')}" alt="{sav:translate(key:'button.save')}" title="{sav:translate(key:'button.save')}" additionalAttributes="{onclick:'update();'}" />
+      <sav:form.image name="formAction][save" src="{sav:getIcon(fileName:'save')}" alt="{sav:translate(key:'button.save')}" title="{sav:translate(key:'button.save')}" additionalAttributes="{onclick:'update();'}" />
       <f:if condition="{configuration.general.saveAndNew}">
-        <sav:form.image name="formAction][saveAndNewInSubform][{sav:compressParameters(arguments:'{subformFieldKey:configuration.general.subformFieldKey,subformUidForeign:0,subformUidLocal:configuration.general.subformUidLocal}')}" src="{sav:getIcon(fileName:'saveAndNew.gif')}" alt="{sav:translate(key:'button.saveAndNew')}" title="{sav:translate(key:'button.saveAndNew')}" additionalAttributes="{onclick:'update();'}" />
+        <sav:form.image name="formAction][saveAndNewInSubform][{sav:compressParameters(arguments:'{subformFieldKey:configuration.general.subformFieldKey,subformUidForeign:0,subformUidLocal:configuration.general.subformUidLocal}')}" src="{sav:getIcon(fileName:'saveAndNew')}" alt="{sav:translate(key:'button.saveAndNew')}" title="{sav:translate(key:'button.saveAndNew')}" additionalAttributes="{onclick:'update();'}" />
       </f:if>  
       <sav:link.action action="newInSubform" noCacheHash="1" arguments="{subformFieldKey:configuration.general.subformFieldKey,subformUidForeign:0,subformUidLocal:configuration.general.subformUidLocal}">
-        <f:image class="new" src="{sav:getIcon(fileName:'new.gif')}" alt="{sav:translate(key:'button.new')}" title="{sav:translate(key:'button.new')}" />
+        <f:image class="new" src="{sav:getIcon(fileName:'new')}" alt="{sav:translate(key:'button.new')}" title="{sav:translate(key:'button.new')}" />
       </sav:link.action>          
       </div>
       <f:if condition="{configuration.general.title}">

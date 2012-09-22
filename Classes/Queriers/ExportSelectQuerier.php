@@ -76,7 +76,6 @@ class Tx_SavLibraryPlus_Queriers_ExportSelectQuerier extends Tx_SavLibraryPlus_Q
 			/* LIMIT    */  $this->buildLimitClause()
 		);
 
-    // Sets the rows from the query
     $this->setRows();
 
     // Replaces the field values by the checkbox value 
@@ -130,18 +129,8 @@ class Tx_SavLibraryPlus_Queriers_ExportSelectQuerier extends Tx_SavLibraryPlus_Q
    */ 
   protected function buildWhereClause() {
 
-  	// Gets the extension configuration manager
-  	$extensionConfigurationManager = $this->getController()->getExtensionConfigurationManager();
-			
-  	// Gets the Default WHERE clause from the query configuration manager
-    $whereClause = $this->queryConfigurationManager->getWhereClause();
-
-    // Adds the enable fields conditions for the main table
-    $mainTable = $this->queryConfigurationManager->getMainTable();
-    $whereClause .= $extensionConfigurationManager->getExtensionContentObject()->enableFields($mainTable);
-    
-		// Adds the allowed pages condition
-    $whereClause .= $this->getAllowedPages($mainTable);
+		// No where clause since we only need to get the field name    
+    $whereClause = '1';    
 
     return $whereClause;
   }  
