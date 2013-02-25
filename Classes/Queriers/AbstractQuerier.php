@@ -58,7 +58,7 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
    * @var array
    */
   protected $rows;
-
+  
   /**
    * The total rows count, i.e. without the limit clause
    *
@@ -95,18 +95,32 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
   protected $queryConfiguration = NULL;
   
   /**
+   * The parent querier
+   *
+   * @var Tx_SavLibraryPlus_Queriers_AbstractQuerier
+   */
+  protected $parentQuerier = NULL;  
+  
+  /**
    * The update querier
    *
    * @var Tx_SavLibraryPlus_Queriers_UpdateQuerier
    */
   protected $updateQuerier = NULL;
-
+  
   /**
    * The pages to clear
    *
    * @var array
    */
   protected $pageIdentifiersToClearInCache = array();
+  
+  /**
+   * Additional Markers
+   *
+   * @var array
+   */
+  protected $additionalMarkers = array();  
   
 	/**
 	 * Injects the controller
@@ -140,6 +154,17 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
   }
 
 	/**
+	 * Injects the parent querier
+	 *
+	 * @param Tx_SavLibraryPlus_Queriers_AbstractQuerier $parentQuerier
+	 *
+	 * @return  none
+	 */
+  public function injectParentQuerier($parentQuerier) {
+    $this->parentQuerier = $parentQuerier;
+  }    
+  
+	/**
 	 * Injects the update querier
 	 *
 	 * @param Tx_SavLibraryPlus_Queriers_UpdateQuerier $updateQuerier
@@ -150,6 +175,28 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
     $this->updateQuerier = $updateQuerier;
   }  
   
+	/**
+	 * Injects additional markers
+	 *
+	 * @param array $additionalMarkers
+	 *
+	 * @return  none
+	 */
+  public function injectAdditionalMarkers($additionalMarkers) {
+    $this->additionalMarkers = array_merge($this->additionalMarkers, $additionalMarkers);
+  }  
+
+	/**
+	 * Gets additional markers
+	 *
+	 * @param nonr
+	 *
+	 * @return  array
+	 */
+  public function getAdditionalMarkers() {
+    return $this->additionalMarkers;
+  }  
+ 
   /**
    * Processes the query
    *
@@ -257,7 +304,18 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
   public function getRowsCount() {
     return count($this->rows);
   }
-  
+ 
+	/**
+	 * Checks if the rows are not empty
+	 *
+	 * @param none
+	 *
+	 * @return boolean
+	 */
+  public function rowsNotEmpty() {
+    return !empty($this->rows) && !empty($this->rows[0]);
+  }
+   
 	/**
 	 * Gets the total rows count, i.e. without the limit clause
 	 *
@@ -291,7 +349,35 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
     return $this->rows[$this->currentRowId][$fieldName];
   }
 
-   /**
+  /**
+	 * Sets the value of a field in the current row
+	 *
+	 * @param string $fieldName The field name
+	 * @param mixed $value The value
+	 *
+	 * @return mixed
+	 */  
+  protected function setFieldValueFromCurrentRow($fieldName, $value) {
+    $this->rows[$this->currentRowId][$fieldName] = $value;
+  }
+    
+  /**
+	 * Gets the value of a field in the row if the table is the main table else it is search in the parent rows
+	 *
+	 * @param string $fieldName The field name
+	 *
+	 * @return mixed
+	 */  
+  public function getFieldValue($fieldName) {
+  	// Gets the querier where the field exists, if it exists
+  	$querier = $this;
+  	while (!$querier->fieldExistsInCurrentRow($fieldName) && $querier->parentQuerier !== NULL) {
+  		$querier = $querier->getParentQuerier();
+  	}
+    return $querier->getFieldValueFromCurrentRow($fieldName);
+  }  
+  
+	/**
 	 * Checks if a field exists in the current row
 	 *
 	 * @param string $fieldName The field name
@@ -302,6 +388,22 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
     return array_key_exists($fieldName, $this->rows[$this->currentRowId]);
   }
 
+	/**
+	 * Checks if a field exists in the row if the table is the main table else it is search in the parent rows
+	 *
+	 * @param string $fieldName The field name
+	 *
+	 * @return boolean
+	 */
+  public function fieldExists($fieldName) {
+  	// Gets the querier where the field exists, if it exists
+  	$querier = $this;
+  	while (!$querier->fieldExistsInCurrentRow($fieldName) && $querier->parentQuerier !== NULL) {
+  		$querier = $querier->getParentQuerier();
+  	}
+    return $querier->fieldExistsInCurrentRow($fieldName);  	
+  }
+  
   /**
 	 * Builds the full field name
 	 *
@@ -329,6 +431,17 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
     return $this->controller;
   }
 
+  /**
+	 * Gets the parent querier
+	 *
+	 * @param none
+	 *
+	 * @return Tx_SavLibraryPlus_Queriers_AbstractQuerier 
+	 */
+  public function getParentQuerier() {
+    return $this->parentQuerier;
+  }  
+  
 	/**
 	 * Gets the update querier
 	 *
@@ -360,13 +473,16 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
 	 * Gets the value content from the POST variable after processing by the update querier.
 	 * It is called when an error occurs in order to retrieve the user's inputs.
 	 *
-	 * @param string $fieldName
+	 * @param string $fullFieldName
 	 *
 	 * @return mixed
 	 */	
-	public function getFieldValueFromProcessedPostVariables($fieldName) {
-		$uid = $this->getFieldValueFromCurrentRow(preg_replace('/\.\w+$/', '.uid', $fieldName));
-    $processedPostVariable = $this->getUpdateQuerier()->getProcessedPostVariable($fieldName, $uid);
+	public function getFieldValueFromProcessedPostVariables($fullFieldName) {
+		$uid = $this->getFieldValueFromCurrentRow(preg_replace('/\.\w+$/', '.uid', $fullFieldName));
+		if ($uid === NULL && $this->getUpdateQuerier()->isNewRecord()) {
+			$uid = 0;
+		}
+    $processedPostVariable = $this->getUpdateQuerier()->getProcessedPostVariable($fullFieldName, $uid);
     $value = $processedPostVariable['value'];
 		return $value;
 	}	
@@ -375,13 +491,16 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
 	 * Gets the error code from the POST variable after processing by the update querier.
 	 * It is called when an error occurs in order to retrieve the user's inputs.
 	 *
-	 * @param string $fieldName
+	 * @param string $fullFieldName
 	 *
 	 * @return integer
 	 */	
-	public function getFieldErrorCodeFromProcessedPostVariables($fieldName) {
-		$uid = $this->getFieldValueFromCurrentRow(preg_replace('/\.\w+$/', '.uid', $fieldName));
-    $processedPostVariable = $this->getUpdateQuerier()->getProcessedPostVariable($fieldName, $uid);
+	public function getFieldErrorCodeFromProcessedPostVariables($fullFieldName) {
+		$uid = $this->getFieldValueFromCurrentRow(preg_replace('/\.\w+$/', '.uid', $fullFieldName));
+		if ($uid === NULL && $this->getUpdateQuerier()->isNewRecord()) {
+			$uid = 0;
+		}		
+    $processedPostVariable = $this->getUpdateQuerier()->getProcessedPostVariable($fullFieldName, $uid);
     $errorCode = $processedPostVariable['errorCode'];
 		return $errorCode;
 	}		
@@ -412,7 +531,7 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
 	 * @return string
 	 */
   protected function buildSelectClause() {
-    $selectClause = '*';
+    $selectClause = $this->queryConfigurationManager->getSelectClause();
     $aliases = $this->queryConfigurationManager->getAliases();
     $selectClause .= $this->replaceTableNames($aliases ? ', ' . $aliases : '');
     return $selectClause;
@@ -762,7 +881,7 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
     $this->addNewTableAlias($mainTable);
 		t3lib_div::loadTCA($mainTable);
 		$TCA = Tx_SavLibraryPlus_Managers_TcaConfigurationManager::getTcaColumns($mainTable);
-
+	
     if (is_array($TCA)) {
       foreach ($TCA as $fieldKey => $field) {
         $TCA[$fieldKey]['mainTable'] = $mainTable;
@@ -782,8 +901,7 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
     } else {
 			throw new Tx_SavLibraryPlus_Exception(Tx_SavLibraryPlus_Controller_FlashMessages::translate('fatal.incorrectTCA'));
     }
-		t3lib_div::loadTCA('fe_users');
-		
+		t3lib_div::loadTCA('fe_users');		
 
     // Adds the columns for existing tables.
     $externalTcaConfiguration = $this->getController()->getLibraryConfigurationManager()->getExternalTcaConfiguration();
@@ -976,6 +1094,11 @@ die('pb');
 	 */
   public function parseLocalizationTags($value, $reportError = true) {
 
+    // Checks if the value must be parsed
+  	if (strpos($value,'$') === false) {
+  		return $value;
+  	}
+  	  	
     // Gets the extension key
     $extensionKey = $this->getController()->getExtensionConfigurationManager()->getExtensionKey();
 
@@ -1034,12 +1157,18 @@ die('pb');
 	 * @return string 
 	 */
   public function parseFieldTags($value, $reportError = true) {
-  	
+	
+  	// Checks if the value must be parsed
+  	if (strpos($value,'#') === false) {
+  		return $value;
+  	}
+
   	// Gets the extension object
   	$extension = $this->getController()->getExtensionConfigurationManager()->getExtension();
 	
   	// Initaializes the markers
   	$markers = $this->buildSpecialMarkers();
+  	$markers = array_merge($markers, $this->additionalMarkers);
   	
 		// Processes special tags
     $markers['###linkToPage###'] = str_replace(
@@ -1054,29 +1183,50 @@ die('pb');
     $mainTable = $this->getQueryConfigurationManager()->getMainTable();
 
     // Gets the tags
-    preg_match_all('/###(?P<render>render\[)?(?P<fullFieldName>(?<TableNameOrAlias>[^\.#\]]+)\.?(?<fieldName>[^#\]]*))\]?###/', $value, $matches);
+    preg_match_all('/###(?:(?P<render>render\[)|special\[)?(?P<fullFieldName>(?<TableNameOrAlias>[^\.\:#\]]+)\.?(?<fieldName>[^#\:\]]*))(?:\:(?<configuration>[^#\]]+))?\]?###/', $value, $matches);
 
     foreach ($matches['fullFieldName'] as $matchKey => $match) {
-      if ($matches['fieldName'][$matchKey]) {
-        // It's a full field name, i.e. tableName.fieldName
-        if ($this->fieldExistsInCurrentRow($matches['fullFieldName'][$matchKey])) {
+    	$fullFieldName = NULL;
+    	if (array_key_exists($matches[0][$matchKey], $markers) && ($matches[0][$matchKey]!='###uid###' || ($this->getController()->getQuerier() instanceof Tx_SavLibraryPlus_Queriers_UpdateQuerier))) {
+      		// Already in the markers array
+      		continue;
+    	} elseif ($matches['fieldName'][$matchKey]) {
+      	if ($this->fieldExists($matches['fullFieldName'][$matchKey])) {
+        	// It's a full field name, i.e. tableName.fieldName        	
         	$fullFieldName = $matches['fullFieldName'][$matchKey];  	
-        } else {	
-        	// Unknown marker
-          Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.unknownMarker', array($matches[0][$matchKey]));   
-          continue;  
         }
       } else {
-        // Checks if it's an alias
-        if ($this->fieldExistsInCurrentRow($matches['TableNameOrAlias'][$matchKey])) {
+				if ($this->fieldExists($matches['TableNameOrAlias'][$matchKey])) {
+        	// It's an alias
           $fullFieldName = $matches['TableNameOrAlias'][$matchKey]; 
-        } elseif ($this->fieldExistsInCurrentRow($mainTable . '.' . $matches['TableNameOrAlias'][$matchKey])) {
-        // The main table was omitted
+        } elseif ($this->fieldExists($mainTable . '.' . $matches['TableNameOrAlias'][$matchKey])) {
+        	// The main table was omitted
           $fullFieldName = $mainTable . '.' . $matches['TableNameOrAlias'][$matchKey];
         } elseif ($matches['TableNameOrAlias'][$matchKey] == 'user') {
           $markers[$matches[0][$matchKey]] = $GLOBALS['TSFE']->fe_user->user['uid'];
           continue;
-      	} elseif ($reportError === true) {
+      	} 
+      }
+      
+      // Special Processing when the full field name is not found
+      if ($fullFieldName === NULL) {
+      	if ($this->getController()->getViewer() instanceof Tx_SavLibraryPlus_Viewers_NewViewer) {
+      		// In new view, it may occur that markers are used, in reqValue for example. The markers are replaced by 0.
+        	$markers[$matches[0][$matchKey]] = '0'; 
+         	continue;        	     		    		
+      	} elseif ($this->getController()->getQuerier() instanceof Tx_SavLibraryPlus_Queriers_UpdateQuerier) {
+      		// In an update, it may occur that markers are used, in reqValue for example.
+      		$fullFieldName = $this->getController()->getQuerier()->buildFullFieldname($matches['fullFieldName'][$matchKey]);
+      		$cryptedFullFieldName = Tx_SavLibraryPlus_Controller_AbstractController::cryptTag($fullFieldName); 
+      		if ($this->getController()->getQuerier()->fieldExistsInPostVariable($cryptedFullFieldName)) {
+      			// Replaces the marker by the current value in the post variable
+      			$markers[$matches[0][$matchKey]] = $this->getController()->getQuerier()->getPostVariable($cryptedFullFieldName);
+      		} else {
+      			// Replaces the marker by 0
+        		$markers[$matches[0][$matchKey]] = '0';       			
+      		}
+      		continue;
+      	} elseif ($reportError === true) { 
           // Unknown marker
           Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.unknownMarker', array($matches[0][$matchKey]));
          continue;
@@ -1084,24 +1234,33 @@ die('pb');
         	// Error is not reported and the value is unchanged
         	$markers[$matches[0][$matchKey]] = $matches[0][$matchKey];
         	continue;
-        }
+        }      	
       }
  
       // Sets the marker either by rendering the field from the single view configuration or directly from the database
       if ($matches['render'][$matchKey]) {  
-
     		// Renders the field based on the TCA configuration as it would be rendered in a single view
     		$fieldKey = Tx_SavLibraryPlus_Controller_AbstractController::cryptTag($fullFieldName);
     		$basicFieldConfiguration = $this->getController()->getLibraryConfigurationManager()->searchBasicFieldConfiguration($fieldKey);    		
     		$fieldConfiguration = Tx_SavLibraryPlus_Managers_TcaConfigurationManager::getTcaConfigFieldFromFullFieldName($fullFieldName);
-    		
+  		
     		// Adds the basic configuration if found
     		if (is_array($basicFieldConfiguration)) {
     			$fieldConfiguration = array_merge($fieldConfiguration, $basicFieldConfiguration);
     		}
     		
+    		// Adds the configuration from the pattern if any
+        if (preg_match_all('/([^=]+)=([^;]+);?/', $matches['configuration'][$matchKey], $configurations)) {
+          foreach ($configurations[0] as $configurationKey => $configuration) {
+    				$fieldConfiguration = array_merge($fieldConfiguration, array(
+    					trim(strtolower($configurations[1][$configurationKey])) => trim($configurations[2][$configurationKey])
+    					)
+    				);
+          }              
+       	}  		
+    		
     		// Adds the value from the current row
-    		$fieldConfiguration['value'] = $this->getFieldValueFromCurrentRow($fullFieldName);  
+    		$fieldConfiguration['value'] = $this->getFieldValue($fullFieldName);  
   		
 				// Calls the item viewer 		
       	$className = 'Tx_SavLibraryPlus_ItemViewers_Default_' . $fieldConfiguration['fieldType'] . 'ItemViewer';
@@ -1110,10 +1269,10 @@ die('pb');
       	$itemViewer->injectItemConfiguration($fieldConfiguration);        	
       	$markers[$matches[0][$matchKey]] = $itemViewer->render();    
       } else {
-        $markers[$matches[0][$matchKey]] = $this->getFieldValueFromCurrentRow($fullFieldName);             	
+        $markers[$matches[0][$matchKey]] = $this->getFieldValue($fullFieldName);             	
       }      
     }
-    
+   
     // Gets the content object
   	$contentObject = $this->getController()->getExtensionConfigurationManager()->getExtensionContentObject();
 
@@ -1128,7 +1287,12 @@ die('pb');
 	 * @return string 
 	 */
   public function processWhereClauseTags($whereClause) {
-  	
+	
+		// Checks if the value must be parsed
+  	if (strpos($whereClause,'#') === false) {
+  		return $whereClause;
+  	}  
+  		
   	// Initaializes the markers
   	$markers = $this->buildSpecialMarkers();
 
@@ -1220,8 +1384,12 @@ die('pb');
 	 * @return array
 	 */
   protected function buildSpecialMarkers() {
+
     // ###uid### marker
-    $markers['###uid###'] = Tx_SavLibraryPlus_Managers_UriManager::getUid();;   
+    $markers['###uid###'] = Tx_SavLibraryPlus_Managers_UriManager::getUid();   
+    
+    // ###uidMainTable
+    $markers['###uidMainTable###'] = Tx_SavLibraryPlus_Managers_UriManager::getUid(); 
     
     // ###user### marker
     $markers['###user###'] = $GLOBALS['TSFE']->fe_user->user['uid'];
@@ -1232,7 +1400,10 @@ die('pb');
 
     // ###CURRENT_PID### marker
     $markers['###CURRENT_PID###'] = $GLOBALS['TSFE']->page['uid'];
-    
+
+    // ###SITEROOT### marker
+    $markers['###SITEROOT###'] = $GLOBALS['TSFE']->rootLine[0]['uid'];
+        
     return $markers;  
   } 
   

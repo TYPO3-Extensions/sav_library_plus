@@ -48,8 +48,15 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_RadioButtonsItemViewer extends Tx_SavLi
     // Adds the option elements
     $items = $this->getItemConfiguration('items');
     $value = $this->getItemConfiguration('value');
+		// If the value is null it is replaced by the default one if it exists
+		if ($value === NULL) {
+			$defaultValue = $this->getItemConfiguration('default');
+			if ($defaultValue !== NULL) {
+				$value = $defaultValue;
+			}
+		}
     foreach ($items as $itemKey => $item) {
-      $checked = ($item[1] == $value ? 'selected' : '');
+      $checked = ($item[1] == $value ? 'checked' : '');
 
 
       // Adds the radio input element

@@ -76,7 +76,7 @@ class Tx_SavLibraryPlus_Viewers_ListViewer extends Tx_SavLibraryPlus_Viewers_Abs
 
     // Creates the template configuration manager
     $templateConfigurationManager = t3lib_div::makeInstance('Tx_SavLibraryPlus_Managers_TemplateConfigurationManager');
-    $templateConfigurationManager->injectTemplateConfiguration($this->libraryConfigurationManager->getListViewTemplateConfiguration());
+    $templateConfigurationManager->injectTemplateConfiguration($this->getLibraryConfigurationManager()->getListViewTemplateConfiguration());
 
     // Creates the field configuration manager
     $this->createFieldConfigurationManager();
@@ -93,7 +93,7 @@ class Tx_SavLibraryPlus_Viewers_ListViewer extends Tx_SavLibraryPlus_Viewers_Abs
       $this->getController()->getQuerier()->setCurrentRowId($rowKey);
       
     	// Gets the fields configuration for the folder
-    	$this->folderFieldsConfiguration = $this->getFieldConfigurationManager()->getFolderFieldsConfiguration($this->getActiveFolder());
+    	$this->folderFieldsConfiguration = $this->getFieldConfigurationManager()->getFolderFieldsConfiguration($this->getActiveFolder(), true, true);
   	
       $listItemConfiguration = array_merge( $this->parseItemTemplate($itemTemplate),
         array(
@@ -174,16 +174,16 @@ class Tx_SavLibraryPlus_Viewers_ListViewer extends Tx_SavLibraryPlus_Viewers_Abs
   protected function parseItemTemplate($itemTemplate) {
 
     $itemConfiguration = array();
+    $fields = array();
     	
   	// Gets the querier
   	$querier = $this->getController()->getQuerier();
 
     // Gets the tags
     preg_match_all('/###(?P<render>render\[)?(?P<fullFieldName>(?<TableNameOrAlias>[^\.#\]]+)\.?(?<fieldName>[^#\]]*))\]?###/', $itemTemplate, $matches);
-    
+   
     // Sets the default class item
     $classItem = 'item';
-
     foreach($matches[0] as $matchKey => $match) {
     	
       // Gets the crypted full field name
@@ -195,11 +195,11 @@ class Tx_SavLibraryPlus_Viewers_ListViewer extends Tx_SavLibraryPlus_Viewers_Abs
 				Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.unknownFieldName', array($fullFieldName));
 			}
       
-      // Checks if the value must be cut
+      // Checks if the value must be cut 
       if ($this->folderFieldsConfiguration[$cryptedFullFieldName]['cutDivItemInner']) {
       	$value = '';
       } else {
-      	// It's a full field name, i.e. tableName.fieldName without render
+      	// It's a full field name, i.e. tableName.fieldName, without render
       	if ($matches['fieldName'][$matchKey] && empty($matches['render'][$matchKey])) {
       		$value = $this->folderFieldsConfiguration[$cryptedFullFieldName]['value'];
       	} else {
@@ -222,17 +222,31 @@ class Tx_SavLibraryPlus_Viewers_ListViewer extends Tx_SavLibraryPlus_Viewers_Abs
            
       // Renders the item
       $itemTemplate = str_replace($matches[0][$matchKey], $value, $itemTemplate);
+      
+      // Sets the field configuration for the fluid processings
+      if ($matches['fieldName'][$matchKey]) {
+      	$fields[$matches['TableNameOrAlias'][$matchKey]] = array($matches['fieldName'][$matchKey] => $this->folderFieldsConfiguration[$cryptedFullFieldName]);      		
+      } else {
+      	$fields[$matches['fullFieldName'][$matchKey]] = $this->folderFieldsConfiguration[$cryptedFullFieldName];
+      }      
     }
-    
+
+    // Creates a view for more fluid processings of the template
+    $view = t3lib_div::makeInstance('Tx_Fluid_View_StandaloneView');
+    $view->setTemplateSource($itemTemplate);
+
+    // Assigns the field configuration and renders the view
+    $view->assign('field', $fields);
+    $itemTemplate = $view->render();    
+     
     // Sets the class item
     $itemConfiguration = array(
       'classItem' => $classItem,
       'template' => $itemTemplate,
     );
-    
+ 
     return $itemConfiguration;
   }
-
 
   /**
    * Parses the item template
@@ -241,78 +255,53 @@ class Tx_SavLibraryPlus_Viewers_ListViewer extends Tx_SavLibraryPlus_Viewers_Abs
    *
    * @return string The parsed item template
    */
-  protected function parseTitle($title) {
-
+  protected function parseTitle($title) { 	
+  	
     // Replaces the tags in the title by $$$label[tag]$$$
-    preg_match_all('/###(([^\.#]+)[\.]?([^#]*))###/', $title, $matches);
-
-    // Gets the query configuration manager
-    $queryConfigurationManager = $this->getController()->getQuerier()->getQueryConfigurationManager();
-    
+    preg_match_all('/###(linkDefault|link)?(?:\[)?(([^\.#\]]+)[\.]?([^#\]]*))(?:\])?###/', $title, $matches);
+ 
     // Processes the matched information
     foreach($matches[0] as $matchKey => $match) {
     
-      // Gets the full field name      
-      if ($matches[3][$matchKey]) {
-        $fieldName = $matches[3][$matchKey];
-        $fullFieldName = $matches[1][$matchKey];
+      // Gets the field configuration 
+      if  ($matches[1][$matchKey]) {
+      	// It is tag for a simple link with no ordering
+      	
+      	// Gets the extension key
+    		$extensionKey = $this->getController()->getExtensionConfigurationManager()->getExtensionKey();
+      	
+    		// Gets the label
+				$label = Tx_Extbase_Utility_Localization::translate($matches[2][$matchKey], $extensionKey);
+      	if (empty($label)) {
+      		$label = $matches[2][$matchKey];
+      	}  
+
+      	// Sets the field configuration
+      	$fieldConfiguration = array (
+      		'orderlinkintitle' => 1,
+      	  'linkwithnoordering' => 1,
+      		'orderlinkintitlesetup' => ':' . $matches[1][$matchKey] . ':',
+      		'label' => $label,
+      		'fieldName' => $matches[2][$matchKey],
+      	); 
+      } elseif ($matches[3][$matchKey]) {
+      	// It is a tag with a full field name
+        $fullFieldName = $matches[2][$matchKey];
+      	$cryptedFullFieldName = Tx_SavLibraryPlus_Controller_AbstractController::cryptTag($fullFieldName);
+      	$fieldConfiguration = $this->folderFieldsConfiguration[$cryptedFullFieldName];        
       } else {
+      	// It is a tag with a short field name, the main table is assumed      	
         $mainTable = $queryConfigurationManager->getMainTable();
-        $fieldName = $matches[1][$matchKey];
-        $fullFieldName = $mainTable . '.' . $fieldName;
+        $fullFieldName = $mainTable . '.' . $matches[2][$matchKey];
+      	$cryptedFullFieldName = Tx_SavLibraryPlus_Controller_AbstractController::cryptTag($fullFieldName);
+      	$fieldConfiguration = $this->folderFieldsConfiguration[$cryptedFullFieldName];  
       }
-          
-      // Gets the field configuration
-      $cryptedFullFieldName = Tx_SavLibraryPlus_Controller_AbstractController::cryptTag($fullFieldName);
-      $fieldConfiguration = $this->folderFieldsConfiguration[$cryptedFullFieldName];
 
       // Checks if an order link in title is set
       if ($fieldConfiguration['orderlinkintitle']) {
-      
-        // Gets the associated whereTags Key
-        $whereTagAscendingOrderKey = Tx_SavLibraryPlus_Controller_AbstractController::cryptTag($fullFieldName . '+');
-        if ($queryConfigurationManager->getWhereTag($whereTagAscendingOrderKey) == NULL) {
-          $whereTagAscendingOrderKey = Tx_SavLibraryPlus_Controller_AbstractController::cryptTag($fieldName . '+');
-        }
-        if ($queryConfigurationManager->getWhereTag($whereTagAscendingOrderKey) == NULL) {
-          Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.noWhereTag', array($fullFieldName . '+', $fieldName . '+'));
-        }
-        $whereTagDescendingOrderKey = Tx_SavLibraryPlus_Controller_AbstractController::cryptTag($fullFieldName . '-');
-        if ($queryConfigurationManager->getWhereTag($whereTagDescendingOrderKey) == NULL) {
-          $whereTagDescendingOrderKey = Tx_SavLibraryPlus_Controller_AbstractController::cryptTag($fieldName . '-');
-        }
-        if ($queryConfigurationManager->getWhereTag($whereTagDescendingOrderKey) == NULL) {
-          Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.noWhereTag', array($fullFieldName . '-', $fieldName . '-'));
-        }
-        
-        // Sets the default pattern for the display
-        if(!isset($fieldConfiguration['orderlinkintitlesetup'])) {
-          $fieldConfiguration['orderlinkintitlesetup'] = ':link:';
-        }
-        $orderLinksInTitle = explode(':', $fieldConfiguration['orderlinkintitlesetup']);
-        $replacementString = '';
-        foreach($orderLinksInTitle as $orderLinkInTitle) {
-          if($orderLinkInTitle) {
-
-            // Creates the view
-            $view = t3lib_div::makeInstance('Tx_Fluid_View_StandaloneView');
-            $view->setTemplatePathAndFilename($this->getPartialRootPath() . '/TitleBars/OrderLinks/'. ucfirst($orderLinkInTitle) . '.html');
-
-            // Assigns the view configuration
-            $view->assign('field', array(
-              'value' => '$$$label[' . $matches[1][$matchKey] . ']$$$',
-              'whereTagAscendingOrderKey' => $whereTagAscendingOrderKey,
-              'whereTagDescendingOrderKey' => $whereTagDescendingOrderKey,
-              'whereTagKey' => Tx_SavLibraryPlus_Managers_UriManager::getWhereTagKey(),
-              'inEditMode' => ($this->inEditMode ? 'InEditMode' : ''),
-              )
-            );
-
-            $replacementString .= $view->render();
-          }
-        }
-      } else {
-        $replacementString = '$$$label[' . $matches[1][$matchKey] . ']$$$';
+      	$replacementString = $this->processLink($fieldConfiguration);
+      }	else {
+        $replacementString = '$$$label[' . $matches[2][$matchKey] . ']$$$';
       }
     
       $title = str_replace($matches[0][$matchKey], $replacementString , $title);
@@ -321,6 +310,72 @@ class Tx_SavLibraryPlus_Viewers_ListViewer extends Tx_SavLibraryPlus_Viewers_Abs
     return $title;
   }
 
+  /**
+   * Processes the link
+   *
+   * @param array $fieldConfiguration The field configuration
+   *
+   * @return string
+   */  
+	protected function processLink($fieldConfiguration) {
+
+		$replacementString = '';
+
+    // Gets the query configuration manager
+    $queryConfigurationManager = $this->getController()->getQuerier()->getQueryConfigurationManager();
+		
+		//Builds the field name and full field name
+    $fieldName = $fieldConfiguration['fieldName'];
+    $fullFieldName = ($fieldConfiguration['tableName'] ? $fieldConfiguration['tableName'] . '.' . $fieldName : $fieldName);
+   		
+    // Gets the ascending whereTag Key
+		$order = ($fieldConfiguration['linkwithnoordering'] ? '' : '+');
+		$whereTagAscendingOrderKey = Tx_SavLibraryPlus_Controller_AbstractController::cryptTag($fullFieldName . $order);
+		if ($queryConfigurationManager->getWhereTag($whereTagAscendingOrderKey) == NULL) {
+			$whereTagAscendingOrderKey = Tx_SavLibraryPlus_Controller_AbstractController::cryptTag($fieldName . $order);
+		}
+		if ($queryConfigurationManager->getWhereTag($whereTagAscendingOrderKey) == NULL) {
+			Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.noWhereTag', array($fullFieldName . $order, $fieldName . $order));
+		}
+		// Gets the descending whereTag Key
+		$order = ($fieldConfiguration['linkwithnoordering'] ? '' : '-');        
+		$whereTagDescendingOrderKey = Tx_SavLibraryPlus_Controller_AbstractController::cryptTag($fullFieldName . $order);
+		if ($queryConfigurationManager->getWhereTag($whereTagDescendingOrderKey) == NULL) {
+			$whereTagDescendingOrderKey = Tx_SavLibraryPlus_Controller_AbstractController::cryptTag($fieldName . $order);
+		}
+		if ($queryConfigurationManager->getWhereTag($whereTagDescendingOrderKey) == NULL) {
+			Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.noWhereTag', array($fullFieldName . $order, $fieldName . $order));
+		}
+        
+		// Sets the default pattern for the display
+		if(!isset($fieldConfiguration['orderlinkintitlesetup'])) {
+			$fieldConfiguration['orderlinkintitlesetup'] = ':link:';
+		}
+		$orderLinksInTitle = explode(':', $fieldConfiguration['orderlinkintitlesetup']);
+
+		foreach($orderLinksInTitle as $orderLinkInTitle) {
+			if($orderLinkInTitle) {
+
+				// Creates the view
+				$view = t3lib_div::makeInstance('Tx_Fluid_View_StandaloneView');
+				$view->setTemplatePathAndFilename($this->getPartialRootPath() . '/TitleBars/OrderLinks/'. ucfirst($orderLinkInTitle) . '.html');
+
+				// Assigns the view configuration
+				$view->assign('field', array(
+					'value' => $fieldConfiguration['label'],
+					'whereTagAscendingOrderKey' => $whereTagAscendingOrderKey,
+					'whereTagDescendingOrderKey' => $whereTagDescendingOrderKey,
+					'whereTagKey' => Tx_SavLibraryPlus_Managers_UriManager::getWhereTagKey(),
+					'inEditMode' => ($this->inEditMode ? 'InEditMode' : ''),
+					)
+				);
+
+				$replacementString .= $view->render();	
+			}  
+    }
+    return $replacementString;
+	} 
+  
   /**
    * Additional view configuration if no rows are returned by the querier
    *

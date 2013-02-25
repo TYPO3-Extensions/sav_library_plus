@@ -49,9 +49,7 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_RichTextEditorItemViewer extends Tx_Sav
    * @return string
    */
   protected function renderItem() {
-  
     $htmlArray = array();
-
     $richTextEditor = t3lib_div::makeInstance('tx_rtehtmlarea_pi2');
     
     // Sets the page typoScript configuration
@@ -110,25 +108,39 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_RichTextEditorItemViewer extends Tx_Sav
     // Adds the prepend javaScript to additional header
     if ($this->getController()->getViewer()->isRichTextEditorInitialized() === false) {
       // Adds the initial javascript
-      $GLOBALS['TSFE']->additionalHeaderData['RichTextEditor'] = $this->additionalJS_initial;
+      if (!method_exists($richTextEditor, 'getRteInitJsCode')) {
+      	$this->addRteInitJsCode();
+      }
 
-      // Adds the additional javaScript
-      $javaScript = array();
-      $javaScript[] = '<script type="text/javascript">';
-      $javaScript[] = $this->additionalJS_pre['rtehtmlarea-loadJScode'];
-		  $javaScript[] = '</script>';
-      $GLOBALS['TSFE']->additionalHeaderData['RichTextEditor'] .= implode('', $javaScript);
-      
       //Initializes the rich text editor
       $this->getController()->getViewer()->initializeRichTextEditor();
     }
-
+ 
     // Adds the javaScript for the rich text editor update
     $editorNumber = preg_replace('/[^a-zA-Z0-9_:.-]/', '_', $properties['itemFormElName']) . '_' . $this->RTEcounter;
     Tx_SavLibraryPlus_Managers_AdditionalHeaderManager::addJavaScript('checkIfRteChanged', 'checkIfRteChanged(\'' . $editorNumber . '\');');
     Tx_SavLibraryPlus_Managers_AdditionalHeaderManager::addJavaScript('rteUpdate', $this->additionalJS_submit[0]);
 
     return $this->arrayToHTML($htmlArray);
+  }
+
+  /**
+   * Adds the RTE init code.
+   *
+   * @param none
+   *
+   * @return string
+   */
+  protected function addRteInitJsCode() {
+    // Adds the initial javascript
+    $javaScriptCode = $this->additionalJS_initial;
+    // Adds the additional javaScript      
+    $javaScriptCode .= '<script type="text/javascript">';
+    $javaScriptCode .= $this->additionalJS_pre['rtehtmlarea-loadJScode'];
+    $javaScriptCode .= '</script>';
+
+		// Adds the javaScript  
+		Tx_SavLibraryPlus_Managers_AdditionalHeaderManager::addJavaScriptInlineCode('RichTextEditor', $javaScriptCode);
   }
 
 }

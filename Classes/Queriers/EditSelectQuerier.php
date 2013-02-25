@@ -53,7 +53,7 @@ class Tx_SavLibraryPlus_Queriers_EditSelectQuerier extends Tx_SavLibraryPlus_Que
  			/* WHERE    */	$this->buildWhereClause(),
 			/* GROUP BY */	$this->buildGroupByClause()
 		);
-		
+
     // Sets the rows from the query
     $this->setRows();
     
@@ -67,12 +67,11 @@ class Tx_SavLibraryPlus_Queriers_EditSelectQuerier extends Tx_SavLibraryPlus_Que
    * @return string The WHERE clause
    */
   protected function buildWhereClause() {
-    // Gets the uid
-    $uid = Tx_SavLibraryPlus_Managers_UriManager::getUid();
 
-    // Builds the where clause
-    $whereClause = '1 AND ';
-    $whereClause .= $this->getQueryConfigurationManager()->getMainTable(). '.uid = ' . intval($uid);
+  	// Builds the where clause
+    $whereClause = '1';
+    $whereClause .= $this->getQueryConfigurationManager()->getAdditionalPartToWhereClause();
+    $whereClause .= $this->getQueryConfigurationManager()->getUidPartToWhereClause();    
 
     return $whereClause;
   }

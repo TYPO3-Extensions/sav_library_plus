@@ -9,8 +9,8 @@
 	</meta>
 	<data type="array">
 		<languageKey index="default" type="array">
-		
-			<label index="LLL:EXT:sav_library_plus/Resources/Private/Language/locallang.xml:pi_flexform.sheetTitle.sAdvanced.description"></label>
+			<label index=".alttitle">SAV Library Plus &gt; Advanced</label>		
+			<label index=".description">Help for the Advanced folder</label>					
 		
 			<label index="LLL:EXT:sav_library_plus/Resources/Private/Language/locallang.xml:pi_flexform.permanentFilter.description">You can use this field to add a where clause that will be added to the where clause of the form query.</label>
 

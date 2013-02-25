@@ -47,21 +47,53 @@ class Tx_SavLibraryPlus_Viewers_FormAdminViewer extends Tx_SavLibraryPlus_Viewer
 	 */
 	protected function parseFieldSpecialTags($template) {  
     // Processes the field marker
-    preg_match_all('/###field\[([^\],]+)(,?)([^\]]*)\]###/', $template, $matches);  
+    preg_match_all('/###(?<prefix>new|show)?field\[(?<fieldName>[^\],]+)(?<separator>,?)(?<label>[^\]]*)\]###/', $template, $matches);  
 
     foreach($matches[0] as $matchKey => $match) {
-			if ($matches[2][$matchKey]) {
-				$querier = $this->getController()->getQuerier();
-				$fullFieldName =  $querier->buildFullFieldName($matches[1][$matchKey]);
-				$class = ($querier->getFieldValueFromCurrentRow($fullFieldName) == $querier->getFieldValueFromSavedRow($fullFieldName) ? 'column4Same' : 'column4Different');
-				$replacementString = 
-           '<div class="column1">$$$label[' . $matches[3][$matchKey] . ']$$$</div>' .
-           '<div class="column2">###renderSaved[' . $matches[1][$matchKey] . ']###</div>' .
-           '<div class="column3">###renderEdit[' . $matches[1][$matchKey] . ']###</div>' .
-           '<div class="' . $class . '">###renderValidation[' . $matches[1][$matchKey] . ']###</div>';				
+    	
+    	// Gets the full field name
+			$querier = $this->getController()->getQuerier();
+			$fullFieldName =  $querier->buildFullFieldName($matches['fieldName'][$matchKey]);		
+      $cryptedFullFieldName = Tx_SavLibraryPlus_Controller_AbstractController::cryptTag($fullFieldName);
+          	
+			if ($matches['separator'][$matchKey]) {
+	
+	      // Checks if the field can be edited	      
+				if ($this->folderFieldsConfiguration[$cryptedFullFieldName]['addedit'] || ($this->folderFieldsConfiguration[$cryptedFullFieldName]['addeditifadmin'] && $this->getController()->getUserManager()->userIsAllowedToChangeData('+'))) {
+      		$edit = 'Edit';
+      		$validation = 'Validation';
+      	} else {
+      		$edit = '';
+      		$validation = 'NoValidation';
+      	}	
+      	// Checks if a validation is forced
+				if ($this->folderFieldsConfiguration[$cryptedFullFieldName]['addvalidationifadmin']) {
+      		$validation = 'Validation';
+				}
+				      	
+      	$prefix = $matches['prefix'][$matchKey];
+      	if ($prefix) {	 
+      		$validation = 'Validation';  
+					$replacementString = 
+						'<div class="column1">$$$label' . $required . '[' . $matches['label'][$matchKey] . ']$$$</div>' .
+            '<div class="column2"></div>' .
+            '<div class="column3">###render' . ucfirst($prefix) . '[' . $matches['fieldName'][$matchKey] . ']###</div>';
+					if ($prefix == 'new') {
+      			$class = ($querier->getFieldValueFromNewRow($fullFieldName) ? 'column4Different' : 'column4Same');								
+						$replacementString .=
+           		'<div class="' . $class . '">###render' . $validation . '[' . $matches['fieldName'][$matchKey] . ']###</div>';
+					}	
+      	} else {
+					$class = ($querier->getFieldValueFromCurrentRow($fullFieldName) == $querier->getFieldValueFromSavedRow($fullFieldName) ? 'column4Same' : 'column4Different');      		
+      		$replacementString = 
+						'<div class="column1">$$$label[' . $matches['label'][$matchKey] . ']$$$</div>' .
+						'<div class="column2">###renderSaved[' . $matches['fieldName'][$matchKey] . ']###</div>' .
+						'<div class="column3">###render' . $edit . '[' . $matches['fieldName'][$matchKey] . ']###</div>' .
+						'<div class="' . $class . '">###render' . $validation . '[' . $matches['fieldName'][$matchKey] . ']###</div>';	
+      	}			
 			} else {
-				$replacementString = '###renderEdit[' . $matches[1][$matchKey] . ']###' .
-					'###renderValidation[' . $matches[1][$matchKey] . ']###';				
+				$replacementString = '###render' . $edit . '[' . $matches['fieldName'][$matchKey] . ']###' .
+					'###render' . $validation . '[' . $matches['fieldName'][$matchKey] . ']###';				
 			}
 			$template = str_replace($matches[0][$matchKey], $replacementString, $template);				
     }

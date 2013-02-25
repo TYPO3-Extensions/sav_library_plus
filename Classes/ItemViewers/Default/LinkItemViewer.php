@@ -42,7 +42,7 @@ class Tx_SavLibraryPlus_ItemViewers_Default_LinkItemViewer extends Tx_SavLibrary
   
     // Gets the value
     $value = $this->getItemConfiguration('value');
-    
+   
     // Checks if the link is related to a RTF file
     if ($this->getItemConfiguration('generatertf')) {
 		  if (empty($value) === false) {  	

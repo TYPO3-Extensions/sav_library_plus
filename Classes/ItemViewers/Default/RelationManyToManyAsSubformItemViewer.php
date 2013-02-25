@@ -102,6 +102,7 @@ class Tx_SavLibraryPlus_ItemViewers_Default_RelationManyToManyAsSubformItemViewe
         'subformUidLocal' => $this->getItemConfiguration('uid'),
         'pageInSubform' => $pageInSubform,
         'maximumItemsInSubform' => $this->getItemConfiguration('maxsubformitems'),
+      	'showFirstLastButtons' => ($this->getItemConfiguration('nofirstlast') ? 0 : 1),      
         'title' => $controller->getViewer()->processTitle($subformTitle),
       )
     );

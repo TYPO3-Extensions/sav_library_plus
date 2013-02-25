@@ -322,7 +322,7 @@
 				<source>The action &quot;%s&quot; is unknown.</source>
 			</trans-unit>
 			<trans-unit id="error.unknownFunction" xml:space="preserve">
-				<source>Please contact the Webmaster. The following function &quot;%s&quot; is unknown.</source>
+				<source>Please contact the Webmaster. The function &quot;%s&quot; is unknown.</source>
 			</trans-unit>
 			<trans-unit id="error.unknownFormParam" xml:space="preserve">
 				<source>The following parameter is unknown: %s.</source>

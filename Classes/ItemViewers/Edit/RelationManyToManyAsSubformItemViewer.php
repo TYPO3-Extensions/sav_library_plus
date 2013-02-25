@@ -40,8 +40,8 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_RelationManyToManyAsSubformItemViewer e
    */
   protected function renderItem() {
 
-    $htmlArray = array();
-    
+  	$htmlArray = array();
+
     // Builds the crypted field Name
     $fullFieldName = $this->getItemConfiguration('tableName') . '.' . $this->getItemConfiguration('fieldName');
     $cryptedFullFieldName = Tx_SavLibraryPlus_Controller_AbstractController::cryptTag($fullFieldName);
@@ -62,6 +62,7 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_RelationManyToManyAsSubformItemViewer e
     $controller->injectQuerier($querier);
     $querier->injectController($controller);
     $querier->injectUpdateQuerier($this->getController()->getQuerier()->getUpdateQuerier());
+    $querier->injectParentQuerier($this->getController()->getQuerier());
     $this->itemConfiguration['uidLocal'] = $this->itemConfiguration['uid'];
     $pageInSubform = Tx_SavLibraryPlus_Managers_SessionManager::getSubformFieldFromSession($cryptedFullFieldName, 'pageInSubform');
     $pageInSubform = ($pageInSubform ? $pageInSubform : 0);
@@ -74,7 +75,18 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_RelationManyToManyAsSubformItemViewer e
 		}
     $querier->injectQueryConfiguration();  
     $querier->processTotalRowsCountQuery();
+    
+    // Gets the rows count
+    $totalRowsCount = $querier->getTotalRowsCount();
+   
+    // Checks if the maximum number of relations is reached
+    if ($totalRowsCount < $this->getItemConfiguration('maxitems')) {
+    	$newButtonIsAllowed = true;
+    } else {
+    	$newButtonIsAllowed = false;
+    }
 
+    // Processes the query
     if (Tx_SavLibraryPlus_Managers_UriManager::getFormAction() == 'newInSubform' && Tx_SavLibraryPlus_Managers_UriManager::getSubformFieldKey() == $cryptedFullFieldName) {
       $isNewInSubform = true;
       $querier->addEmptyRow();
@@ -118,6 +130,7 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_RelationManyToManyAsSubformItemViewer e
     $saveButtonIsAllowed = $this->getItemConfiguration('addsave') || $this->getItemConfiguration('addsavebutton');
     $viewer->addToViewConfiguration('general',
       array (
+      	'newButtonIsAllowed' => $newButtonIsAllowed,
         'deleteButtonIsAllowed' => ($isNewInSubform === false) && $deleteButtonIsAllowed,
         'upDownButtonIsAllowed' => ($isNewInSubform === false) && $upDownButtonIsAllowed,
         'saveButtonIsAllowed' => ($isNewInSubform === false) && $saveButtonIsAllowed,

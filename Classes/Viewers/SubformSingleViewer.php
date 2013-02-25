@@ -69,8 +69,8 @@ class Tx_SavLibraryPlus_Viewers_SubformSingleViewer extends Tx_SavLibraryPlus_Vi
         $uid = $this->getController()->getQuerier()->getFieldValueFromCurrentRow('uid');
         $itemName = Tx_SavLibraryPlus_Controller_AbstractController::getFormName() . '[' . $fieldConfigurationKey . '][' . intval($uid) . ']';
         $this->folderFieldsConfiguration[$fieldConfigurationKey]['itemName'] = $itemName;
-        // Calls the item viewer
-        $this->folderFieldsConfiguration[$fieldConfigurationKey]['value'] = $this->renderItem($fieldConfigurationKey);
+        // Processes the field
+      	$this->processField($fieldConfigurationKey);
       }
 
       $configurationRows[] = $this->folderFieldsConfiguration;

@@ -70,7 +70,8 @@ class Tx_SavLibraryPlus_Queriers_FormUpdateQuerier extends Tx_SavLibraryPlus_Que
    
     // Gets the main table
     $mainTable = $this->getQueryConfigurationManager()->getMainTable();
-    
+		$mainTableUid = Tx_SavLibraryPlus_Managers_UriManager::getUid();
+		    
 		// Processes the regular fields. Explode the key to get the table and field names
 		$variablesToUpdate = array();
 		foreach($postVariables as $postVariableKey => $postVariable) {
@@ -90,9 +91,7 @@ class Tx_SavLibraryPlus_Queriers_FormUpdateQuerier extends Tx_SavLibraryPlus_Que
 
         // Makes pre-processings.
         self::$doNotAddValueToUpdateOrInsert = false;
-        if ($this->verifier($value)) {
-          $value = $this->preProcessor($value);
-        }
+        $value = $this->preProcessor($value);
         
         // Adds the variables
         if (self::$doNotAddValueToUpdateOrInsert === false) {
@@ -109,16 +108,18 @@ class Tx_SavLibraryPlus_Queriers_FormUpdateQuerier extends Tx_SavLibraryPlus_Que
 				
 		// Updates the fields if any
     if (empty($variablesToUpdateOrInsert) === false) {
+    	$variableToSerialize = array();
   		foreach ($variablesToUpdateOrInsert as $tableName => $variableToUpdateOrInsert) {
         if (empty($tableName) === false){ 
-					$shortFormName = Tx_SavLibraryPlus_Controller_AbstractController::getShortFormName();
-					$variableToSerialize = array($shortFormName => array('temporary' => current($variableToUpdateOrInsert)));     	
-    			// Updates the _submitted_data_ field
-			    $this->updateFields($mainTable, array('_submitted_data_' => serialize($variableToSerialize),'_validated_' => 0), key($variableToUpdateOrInsert));   
-
-			    Tx_SavLibraryPlus_Controller_FlashMessages::addMessage('message.dataSaved'); 			    	
+        	$variableToSerialize = $variableToSerialize + $variableToUpdateOrInsert; 	
 				}
       }
+
+      // Updates the _submitted_data_ field
+			$shortFormName = Tx_SavLibraryPlus_Controller_AbstractController::getShortFormName();
+			$serializedVariable = serialize(array($shortFormName => array('temporary' => $variableToSerialize)));  
+      $this->updateFields($mainTable, array('_submitted_data_' => $serializedVariable,'_validated_' => 0), $mainTableUid);   
+			Tx_SavLibraryPlus_Controller_FlashMessages::addMessage('message.dataSaved'); 			    	
     }
 
     // Post-processing

@@ -9,8 +9,8 @@
 	</meta>
 	<data type="array">
 		<languageKey index="default" type="array">
-
-			<label index="LLL:EXT:sav_library_plus/Resources/Private/Language/locallang.xml:pi_flexform.sheetTitle.sInput.description"></label>
+			<label index=".alttitle">SAV Library Plus &gt; Input control</label>		
+			<label index=".description">Help for the Input Control folder</label>			
 		
 			<label index="LLL:EXT:sav_library_plus/Resources/Private/Language/locallang.xml:pi_flexform.inputIsAllowed.description">If set, Front End inputs are allowed.</label>
 		

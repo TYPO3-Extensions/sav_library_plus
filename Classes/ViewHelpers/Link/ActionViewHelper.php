@@ -75,7 +75,7 @@ class Tx_SavLibraryPlus_ViewHelpers_Link_ActionViewHelper extends Tx_Fluid_Core_
     // Sets the new action
     $compressedParameters = Tx_SavLibraryPlus_Managers_UriManager::getCompressedParameters();
     $libraryParam = Tx_SavLibraryPlus_Controller_AbstractController::changeCompressedParameters($compressedParameters, 'formAction', $action);
-    $formName = hash(Tx_SavLibraryPlus_Managers_ExtensionConfigurationManager::getFormNameHashAlgorithm(), Tx_SavLibraryPlus_Controller_AbstractController::getFormName());
+    $formName = Tx_SavLibraryPlus_Controller_AbstractController::getFormName();
     $libraryParam = Tx_SavLibraryPlus_Controller_AbstractController::changeCompressedParameters($libraryParam, 'formName', $formName);
      
     // Changes the other parameters if any

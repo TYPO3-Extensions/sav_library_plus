@@ -120,7 +120,7 @@ class Tx_SavLibraryPlus_Queriers_ListSelectQuerier extends Tx_SavLibraryPlus_Que
 		$selectedFilterKey = Tx_SavLibraryPlus_Managers_SessionManager::getSelectedFilterKey();
 
 		if (empty($selectedFilterKey) === false) {
-		  $additionalWhereClause = Tx_SavLibraryPlus_Managers_SessionManager::getFilterField($selectedFilterKey, 'addWhere');
+		  $additionalWhereClause = Tx_SavLibraryPlus_Managers_SessionManager::getFilterField($selectedFilterKey, 'addWhere');	  
 		  $searchRequestFromFilter = Tx_SavLibraryPlus_Managers_SessionManager::getFilterField($selectedFilterKey, 'search');
 		  if (empty($searchRequestFromFilter) === false) {
 		  	// The WHERE clause coming from the filter replaces the default WHERE Clause

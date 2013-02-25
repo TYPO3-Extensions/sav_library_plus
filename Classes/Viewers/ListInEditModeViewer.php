@@ -64,8 +64,8 @@ class Tx_SavLibraryPlus_Viewers_ListInEditModeViewer extends Tx_SavLibraryPlus_V
 
     // Adds the button to the configuration
     $additionalListItemConfiguration = array(
-      'editButtonIsAllowed' => !$noEditButton,
-      'deleteButtonIsAllowed' => $deleteButtonIsAllowed,
+      'editButtonIsAllowed' => !$noEditButton && $this->getController()->getUserManager()->userIsAllowedToChangeData(),
+      'deleteButtonIsAllowed' => $deleteButtonIsAllowed  && $this->getController()->getUserManager()->userIsAllowedToChangeData(),
     );
 
     return $additionalListItemConfiguration;

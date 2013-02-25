@@ -439,19 +439,21 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
     			// Raw rendering : the value is taken from the row
     			$markers['###' . $fieldName . '###'] = $this->getFieldValueFromCurrentRow($fieldName);
     		} else {
-    			// Renders the field based on the TCA configuration as it would be rendered in a single view
+    			// Renders the field based on the TCA configuration as it would be rendered in a single view 			
     			$basicFieldConfiguration = $this->getController()->getLibraryConfigurationManager()->searchBasicFieldConfiguration(Tx_SavLibraryPlus_Controller_Controller::cryptTag($fieldName));    		 
-    			$fieldConfiguration = Tx_SavLibraryPlus_Managers_TcaConfigurationManager::getTcaConfigFieldFromFullFieldName($fieldName);
     		
-    			// Adds the basic configuration if found
+    			// Adds the basic configuration, if found, to the TCA 
     			if (is_array($basicFieldConfiguration)) {
-    				$fieldConfiguration = array_merge($fieldConfiguration, $basicFieldConfiguration);
+    				$fieldConfiguration = array_merge(Tx_SavLibraryPlus_Managers_TcaConfigurationManager::getTcaConfigFieldFromFullFieldName($fieldName), $basicFieldConfiguration);
+    			} else {
+    				// Builds the basic configuration from the TCA
+    				$fieldConfiguration = Tx_SavLibraryPlus_Managers_TcaConfigurationManager::buildBasicConfigurationFromTCA($fieldName);
     			}
     		  // Adds the additional field configuration
     		  if (is_array($additionalFieldsConfiguration[$fieldName])) {
 			    	$fieldConfiguration = array_merge($fieldConfiguration, $additionalFieldsConfiguration[$fieldName]);
     		  }
-		       		
+       		
 					// Checks if the fieldType is set		
 					if (isset($fieldConfiguration['fieldType'])) {
 						// Adds the value to the field configuration
@@ -1105,6 +1107,6 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
   protected function isInUtf8() {
     return ($GLOBALS['TSFE']->renderCharset == 'utf-8');  
   }                                                   
-  
+
 }
 ?>

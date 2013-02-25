@@ -48,7 +48,6 @@ class Tx_SavLibraryPlus_DatePicker_DatePicker {
    * @var string
    */
   protected static $datePickerCssFile = 'calendar-win2k-2.css';	
-  
     
   /**
    * The javaScript file
@@ -72,10 +71,26 @@ class Tx_SavLibraryPlus_DatePicker_DatePicker {
     if (file_exists($datePickerLanguagePath . self::$datePickerLanguageFile) === false) {
       self::$datePickerLanguageFile = 'calendar-en.js';
     }
+    self::compatibility();
     self::addCascadingStyleSheet();    
     self::addJavaScript();  
   }
 
+  /**
+   *  Removes the additional header data inserted by SAV Library if it exists 
+   *  
+   * @param none
+   *
+   * @return none
+   */  
+	protected static function compatibility() {
+		if (version_compare(TYPO3_version, '6.0', '<')) { 	
+	  	if($GLOBALS['TSFE']->additionalHeaderData['DatePicker']) {
+	  		unset($GLOBALS['TSFE']->additionalHeaderData['DatePicker']);
+	  	}
+		}    	
+	} 
+     
   /**
    *  Adds the date picker css file 
    *  - from the datePicker.stylesheet TypoScript configuration if any
@@ -95,7 +110,7 @@ class Tx_SavLibraryPlus_DatePicker_DatePicker {
   		$cascadingStyleSheetAbsoluteFileName = t3lib_div::getFileAbsFileName($datePickerTypoScriptConfiguration['stylesheet']);
   		if (is_file($cascadingStyleSheetAbsoluteFileName)) {
   			$cascadingStyleSheet = substr($cascadingStyleSheetAbsoluteFileName, strlen(PATH_site));
-				Tx_SavLibraryPlus_Managers_AdditionalHeaderManager::addCascadingStyleSheet(self::KEY, $cascadingStyleSheet);
+				Tx_SavLibraryPlus_Managers_AdditionalHeaderManager::addCascadingStyleSheet($cascadingStyleSheet);
   		} else {
 				throw new Tx_SavLibraryPlus_Exception(Tx_SavLibraryPlus_Controller_FlashMessages::translate('error.fileDoesNotExist', array(htmlspecialchars($cascadingStyleSheetAbsoluteFileName))));		
   		}
@@ -107,14 +122,14 @@ class Tx_SavLibraryPlus_DatePicker_DatePicker {
   			$cascadingStyleSheetAbsoluteFileName = t3lib_div::getFileAbsFileName($datePickerTypoScriptConfiguration['stylesheet']);
   			if (is_file($cascadingStyleSheetAbsoluteFileName)) {
   				$cascadingStyleSheet = substr($cascadingStyleSheetAbsoluteFileName, strlen(PATH_site));
-					Tx_SavLibraryPlus_Managers_AdditionalHeaderManager::addCascadingStyleSheet(self::KEY, $cascadingStyleSheet);
+					Tx_SavLibraryPlus_Managers_AdditionalHeaderManager::addCascadingStyleSheet($cascadingStyleSheet);
   			} else {
 					throw new Tx_SavLibraryPlus_Exception(Tx_SavLibraryPlus_Controller_FlashMessages::translate('error.fileDoesNotExist', array(htmlspecialchars($cascadingStyleSheetAbsoluteFileName))));		
   			}
   		} else {
-  				// The style sheet is the default onr
+  				// The style sheet is the default one
 					$cascadingStyleSheet = t3lib_extMgm::siteRelPath($extensionKey) . self::$datePickerPath . 'css/'. self::$datePickerCssFile;
-					Tx_SavLibraryPlus_Managers_AdditionalHeaderManager::addCascadingStyleSheet(self::KEY, $cascadingStyleSheet); 			
+					Tx_SavLibraryPlus_Managers_AdditionalHeaderManager::addCascadingStyleSheet($cascadingStyleSheet); 			
   		}  		
   	} 
   }
@@ -127,14 +142,10 @@ class Tx_SavLibraryPlus_DatePicker_DatePicker {
    * @return none
    */
   public static function addJavaScript() {
-  	if(empty($GLOBALS['TSFE']->additionalHeaderData[self::KEY . '_JS'])) {
-  		$datePickerSiteRelativePath =t3lib_extMgm::siteRelPath(Tx_SavLibraryPlus_Controller_AbstractController::LIBRARY_NAME) . self::$datePickerPath;
-  		$javaScript = array();
-    	$javaScript[] = '<script type="text/javascript" src="' . $datePickerSiteRelativePath . 'js/' . self::$datePickerJsFile . '"></script>';
-    	$javaScript[] = '<script type="text/javascript" src="' . $datePickerSiteRelativePath . 'lang/' . self::$datePickerLanguageFile . '" charset="utf-8"></script>';
-    	$javaScript[] = '<script type="text/javascript" src="' . $datePickerSiteRelativePath . 'js/' . self::$datePickerJsSetupFile . '"></script>';	  		
-  		$GLOBALS['TSFE']->additionalHeaderData[self::KEY . '_JS'] = implode(chr(10), $javaScript);
-  	}
+  	$datePickerSiteRelativePath = t3lib_extMgm::siteRelPath(Tx_SavLibraryPlus_Controller_AbstractController::LIBRARY_NAME) . self::$datePickerPath;
+  	Tx_SavLibraryPlus_Managers_AdditionalHeaderManager::addJavaScriptFile($datePickerSiteRelativePath . 'js/' . self::$datePickerJsFile);
+  	Tx_SavLibraryPlus_Managers_AdditionalHeaderManager::addJavaScriptFile($datePickerSiteRelativePath . 'lang/' . self::$datePickerLanguageFile);
+  	Tx_SavLibraryPlus_Managers_AdditionalHeaderManager::addJavaScriptFile($datePickerSiteRelativePath . 'js/' . self::$datePickerJsSetupFile);
   }
 
   /**

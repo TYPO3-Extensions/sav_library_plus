@@ -10,7 +10,7 @@
       <ul class="folderTabs">
         <f:for each="{configuration.folders}" as="folder" key="folderKey">
         <li {f:if(condition:'{folderKey} == {configuration.general.activeFolderKey}',then:'class="currentTab"')}>
-          <sav:link.action action="{f:if(condition:configuration.general.isNewView,then:'new',else:'edit')}" arguments="{folderKey:folderKey}" additionalAttributes="{onclick:'return submitIfChanged();'}" noCacheHash="1">
+          <sav:link.action action="{f:if(condition:configuration.general.isNewView,then:'new',else:'edit')}" arguments="{folderKey:folderKey}" additionalAttributes="{onclick:'return submitIfChanged(\'{configuration.general.formName}\');'}" noCacheHash="1">
           <span><sav:translate key="{folder.label}" extension="{configuration.general.extensionKey}" /></span>
           </sav:link.action>
         </li>
@@ -30,7 +30,7 @@
         <f:if condition="{field.cutDivItemInner}!=1">
           <div class="{field.classField}">
           <f:if condition="{field.cutLabel}!=1">
-            <div class="{field.classLabel}{f:if(condition:'{field.error}',then:' error')}"{f:if(condition:'{field.styleLabel}',then:' style="{field.styleLabel}"')}>{field.label}<f:if condition="{field.required}"><f:image src="{sav:getIcon(fileName:'required')}" class="required" alt="{sav:translate(key:'icon.required')}" title="{sav:translate(key:'icon.required')}" /></f:if></div>
+            <div class="{field.classLabel}{f:if(condition:'{field.error}',then:' error')}"{f:if(condition:'{field.styleLabel}',then:' style="{field.styleLabel}"')}><sav:html>{field.label}</sav:html><f:if condition="{field.required}"><f:image src="{sav:getIcon(fileName:'required')}" class="required" alt="{sav:translate(key:'icon.required')}" title="{sav:translate(key:'icon.required')}" /></f:if></div>
           </f:if>
           <f:if condition="{field.subform}">
             <f:then>

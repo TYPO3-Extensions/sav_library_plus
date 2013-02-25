@@ -9,10 +9,10 @@
 	</meta>
 	<data type="array">
 		<languageKey index="default" type="array">
+			<label index=".alttitle">SAV Library Plus &gt; Help pages</label>		
+			<label index=".description">Help for the Help pages folder</label>					
 		
-			<label index="LLL:EXT:sav_library_plus/Resources/Private/Language/locallang.xml:pi_flexform.sheetTitle.sHelpPages.description"></label>
-		
-			<label index="LLL:EXT:sav_library_plus/Resources/Private/Language/locallang.xml:pi_flexform.helpPageListView.description">Use this selector to choose a page of your site which will be use as an help page for the list view of your extension. In this case, an icon is displayed in the title bar of your extension.</label>
+			<label index="LLL:EXT:sav_library_plus/Resources/Private/Language/locallang.xml:pi_flexform.helpPageListView.description">wwwwUse this selector to choose a page of your site which will be use as an help page for the list view of your extension. In this case, an icon is displayed in the title bar of your extension.</label>
 		
 			<label index="LLL:EXT:sav_library_plus/Resources/Private/Language/locallang.xml:pi_flexform.helpPageSingleView.description">Use this selector to choose a page of your site which will be use as an help page for the single view of your extension. In this case, an icon is displayed in the title bar of your extension.</label>
 

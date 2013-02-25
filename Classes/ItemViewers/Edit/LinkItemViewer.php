@@ -45,19 +45,32 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_LinkItemViewer extends Tx_SavLibraryPlu
     $value = ($value == NULL ? '' : $value);
 
     if ($this->getItemConfiguration('generatertf')) {
-  		   
+    	// Initializes the content
+    	$content = '';
+ 		   
   		// Adds an input image element
-		  $content = Tx_SavLibraryPlus_Utility_HtmlElements::htmlInputImageElement(
-		    array(
-					Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('class', 'generateRtfButton'),
-		      Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('src', Tx_SavLibraryPlus_Managers_LibraryConfigurationManager::getIconPath('generateRtf')),
-	        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('name', Tx_SavLibraryPlus_Controller_AbstractController::getFormName() . '[formAction][saveAndGenerateRtf][' . $this->getCryptedFullFieldName() . ']'),	        
-		      Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('title', Tx_Extbase_Utility_Localization::translate('button.generateRtf', 'sav_library_plus')),
-		      Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('alt', Tx_Extbase_Utility_Localization::translate('button.generateRtf', 'sav_library_plus')),
-		      Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('onclick', 'return update();'),
-		     )
-		  );    	
-
+  		$generateRtfButton = false;
+  		$generateRtfButtonCondition = $this->getItemConfiguration('generatertfbuttonif');
+    	if (!empty($generateRtfButtonCondition)) {
+    		$fieldConfigurationManager = t3lib_div::makeInstance('Tx_SavLibraryPlus_Managers_FieldConfigurationManager');
+    		$fieldConfigurationManager->injectController($this->getController());	
+    		$fieldConfigurationManager->injectQuerier($this->getController()->getQuerier());	
+    		$generateRtfButton = $fieldConfigurationManager->processFieldCondition($generateRtfButtonCondition);
+	    }	  	
+	    	
+  		if (empty($generateRtfButtonCondition) || (!empty($generateRtfButtonCondition) && $generateRtfButton)) {
+			  $content = Tx_SavLibraryPlus_Utility_HtmlElements::htmlInputImageElement(
+			    array(
+						Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('class', 'generateRtfButton'),
+			      Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('src', Tx_SavLibraryPlus_Managers_LibraryConfigurationManager::getIconPath('generateRtf')),
+		        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('name', Tx_SavLibraryPlus_Controller_AbstractController::getFormName() . '[formAction][saveAndGenerateRtf][' . $this->getCryptedFullFieldName() . ']'),	        
+			      Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('title', Tx_Extbase_Utility_Localization::translate('button.generateRtf', 'sav_library_plus')),
+			      Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('alt', Tx_Extbase_Utility_Localization::translate('button.generateRtf', 'sav_library_plus')),
+			      Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('onclick', 'return update(\'' . Tx_SavLibraryPlus_Controller_AbstractController::getFormName() . '\');'),
+			     )
+			  );    	
+  		}
+  		
     	// Adds the hidden input element
     	$content .= Tx_SavLibraryPlus_Utility_HtmlElements::htmlInputHiddenElement(
       	array(

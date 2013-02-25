@@ -40,7 +40,31 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_RelationOneToManyAsSelectorboxItemViewe
    */
   protected function renderItem() {
 
-    $htmlArray = array();  
+    $htmlArray = array();         
+
+    // Gets the label
+    $labelSelect = $this->getItemConfiguration('labelselect');
+    if (empty($labelSelect) === false) {
+    	// Checks if this label comes from an aliasSelect attribute
+    	$aliasSelect = $this->getItemConfiguration('aliasselect');
+    	if (preg_match('/(?:AS|as) ' . $labelSelect . '/', $aliasSelect)) {
+    		// Uses the alias
+    		$label = $labelSelect;
+    		$labelSelect = '';
+    	} else {
+    		// Builds a full field name
+    		$label = $this->getItemConfiguration('foreign_table') . '.' . $labelSelect;	
+    		$labelSelect = ',' . $label;	
+    	}
+    } else {
+    	// Gets the label from the TCA
+    	$label =  $this->getItemConfiguration('foreign_table') . '.' . Tx_SavLibraryPlus_Managers_TcaConfigurationManager::getTcaCtrlField($this->getItemConfiguration('foreign_table'), 'label');
+			$labelSelect = ',' . $label;
+    }    
+   
+		// Sets the SELECT Clause
+		$this->itemConfiguration['selectclause'] = $this->getItemConfiguration('foreign_table') . '.uid' . $labelSelect;
+		
     // Builds the querier
     $querierClassName = 'Tx_SavLibraryPlus_Queriers_ForeignTableSelectQuerier';
     $querier = t3lib_div::makeInstance($querierClassName);
@@ -68,21 +92,6 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_RelationOneToManyAsSelectorboxItemViewe
       );
     }
     
-    // Gets the label
-    $labelSelect = $this->getItemConfiguration('labelselect');
-    if (empty($labelSelect) === false) {
-    	if ($querier->fieldExistsInCurrentRow($labelSelect)) {
-    		// The attribute is an alias
-    		$label = $labelSelect;
-    	} else {
-    		// The attribute is a field, adds the foreign table
-    		$label = $this->getItemConfiguration('foreign_table') . '.' . $this->getItemConfiguration('labelselect');
-    	}
-    } else {
-    	// Gets the label from the TCA
-    	$label =  $this->getItemConfiguration('foreign_table') . '.' . Tx_SavLibraryPlus_Managers_TcaConfigurationManager::getTcaCtrlField($this->getItemConfiguration('foreign_table'), 'label');
-    }
-
     // Adds the option elements
     foreach ($rows as $rowKey => $row) {
 			// Sets the rowId for the localization and field tags    	

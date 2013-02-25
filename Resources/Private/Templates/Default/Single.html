@@ -31,7 +31,7 @@
         <f:if condition="{field.cutDivItemInner}!=1">
           <div class="{field.classField}">
           <f:if condition="{field.cutLabel}!=1">
-          <div class="{field.classLabel}"{f:if(condition:'{field.styleLabel}',then:' style="{field.styleLabel}"')}>{field.label} </div>
+          <div class="{field.classLabel}"{f:if(condition:'{field.styleLabel}',then:' style="{field.styleLabel}"')}><sav:html>{field.label}</sav:html></div>
           </f:if>
           <f:if condition="{field.subform}">
             <f:then>

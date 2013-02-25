@@ -118,16 +118,17 @@ class Tx_SavLibraryPlus_Queriers_ForeignTableSelectQuerier extends Tx_SavLibrary
     $whereClause = (
       !$fieldConfiguration['overrideenablefields'] ?
       '1' . $contentObject->enableFields($fieldConfiguration['foreign_table']) :
-      ''
+      '1'
     );
+    
+    // Sets the override starting point condition
+    $overrideStartingPoint = $fieldConfiguration['fieldType'] == 'RelationManyToManyAsDoubleSelectorbox' ||
+    	$fieldConfiguration['fieldType'] == 'RelationOneToManyAsSelectorbox' ||
+    	$fieldConfiguration['overridestartingpoint'];
+   	
     $whereClause .= (
-      ($contentObject->data['pages'] && !$fieldConfiguration['overridestartingpoint']) ?
+      (!$overrideStartingPoint && $contentObject->data['pages']) ?
       ' AND ' . $fieldConfiguration['foreign_table'] . '.pid IN (' . $contentObject->data['pages'] . ')' :
-      ''
-    );
-    $whereClause .= (
-      $fieldConfiguration['whereselect'] ?
-      ' AND ' . $fieldConfiguration['whereselect'] :
       ''
     );
      
@@ -173,7 +174,7 @@ class Tx_SavLibraryPlus_Queriers_ForeignTableSelectQuerier extends Tx_SavLibrary
           ' ' . $fieldConfiguration['additionaljointableselect'] :
           ''),
       'whereClause' => $whereClause
-        . ' AND ' . $fieldConfiguration['foreign_table'] . '.uid = ' . $fieldConfiguration['value'],
+        . ' AND ' . $fieldConfiguration['foreign_table'] . '.uid = ' . intval($fieldConfiguration['value']),
       'groupByClause' => $fieldConfiguration['groupbyselect'],
       'orderByClause' => $fieldConfiguration['orderselect'],
     );
@@ -223,7 +224,7 @@ class Tx_SavLibraryPlus_Queriers_ForeignTableSelectQuerier extends Tx_SavLibrary
       'groupByClause' => $fieldConfiguration['groupbyselect'],
       'orderByClause' => $fieldConfiguration['orderselect'] ? $fieldConfiguration['orderselect'] : $fieldConfiguration['MM'] . '.sorting',
       'limitClause' => ($fieldConfiguration['maxsubformitems'] ?	($fieldConfiguration['maxsubformitems'] *	$fieldConfiguration['pageInSubform']) . ',' . ($fieldConfiguration['maxsubformitems']) : ''),
-    );
+    );   
   }
 
   /**
@@ -311,7 +312,7 @@ class Tx_SavLibraryPlus_Queriers_ForeignTableSelectQuerier extends Tx_SavLibrary
    * @return none
    */ 
   public function buildQueryConfigurationForForeignTable(&$fieldConfiguration) {
-  	
+	
 		$this->doNotProcessQuery = false;  	
 
     // Builds the where clause
@@ -340,6 +341,7 @@ class Tx_SavLibraryPlus_Queriers_ForeignTableSelectQuerier extends Tx_SavLibrary
     // Prepares the query configuration
     $this->queryConfiguration = array (
       'mainTable' => $fieldConfiguration['foreign_table'],
+    	'selectClause' => $fieldConfiguration['selectclause'],
       'aliases' => $fieldConfiguration['aliasselect'],
       'foreignTables' =>
           ($fieldConfiguration['additionaltableselect'] ?

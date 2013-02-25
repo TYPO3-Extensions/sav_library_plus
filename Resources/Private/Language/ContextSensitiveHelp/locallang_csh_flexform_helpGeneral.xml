@@ -9,8 +9,8 @@
 	</meta>
 	<data type="array">
 		<languageKey index="default" type="array">
-		
-			<label index="LLL:EXT:sav_library_plus/Resources/Private/Language/locallang.xml:pi_flexform.sheetTitle.sDEF.description"></label>
+			<label index=".alttitle">SAV Library Plus &gt; General</label>		
+			<label index=".description">Help for the General folder</label>			
 
 			<label index="LLL:EXT:sav_library_plus/Resources/Private/Language/locallang.xml:pi_flexform.formId.description">Use this selector to select the form name. Let use recall that the "SAV Library Plus" makes it possible to build several forms associated with the same extension, thus providing different views of your tables.</label>
 		

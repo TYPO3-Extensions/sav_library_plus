@@ -263,23 +263,23 @@ class Tx_SavLibraryPlus_ItemViewers_Default_FilesItemViewer extends Tx_SavLibrar
       }
     }
 
-      $typoScriptConfiguration = array(
-        'parameter'  => $uploadFolder . '/' . $this->fileName,
-        'target'  => $this->getItemConfiguration('target'),
-      );
+    $typoScriptConfiguration = array(
+      'parameter'  => $uploadFolder . '/' . rawurlencode($this->fileName),
+      'target'  => $this->getItemConfiguration('target'),
+    );
 
-      // Creates the link
-      $contentObject = $this->getController()->getExtensionConfigurationManager()->getExtensionContentObject();
-      $messageLink = $this->getItemConfiguration('message') ? $this->getItemConfiguration('message') : $this->fileName;
-      $link = $contentObject->typolink($messageLink, $typoScriptConfiguration);
+    // Creates the link
+    $contentObject = $this->getController()->getExtensionConfigurationManager()->getExtensionContentObject();
+    $messageLink = $this->getItemConfiguration('message') ? $this->getItemConfiguration('message') : $this->fileName;
+    $link = $contentObject->typolink($messageLink, $typoScriptConfiguration);
 
-      // Adds the SPAN elements
-      $content .= Tx_SavLibraryPlus_Utility_HtmlElements::htmlSpanElement(
-        array(
-          Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('class', 'fileLink'),
-        ),
-        $link
-      );
+    // Adds the SPAN elements
+    $content .= Tx_SavLibraryPlus_Utility_HtmlElements::htmlSpanElement(
+      array(
+        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('class', 'fileLink'),
+      ),
+      $link
+    );
 
     return $content;
   }

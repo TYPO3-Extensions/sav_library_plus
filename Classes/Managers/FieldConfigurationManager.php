@@ -23,7 +23,7 @@
  ***************************************************************/
 
 /**
- * Field configurataion manager.
+ * Field configuration manager.
  *
  * @package SavLibraryPlus
  * @subpackage Managers
@@ -45,11 +45,14 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
         \s+
       )?
       (?P<expression>
-        (?:\#{3})?
-        (?P<lhs>(?:(?:\w+\.)+)?\w+)
-        \s*(?P<operator>=|!=)\s*
-        (?P<rhs>\w+|\#{3}user\#{3}|\#{3}cruser\#{3})
-        (?:\#{3})?
+        (?:
+        	false | true |     
+	        (?:\#{3})?
+		        (?P<lhs>(?:(?:\w+\.)+)?\w+)
+		        \s*(?P<operator>=|!=|>=|<=|>|<)\s*
+		        (?P<rhs>[-\w]+|\#{3}[^\#]+\#{3}) 
+	        (?:\#{3})?
+				)
       )
     )
   /x';
@@ -102,7 +105,7 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
    * @var Tx_SavLibraryPlus_Queriers_AbstractQuerier
    */
   protected $querier = NULL;
-  
+    
 	/**
 	 * Injects the controller
 	 * 
@@ -229,10 +232,11 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
 	 *
 	 * @param array $folder array (the folder)
 	 * @param boolean $flatten
+	 * @param boolean $flattenAll
 	 *
 	 * @return array
 	 */
-  public function getFolderFieldsConfiguration($folder, $flatten = false) {
+  public function getFolderFieldsConfiguration($folder, $flatten = false, $flattenAll = false) {
 
     $folderFieldsConfiguration = array();
     
@@ -249,11 +253,18 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
 
       // If it is a subform, gets the configuration for each subform field
       if (isset($fieldConfiguration['subform']) && $flatten === true) {
+
         foreach ($fieldConfiguration['subform'] as $subformFolderKey => $subformFolder) {
           $subfromFolderFieldsConfiguration = $this->getFolderFieldsConfiguration($subformFolder);
           foreach ($subfromFolderFieldsConfiguration as $subfromFolderFieldConfigurationKey => $subfromFolderFieldConfiguration) {
             $subfromFolderFieldsConfiguration[$subfromFolderFieldConfigurationKey ]['parentTableName'] = $fieldConfiguration['tableName'];
             $subfromFolderFieldsConfiguration[$subfromFolderFieldConfigurationKey ]['parentFieldName'] = $fieldConfiguration['fieldName'];
+            if ($flattenAll === true) {
+          		$folderFieldsConfiguration = array_merge($folderFieldsConfiguration, array(
+        				$subfromFolderFieldConfigurationKey => $subfromFolderFieldConfiguration
+        				)
+        			);
+          	}
           }
           $fieldConfiguration['subform'] = $subfromFolderFieldsConfiguration;
         }
@@ -310,8 +321,7 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
     }
  
     // Adds the label
-    $label = Tx_SavLibraryPlus_Managers_TcaConfigurationManager::getTcaFieldLabel($tableName, $fieldName);
-    $fieldConfiguration['label'] = $label;
+    $fieldConfiguration['label'] = $this->getLabel();
 
     // Adds the value
     $fieldConfiguration['value'] = $this->getValue();
@@ -380,12 +390,39 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
     // Adds the item wrapper if the viewer exists
     $viewer = $this->getController()->getViewer();
     if (empty($viewer) === false) {
+    	if ($this->kickstarterFieldConfiguration['wrapitemifnotcut'] && !$fieldConfiguration['cutDivItemInner']) {
+    		$this->kickstarterFieldConfiguration['wrapitem'] = $this->kickstarterFieldConfiguration['wrapitemifnotcut'];
+    	}
       $fieldConfiguration['wrapItem'] = $querier->parseLocalizationTags($this->kickstarterFieldConfiguration['wrapitem']);
       $fieldConfiguration['wrapItem'] = $querier->parseFieldTags($fieldConfiguration['wrapItem']);
     }
 
     return $fieldConfiguration;
   }
+
+	/**
+	 * Builds the label.
+	 *
+	 * @param none
+	 *
+	 * @return string
+	 */
+	protected function getLabel() { 
+		$label = $this->kickstarterFieldConfiguration['label'];
+		if (empty($this->kickstarterFieldConfiguration['label'])) {		
+			$tableName = $this->kickstarterFieldConfiguration['tableName'];
+    	$fieldName = $this->kickstarterFieldConfiguration['fieldName'];
+    	// Tries to find the label in the extension resource locallang_db file
+    	$labelKey = 'LLL:EXT:' . Tx_SavLibraryPlus_Managers_ExtensionConfigurationManager::getExtensionKey() . '/Resources/Private/Language/locallang_db.xml:' .$tableName . '.' . $fieldName;
+    	$label = $GLOBALS['TSFE']->sL($labelKey);   
+    	if (empty($label)) {
+    		// tries to find the lable from the TCA
+				$label = Tx_SavLibraryPlus_Managers_TcaConfigurationManager::getTcaFieldLabel($tableName, $fieldName);
+    	}	
+		}
+		return $label;
+	} 
+  
 
 	/**
 	 * Builds the value content.
@@ -397,7 +434,7 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
 	protected function getValue() { 
 		// Gets the querier		
     $querier = $this->getQuerier();		
-    
+   
 	  // Gets the value directly from the kickstarter (specific and rare case)
 	  if (empty($this->kickstarterFieldConfiguration['value']) === false) {
 	  	$value = $this->kickstarterFieldConfiguration['value'];
@@ -419,14 +456,25 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
     		$fieldName = $this->getFullFieldName();
     	}
   	
-    	$viewerCondition = $this->getController()->getviewer() !== NULL && $this->getController()->getViewer()->isNewView() === false;
- 			if ($this->kickstarterFieldConfiguration['reqvalue'] && $viewerCondition === true) {
-				$value = $this->getValueFromRequest();   	
- 			} elseif ($querier->errorDuringUpdate() === true) {		
+ 			// Gets the value   	
+    	if ($querier->errorDuringUpdate() === true) {		
+debug($fieldName);
+debug($value);
 				$value = $querier->getFieldValueFromProcessedPostVariables($fieldName);
 			} else {
       	$value = $querier->getFieldValueFromCurrentRow($fieldName);					
  			}
+			
+ 			// Special processing if reqValue attribute is set
+ 			if ($this->kickstarterFieldConfiguration['reqvalue']) {
+    		$viewerCondition = $this->getController()->getviewer() !== NULL && $this->getController()->getViewer()->isNewView() === false;
+ 				if ($viewerCondition === true) {
+					$value = $this->getValueFromRequest();
+ 				} else {
+ 					// Processes the reqValue only for additional markers
+ 					$this->getValueFromRequest();
+ 				}   	
+ 			} 
     }
    
     return $value;    
@@ -500,15 +548,15 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
 	protected function getValueFromRequest() {  
 
 		// Gets the querier
-    $querier = $this->getController()->getQuerier();
-    
+    $querier = $this->getQuerier();
+   
     // Gets the query
     $query = $this->kickstarterFieldConfiguration['reqvalue']; 
         
     // Processes localization tags
     $query = $querier->parseLocalizationTags($query);
     $query = $querier->parseFieldTags($query);
-    
+
     // Checks if the query is a select query
     if (!$querier->isSelectQuery($query)) {
     	Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.onlySelectQueryAllowed', array($this->kickstarterFieldConfiguration['fieldName']));
@@ -525,13 +573,27 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
   	if (empty($separator)) {
   		$separator = '<br />';
   	}
-
+ 
+  	// Creates an item viewer for the processing of the func attribute
+  	$itemViewer = t3lib_div::makeInstance('Tx_SavLibraryPlus_ItemViewers_Default_StringItemViewer');
+  	$itemViewer->injectController($this->getController());
+  	$itemViewer->injectItemConfiguration($this->kickstarterFieldConfiguration);
+  	
   	// Processes the rows
   	$value = '';
   	while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($resource)) {
 			// Checks if the field value is in the row
       if (array_key_exists('value', $row)) {
-        $value .= ($value ? $separator : '') . $row['value'];
+      	$valueFromRow = $row['value'];
+        unset($row['value']);  
+        $itemViewer->injectItemConfigurationAttribute($row);
+        // Injects each field as additional markers
+        foreach ($row as $fieldKey => $field) {
+        	$querier->injectAdditionalMarkers(array('###' . $fieldKey . '###' => $field));       	
+        }
+        $valueFromRow = $itemViewer->processFuncAttribute($valueFromRow);
+
+        $value .= ($value ? $separator : '') . $valueFromRow;
       } else {
       	Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.aliasValueMissingInReqValue', array($this->kickstarterFieldConfiguration['fieldName']));
 				return '';
@@ -567,7 +629,7 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
     if (empty($this->kickstarterFieldConfiguration['classvalue'])) {
       $class = 'value';
     } else {
-      $class =  'value ' . $this->kickstarterFieldConfiguration['classvalue'];
+      $class = 'value ' . $this->kickstarterFieldConfiguration['classvalue'];
     }
 
     return $class;
@@ -698,6 +760,7 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
     );
     if ($fusionEnd) {
       $this->fusionInProgress = FALSE;
+      $this->fusionBeginPending = FALSE;     
     }
     return $cut;
 	}
@@ -748,7 +811,7 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
 	protected function cutIfEmpty() {
 
     if ($this->kickstarterFieldConfiguration['cutifnull'] || $this->kickstarterFieldConfiguration['cutifempty']) {
-      $value = $this->getValue();    
+      $value = $this->getValue();      
       return empty($value);
     } else {
       return FALSE;
@@ -787,11 +850,11 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
 		$result = NULL;
 		
 		// Gets the querier
-    $querier = $this->getController()->getQuerier();
+    $querier = $this->getQuerier();
     	
     // Matchs the pattern
     preg_match_all(self::CUT_IF_PATTERN, $fieldCondition, $matches);
-    
+   
     // Processes the expressions
     foreach($matches['expression'] as $matchKey => $match) {
       // Processes the left hand side
@@ -799,7 +862,7 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
       switch ($lhs) {
 				case 'group':
 					$isGroupCondition = true;
-          if (empty($querier) === false) {
+          if (empty($querier) === false && $querier->rowsNotEmpty()) {
           	$fullFieldName = $querier->buildFullFieldName('usergroup');
           	if ($querier->fieldExistsInCurrentRow($fullFieldName) === true) {
       				$lhsValue = $querier->getFieldValueFromCurrentRow($fullFieldName);
@@ -814,10 +877,12 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
           $isGroupCondition = true;
   		    $lhsValue = $GLOBALS['TSFE']->fe_user->user['usergroup'];
           break;
+        case '':        	
+        	break;
         default:
 					// Gets the value        	
-          if (empty($querier) === false) {
-            $fullFieldName = $querier->buildFullFieldName($lhs);
+          if (empty($querier) === false && $querier->rowsNotEmpty()) {
+            $fullFieldName = $querier->buildFullFieldName($lhs);         
           	if ($querier->fieldExistsInCurrentRow($fullFieldName) === true) {
       				$lhsValue = $querier->getFieldValueFromCurrentRow($fullFieldName);
           	} else {
@@ -827,10 +892,9 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
     				return false;
     			}
       }
+      
       // Processes the right hand side
       $rhs = $matches['rhs'][$matchKey];
- 
-      // Processes special markers
       switch ($rhs) {
         case 'EMPTY':
         	$condition = empty($lhsValue);
@@ -847,22 +911,40 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
     				$condition = ($lhsValue == $GLOBALS['TSFE']->fe_user->user['uid']);
     			}
         	break; 
+        case '###time()###':
+        case '###now()###':
+  		      $rhsValue = time();               	
+        	break;        	
+        case '':
+						// Processes directly the expression
+						switch($matches['expression'][$matchKey]) {
+							case 'false':
+								$condition = 0;
+								break;
+							case 'true':
+								$condition = 1;
+								break;
+							default:
+								$condition = 1;
+						}
+        	break;
         default:
         	if ($isGroupCondition !== true) {
          		$rhsValue = $rhs;       			
-        	} else {
+        	} else {     		
             $rows = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows(
               /* SELECT */	'uid',
         			/* FROM   */	'fe_groups',
         	 		/* WHERE  */	'title="' . $rhs . '"'
   		      ); 
-  		      $rhsValue = $rows[0]['uid'];        			
+  		      $rhsValue = $rows[0]['uid'];     		          			
         	}
         	break;       		
       }
-    
+
       // Processes the condition
-      switch ($matches['operator'][$matchKey]) {
+      $operator = $matches['operator'][$matchKey];
+      switch ($operator) {
         case '=':
           if ($isGroupCondition !== true) {
             $condition = ($lhsValue == $rhsValue);
@@ -877,11 +959,20 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
           	$condition = (in_array($rhsValue, explode(',', $lhsValue)) === false);
           }          	
           break;
+        case '>=':
+        case '<=':
+        case '>':
+        case '<':
+          if ($isGroupCondition !== true) {
+            $condition = eval('return ' . $lhsValue . $operator . $rhsValue . ';');
+          } else {
+          		return Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.operatorNotAllowed', array($operator));
+          }          	
+          break;                          
       }
 
       // Processes the connector
-      $connector = $matches['connector'][$matchKey];
-      
+      $connector = $matches['connector'][$matchKey];      
       switch ($connector) {
         case '|':
         case 'or':

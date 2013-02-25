@@ -32,6 +32,13 @@
 class Tx_SavLibraryPlus_ItemViewers_Edit_RelationManyToManyAsDoubleSelectorboxItemViewer extends Tx_SavLibraryPlus_ItemViewers_Edit_AbstractItemViewer {
 
   /**
+   * The selected items
+   *
+   * @var array
+   */
+  protected $selectedItems;  
+	
+	/**
    * The Foreign Table Select Querier
    *
    * @var Tx_SavLibraryPlus_Queriers_ForeignTableSelectQuerier
@@ -58,7 +65,11 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_RelationManyToManyAsDoubleSelectorboxIt
       $this->setForeignTableSelectQuerier('buildQueryConfigurationForCommaListManyToManyRelation');
       $this->setSelectedItems();
     }
-    return $this->renderDoubleSelectorbox();
+    if ($this->getItemConfiguration('singlewindow')) {
+    	return $this->renderSingleSelectorbox();
+    } else {
+    	return $this->renderDoubleSelectorbox();   	
+    }
   }
 
   /**
@@ -135,10 +146,88 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_RelationManyToManyAsDoubleSelectorboxIt
     $htmlArray[] = $this->buildSourceSelectorBox();
 
     // Adds the javaScript for the selectorboxes
-    Tx_SavLibraryPlus_Managers_AdditionalHeaderManager::addJavaScript('selectAll', 'selectAll(\'' . Tx_SavLibraryPlus_Controller_AbstractController::getFormName() . '\', \'' . $this->getItemConfiguration('itemName') . '[]\');');
+    Tx_SavLibraryPlus_Managers_AdditionalHeaderManager::addJavaScript('selectAll', 
+    	'if (x == \'' . Tx_SavLibraryPlus_Controller_AbstractController::getFormName() . '\')	selectAll(x, \'' . $this->getItemConfiguration('itemName') . '[]\');');
 
     return $this->arrayToHTML($htmlArray);
   }
+  
+	/**
+	 * Renders the Single Selectorbox
+	 *
+	 * @param none
+	 *
+	 * @return string the rendered item
+	 */
+  protected function renderSingleSelectorbox() {
+
+    $htmlArray = array();
+		
+    // Gets information from the foreign table
+    $this->foreignTableSelectQuerier->buildQueryConfigurationForForeignTable($this->itemConfiguration);
+    $this->foreignTableSelectQuerier->injectQueryConfiguration();
+
+    $this->foreignTableSelectQuerier->processQuery();
+
+    // Gets the rows
+    $rows = $this->foreignTableSelectQuerier->getRows();
+    
+    // Initializes the option element array
+    $htmlOptionArray = array();
+		$htmlOptionArray[] = '';
+		
+		// Checks if the emptyItem attribute is set
+  	if ($this->getItemConfiguration('emptyitem')) {
+			// Adds the Option element
+			$htmlOptionArray[] = Tx_SavLibraryPlus_Utility_HtmlElements::htmlOptionElement(
+        array(
+          Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('class', 'item0'),
+          Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('value', '0'),
+        ),
+        ''
+      );
+    }    
+    
+  	// Gets the label for the foreign_table
+		$label = $this->getItemConfiguration('labelselect');
+		if (!empty($label)) {
+			// Checks if it is an alias
+			if (!$this->foreignTableSelectQuerier->fieldExistsInCurrentRow($label)) {
+				$label = $this->getItemConfiguration('foreign_table') . '.' . $label;
+			}
+		} else {
+			$label = $this->getItemConfiguration('foreign_table') . '.' . Tx_SavLibraryPlus_Managers_TcaConfigurationManager::getTcaCtrlField($this->getItemConfiguration('foreign_table'), 'label');	
+		}
+
+    // Adds the option elements
+    foreach ($rows as $rowKey => $row) {   
+      $selected = (in_array($row['uid'], $this->selectedItems) === true ? 'selected ' : '');
+			// Adds the Option element
+			$htmlOptionArray[] = Tx_SavLibraryPlus_Utility_HtmlElements::htmlOptionElement(
+	       array(
+	         Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('class', 'item' . $row['uid']),
+	         Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('value', $row['uid']),
+	         Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttributeIfNotNull('selected', $selected),
+	         ),
+	       stripslashes($row[$label])
+	    );
+    }
+    
+    // Adds the select element
+		$htmlArray[] = Tx_SavLibraryPlus_Utility_HtmlElements::htmlSelectElement(
+      array(
+        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('multiple', 'multiple'),
+        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('class', 'multiple'),
+        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('name', $this->getItemConfiguration('itemName') . '[]'),
+        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('size', $this->getItemConfiguration('size')),
+        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('onchange', 'document.changed=1;'),
+      ),
+      $this->arrayToHTML($htmlOptionArray)
+    );
+
+    return $this->arrayToHTML($htmlArray);
+  }  
+  
   
 	/**
 	 * Builds the destination selector box
@@ -157,24 +246,27 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_RelationManyToManyAsDoubleSelectorboxIt
 		$htmlOptionArray[] = '';
 
 		// Gets the label for the foreign_table
-		$label = $this->getItemConfiguration('foreign_table') . '.' . (
-      $this->getItemConfiguration('labelselect') ?
-      $this->getItemConfiguration('labelselect') :
-      Tx_SavLibraryPlus_Managers_TcaConfigurationManager::getTcaCtrlField($this->getItemConfiguration('foreign_table'), 'label')
-    );
+		$label = $this->getItemConfiguration('labelselect');
+		if (!empty($label)) {
+			// Checks if it is an alias
+			if (!$this->foreignTableSelectQuerier->fieldExistsInCurrentRow($label)) {
+				$label = $this->getItemConfiguration('foreign_table') . '.' . $label;
+			}
+		} else {
+			$label = $this->getItemConfiguration('foreign_table') . '.' . Tx_SavLibraryPlus_Managers_TcaConfigurationManager::getTcaCtrlField($this->getItemConfiguration('foreign_table'), 'label');	
+		}
 
     // Adds the option elements
-    foreach ($rows as $rowKey => $row) {
-    
+    foreach ($rows as $rowKey => $row) {    
       if (in_array($row['uid'], $this->selectedItems) === true) {
-			// Adds the Option element
-			$htmlOptionArray[] = Tx_SavLibraryPlus_Utility_HtmlElements::htmlOptionElement(
-        array(
-          Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('class', 'item' . $row['uid']),
-          Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('value', $row['uid']),
-        ),
-        stripslashes($row[$label])
-      );
+				// Adds the Option element
+				$htmlOptionArray[] = Tx_SavLibraryPlus_Utility_HtmlElements::htmlOptionElement(
+	        array(
+	          Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('class', 'item' . $row['uid']),
+	          Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('value', $row['uid']),
+	        ),
+	        stripslashes($row[$label])
+	      );
       }
     }
     
@@ -213,12 +305,16 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_RelationManyToManyAsDoubleSelectorboxIt
     $htmlOptionArray = array();
 		$htmlOptionArray[] = '';
 
-		// Gets the label for the foreign_table
-		$label = $this->getItemConfiguration('foreign_table') . '.' . (
-      $this->getItemConfiguration('labelselect') ?
-      $this->getItemConfiguration('labelselect') :
-      Tx_SavLibraryPlus_Managers_TcaConfigurationManager::getTcaCtrlField($this->getItemConfiguration('foreign_table'), 'label')
-    );
+  		// Gets the label for the foreign_table
+		$label = $this->getItemConfiguration('labelselect');
+		if (!empty($label)) {
+			// Checks if it is an alias
+			if (!$this->foreignTableSelectQuerier->fieldExistsInCurrentRow($label)) {
+				$label = $this->getItemConfiguration('foreign_table') . '.' . $label;
+			}
+		} else {
+			$label = $this->getItemConfiguration('foreign_table') . '.' . Tx_SavLibraryPlus_Managers_TcaConfigurationManager::getTcaCtrlField($this->getItemConfiguration('foreign_table'), 'label');	
+		}
 
     // Adds the option elements
     foreach ($rows as $rowKey => $row) {

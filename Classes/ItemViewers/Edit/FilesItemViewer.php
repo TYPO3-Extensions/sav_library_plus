@@ -83,7 +83,7 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_FilesItemViewer extends Tx_SavLibraryPl
 		       	
     		// Builds the typoScript configuration
 				$typoScriptConfiguration = array(
-      		'parameter'  =>  $uploadFolder . '/' . $fileName, 
+      		'parameter'  =>  $uploadFolder . '/' . rawurlencode($fileName), 
       		'fileTarget'  => $this->getItemConfiguration('target') ? $this->getItemConfiguration('target') : '_blank',						
     		);    
 

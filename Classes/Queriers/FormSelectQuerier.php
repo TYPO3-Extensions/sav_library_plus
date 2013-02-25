@@ -37,7 +37,28 @@ class Tx_SavLibraryPlus_Queriers_FormSelectQuerier extends Tx_SavLibraryPlus_Que
    * @var array
    */
 	protected $savedRow;	
+
+	/**
+   * The new row
+   *
+   * @var array
+   */
+	protected $newRow;		
 	
+	/**
+   * The validation array
+   *
+   * @var array
+   */
+	protected $validation;	
+	
+	/**
+   * The form unserialized data
+   *
+   * @var array
+   */
+	protected $formUnserializedData;	
+				
   /**
    * Executes the query
    *
@@ -60,22 +81,59 @@ class Tx_SavLibraryPlus_Queriers_FormSelectQuerier extends Tx_SavLibraryPlus_Que
 
     // Saves the current row
     $this->savedRow = $this->rows[$this->currentRowId];
-    
+   
     // Gets the submitted data and unserializes them
     $submittedData = $this->getFieldValueFromCurrentRow($this->buildFullFieldName('_submitted_data_'));
     $unserializedData = unserialize($submittedData);
-    
+  
     // Gets the temporary data associated with the form if any
     $shortFormName = Tx_SavLibraryPlus_Controller_AbstractController::getShortFormName();
     
     if (empty($unserializedData[$shortFormName]) === false) {
-    	$formUnserializedSata = $unserializedData[$shortFormName];
-    	if(empty($formUnserializedSata['temporary']) === false) {
-    		$this->rows[$this->currentRowId] = array_merge($this->rows[$this->currentRowId], $formUnserializedSata['temporary']);
+    	$this->formUnserializedData = $unserializedData[$shortFormName];
+    	if(empty($this->formUnserializedData['temporary']) === false) {
+    		if (!empty($this->formUnserializedData['temporary']['validation'])) {
+    			$this->validation = $this->formUnserializedData['temporary']['validation'];
+    			unset($this->formUnserializedData['temporary']['validation']);
+    		}
+
+    		$this->processFormUnserializedData($formUnserializedData['temporary']);
     	}
     }
   }
 
+  /**
+   * Processes the form unserialized data
+   *
+   * @param none
+   *
+   * @return none
+   */  
+	protected function processFormUnserializedData() {
+		foreach($this->formUnserializedData['temporary'] as $key => $row) {
+    	if ($key === 0 && !$this->getFieldValueFromCurrentRow($this->buildFullFieldName('_validated_'))) {
+    		$this->newRow = $row;
+    	} else {
+    		$this->rows[$this->currentRowId] = array_merge($this->rows[$this->currentRowId], $row);    				
+    	}
+    }
+	}  
+  
+  /**
+   * Gets the validation for a field
+   *
+   * @param $cryptedFullFieldName
+   *
+   * @return mixed
+   */
+  public function getFieldValidation($cryptedFullFieldName) {
+  	if (isset($this->validation[$cryptedFullFieldName])) {
+  		return $this->validation[$cryptedFullFieldName];
+  	} else {
+  		return NULL;
+  	}
+  }	  
+  
   /**
    * Builds the WHERE clause
    *
@@ -115,6 +173,16 @@ class Tx_SavLibraryPlus_Queriers_FormSelectQuerier extends Tx_SavLibraryPlus_Que
   public function getFieldValueFromSavedRow($fullFieldName) {
   	return $this->savedRow[$fullFieldName];
   }
-  
+
+  /**
+   * Gets a new row field
+   *
+   * @param $fullFieldName
+   *
+   * @return mixed
+   */
+  public function getFieldValueFromNewRow($fullFieldName) {
+  	return $this->newRow[$fullFieldName];
+  }  
 }
 ?>

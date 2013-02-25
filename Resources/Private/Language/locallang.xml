@@ -115,7 +115,7 @@
 			<label index="error.unknownConfigurationFile">The configuration file "%s" is unknown.</label>
 			<label index="error.unknownFieldName">Please contact the Webmaster. The field "%s" is unknown or undefined.</label>
       <label index="error.unknownFormAction">The action "%s" is unknown.</label>
-			<label index="error.unknownFunction">Please contact the Webmaster. The following function "%s" is unknown.</label>
+			<label index="error.unknownFunction">Please contact the Webmaster. The function "%s" is unknown.</label>
 			<label index="error.unknownFormParam">The following parameter is unknown: %s.</label>
 			<label index="error.unknownFunctionInWhere">The following function, used in a WHERE clause (###func:whereClause###), is not defined: %s.</label>
 			<label index="error.unknownMarker">The following marker is unknown: %s.</label>

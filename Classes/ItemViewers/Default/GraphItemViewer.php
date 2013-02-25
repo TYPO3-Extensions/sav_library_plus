@@ -53,6 +53,7 @@ class Tx_SavLibraryPlus_ItemViewers_Default_GraphItemViewer extends Tx_SavLibrar
    * @return string
    */
   protected function renderItem() {  
+  	
     // Checks that sav_jpgraph is loaded
     if (t3lib_extMgm::isLoaded('sav_jpgraph')) {
 
@@ -100,17 +101,17 @@ class Tx_SavLibraryPlus_ItemViewers_Default_GraphItemViewer extends Tx_SavLibrar
     }
 
     // Defines the main directory
-    define('JP_maindir', t3lib_extMgm::extPath('sav_jpgraph') . 'src/');
+    define('JP_maindir', t3lib_extMgm::extPath('sav_jpgraph') . 'Classes/JpGraph/');
 
     // Defines the cache dir
     define('CACHE_DIR', 'typo3temp/sav_jpgraph/');
 
     // Requires the xml class
-    require_once(t3lib_extMgm::extPath('sav_jpgraph'). 'class.typo3.php');
-    require_once(t3lib_extMgm::extPath('sav_jpgraph'). 'class.xmlgraph.php');
+    require_once(t3lib_extMgm::extPath('sav_jpgraph'). 'Classes/XmlParser/XmlTypo3Tag.php');
+    require_once(t3lib_extMgm::extPath('sav_jpgraph'). 'Classes/XmlParser/XmlGraph.php');
 
     // Creates the xlmgraph
-    $this->xmlGraph = t3lib_div::makeInstance('xmlGraph');
+    $this->xmlGraph = t3lib_div::makeInstance('Tx_SavJpgraph_XmlParser_xmlGraph');
   }
 
 	/**

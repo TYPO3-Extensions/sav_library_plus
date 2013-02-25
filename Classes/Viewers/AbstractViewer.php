@@ -92,7 +92,7 @@ abstract class Tx_SavLibraryPlus_Viewers_AbstractViewer {
    *
    * @var Tx_SavLibraryPlus_Managers_LibraryConfigurationManager
    */
-  protected $libraryConfigurationManager = array();	
+  protected $libraryConfigurationManager;	
 
   /**
    * The field configuration manager
@@ -190,6 +190,17 @@ abstract class Tx_SavLibraryPlus_Viewers_AbstractViewer {
     return $this->controller;
   }
 
+	/**
+	 * Gets the library configuration manager
+	 *
+	 * @param none
+	 *
+	 * @return Tx_SavLibraryPlus_Managers_LibraryConfigurationManager
+	 */
+  public function getLibraryConfigurationManager() {
+    return $this->libraryConfigurationManager;
+  }  
+  
   /**
 	 * Returns true if the view is a new view
 	 *
@@ -219,7 +230,7 @@ abstract class Tx_SavLibraryPlus_Viewers_AbstractViewer {
     $this->viewIdentifier =  $this->libraryConfigurationManager->getViewIdentifier($viewType);
   
     // Gets the view configuration
-    $this->libraryViewConfiguration =  $this->libraryConfigurationManager->getViewConfiguration($this->viewIdentifier);
+    $this->libraryViewConfiguration =  $this->libraryConfigurationManager->getViewConfiguration($this->viewIdentifier);  
   }
      				
 	/**
@@ -624,7 +635,7 @@ abstract class Tx_SavLibraryPlus_Viewers_AbstractViewer {
 	 * Processes the title field of a view.
 	 * It replaces localization and field tags by their values
 	 *
-	 * @param $title string The title to process
+	 * @param string $title The title to process
 	 *
 	 * @return string The processed title
 	 */
@@ -651,6 +662,22 @@ abstract class Tx_SavLibraryPlus_Viewers_AbstractViewer {
     $title = $this->getController()->getQuerier()->parseFieldTags($title);
 
     return $title;
+  }
+  
+	/**
+	 * Processes the field.
+	 *
+	 * @param string $cryptedFullFieldName The crypted full field name
+	 *
+	 * @return none
+	 */
+  protected function processField($cryptedFullFieldName) { 	
+    if ($this->folderFieldsConfiguration[$cryptedFullFieldName]['onlabel']) {
+      $this->folderFieldsConfiguration[$cryptedFullFieldName]['label'] = $this->renderItem($cryptedFullFieldName);
+      $this->folderFieldsConfiguration[$cryptedFullFieldName]['value'] = '';
+    } else {
+      $this->folderFieldsConfiguration[$cryptedFullFieldName]['value'] = $this->renderItem($cryptedFullFieldName);
+    }
   }
 
   /**

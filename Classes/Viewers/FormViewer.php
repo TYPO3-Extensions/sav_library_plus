@@ -75,15 +75,6 @@ class Tx_SavLibraryPlus_Viewers_FormViewer extends Tx_SavLibraryPlus_Viewers_Abs
    */
   public function render() {
 
-    // Adds the javaScript file
-    $GLOBALS['TSFE']->additionalHeaderData[Tx_SavLibraryPlus_Controller_AbstractController::LIBRARY_NAME] =
-        '<script type="text/javascript" src="' .
-        t3lib_extMgm::siteRelPath(Tx_SavLibraryPlus_Controller_AbstractController::LIBRARY_NAME) .
-        'Resources/Private/JavaScript/sav_library_plus.js"></script>';  	
-  	
-    // Gets the library configuration manager
-    $libraryConfigurationManager = $this->getController()->getLibraryConfigurationManager();
-
     // Sets the library view configuration
     $this->setLibraryViewConfiguration('FormView');
 
@@ -92,17 +83,17 @@ class Tx_SavLibraryPlus_Viewers_FormViewer extends Tx_SavLibraryPlus_Viewers_Abs
 
     // Creates the template configuration manager
     $templateConfigurationManager = t3lib_div::makeInstance('Tx_SavLibraryPlus_Managers_TemplateConfigurationManager');
-    $templateConfigurationManager->injectTemplateConfiguration($libraryConfigurationManager->getFormViewTemplateConfiguration());
+    $templateConfigurationManager->injectTemplateConfiguration($this->getLibraryConfigurationManager()->getFormViewTemplateConfiguration());
 
     // Creates the field configuration manager
     $this->createFieldConfigurationManager();
-    
+        
     // Gets the item template
     $itemTemplate = $templateConfigurationManager->getItemTemplate();
 
     // Processes the rows
     $rows = $this->getController()->getQuerier()->getRows();
-
+      	
     $fields = array();
     foreach ($rows as $rowKey => $row) {
 
@@ -155,12 +146,13 @@ class Tx_SavLibraryPlus_Viewers_FormViewer extends Tx_SavLibraryPlus_Viewers_Abs
     // Parses the buttons if any
 		$itemTemplate = $this->parseButtonSpecialTags($itemTemplate);  
 
-    // Parses localization tags
-    $itemTemplate = $this->getController()->getQuerier()->parseLocalizationTags($itemTemplate, false);  	
-    
 		// Processes the rendering of the item
 		$itemTemplate = $this->parseRenderTags($itemTemplate);
    
+    // Parses localization tags
+    $itemTemplate = $this->getController()->getQuerier()->parseLocalizationTags($itemTemplate, false);  	
+    $itemTemplate = $this->getController()->getQuerier()->parseFieldTags($itemTemplate, false);  	
+    
   	return $itemTemplate;
   }
 
@@ -172,36 +164,57 @@ class Tx_SavLibraryPlus_Viewers_FormViewer extends Tx_SavLibraryPlus_Viewers_Abs
 	 * @return string 
 	 */
 	protected function parseFieldSpecialTags($template) {  
+		
+	  // Checks if the value must be parsed
+  	if (strpos($template,'#') === false) {
+  		return $template;
+  	}
+  			
     // Processes the field marker
-    preg_match_all('/###field\[([^\],]+)(,?)([^\]]*)\]###/', $template, $matches);  
+    preg_match_all('/###(?<prefix>new|show)?field\[(?<fieldName>[^\],]+)(?<separator>,?)(?<label>[^\]]*)\]###/', $template, $matches);  
 
     foreach($matches[0] as $matchKey => $match) {
 
     	// Gets the crypted full field name
-      $fullFieldName =  $this->getController()->getQuerier()->buildFullFieldName($matches[1][$matchKey]);  
+      $fullFieldName =  $this->getController()->getQuerier()->buildFullFieldName($matches['fieldName'][$matchKey]);  
       $cryptedFullFieldName = Tx_SavLibraryPlus_Controller_AbstractController::cryptTag($fullFieldName);
 
       // Removes the field if not in admin mode
-      if ($this->folderFieldsConfiguration[$cryptedFullFieldName]['addeditifadmin']) {
+      if ($this->folderFieldsConfiguration[$cryptedFullFieldName]['addeditifadmin'] && !$this->getController()->getUserManager()->userIsAllowedToChangeData('+')) {
       	$template = str_replace($matches[0][$matchKey], '', $template);
       	continue;
       }
-    	
+
+      // Checks if the field can be edited
+				if ($this->folderFieldsConfiguration[$cryptedFullFieldName]['addedit']) {
+      		$edit = 'Edit';
+      	} else {
+      		$edit = '';
+      }	
+      
       // Processes the field
-			if ($matches[2][$matchKey]) {
+			if ($matches['separator'][$matchKey]) {
 				// Checks if required is needed
 				if ($this->folderFieldsConfiguration[$cryptedFullFieldName]['required']) {
       		$required = 'Required';
       	} else {
       		$required = '';
       	}
-				
-				$replacementString = 
-              '<div class="column1">$$$label' . $required . '[' . $matches[3][$matchKey] . ']$$$</div>' .
-                '<div class="column2">###renderSaved[' . $matches[1][$matchKey] . ']###</div>' .
-                '<div class="column3">###renderEdit[' . $matches[1][$matchKey] . ']###</div>';				
+      	
+      	$prefix = $matches['prefix'][$matchKey];
+      	if ($prefix) {	      			
+					$replacementString = 
+						'<div class="column1">$$$label' . $required . '[' . $matches['label'][$matchKey] . ']$$$</div>' .
+            '<div class="column2"></div>' .
+            '<div class="column3">###render' . ucfirst($prefix) . '[' . $matches['fieldName'][$matchKey] . ']###</div>';		
+      	} else {
+					$replacementString = 
+             '<div class="column1">$$$label' . $required . '[' . $matches['label'][$matchKey] . ']$$$</div>' .
+             '<div class="column2">###renderSaved[' . $matches['fieldName'][$matchKey] . ']###</div>' .
+             '<div class="column3">###render' . $edit . '[' . $matches['fieldName'][$matchKey] . ']###</div>';		      		
+      	}		
 			} else {
-				$replacementString = '###renderEdit[' . $matches[1][$matchKey] . ']###';				
+				$replacementString = '###render' . $edit . '[' . $matches['fieldName'][$matchKey] . ']###';				
 			}
 			$template = str_replace($matches[0][$matchKey], $replacementString, $template);				
     }
@@ -237,12 +250,12 @@ class Tx_SavLibraryPlus_Viewers_FormViewer extends Tx_SavLibraryPlus_Viewers_Abs
 	 */
 	protected function parseRenderTags($template) {  
     // Processes the render marker	
-    preg_match_all('/###render(Edit|Saved|Validation)?\[([^#]+)\]###/', $template, $matches);
+    preg_match_all('/###render(?<type>Edit|New|Show|Saved|Validation|NoValidation)?\[(?<fieldName>[^#]+)\]###/', $template, $matches);
 
     foreach($matches[0] as $matchKey => $match) {
    	
       // Builds the crypted full field name
-      $fullFieldName =  $this->getController()->getQuerier()->buildFullFieldName($matches[2][$matchKey]);
+      $fullFieldName =  $this->getController()->getQuerier()->buildFullFieldName($matches['fieldName'][$matchKey]);
       $cryptedFullFieldName = Tx_SavLibraryPlus_Controller_AbstractController::cryptTag($fullFieldName);
       
       if (empty($this->folderFieldsConfiguration[$cryptedFullFieldName])) {
@@ -251,25 +264,37 @@ class Tx_SavLibraryPlus_Viewers_FormViewer extends Tx_SavLibraryPlus_Viewers_Abs
       }
 
       // Adds the item name
-      $uid = $this->getController()->getQuerier()->getFieldValueFromCurrentRow('uid');
+      if ($matches['type'][$matchKey] == 'New') {
+      	$uid = 0;
+      } else {
+      	$uid = $this->getController()->getQuerier()->getFieldValueFromCurrentRow('uid');
+      }
       $itemName = Tx_SavLibraryPlus_Controller_AbstractController::getFormName() . '[' . $cryptedFullFieldName . '][' . intval($uid) . ']';
       $this->folderFieldsConfiguration[$cryptedFullFieldName]['itemName'] = $itemName;
       
       // Sets the default rendering
 			$this->folderFieldsConfiguration[$cryptedFullFieldName]['edit'] = '0';
 
-			switch($matches[1][$matchKey]) {
+			switch($matches['type'][$matchKey]) {
 				case 'Edit':
 					$this->folderFieldsConfiguration[$cryptedFullFieldName]['edit'] = '1';
 					$replacementString = $this->renderItem($cryptedFullFieldName);
-					break;
+					break;					
+				case 'New':
+					$this->folderFieldsConfiguration[$cryptedFullFieldName]['edit'] = '1';
+					$previousValue = $this->folderFieldsConfiguration[$cryptedFullFieldName]['value'];
+					$this->folderFieldsConfiguration[$cryptedFullFieldName]['value'] = $this->getController()->getQuerier()->getFieldValueFromNewRow($fullFieldName);
+					$replacementString = $this->renderItem($cryptedFullFieldName);
+					$this->folderFieldsConfiguration[$cryptedFullFieldName]['value'] = $previousValue;
+					break;	
 				case 'Saved':
 					$this->folderFieldsConfiguration[$cryptedFullFieldName]['edit'] = '0';
 					$previousValue = $this->folderFieldsConfiguration[$cryptedFullFieldName]['value'];
 					$this->folderFieldsConfiguration[$cryptedFullFieldName]['value'] = $this->getController()->getQuerier()->getFieldValueFromSavedRow($fullFieldName);
 					$replacementString = $this->renderItem($cryptedFullFieldName);
 					$this->folderFieldsConfiguration[$cryptedFullFieldName]['value'] = $previousValue;
-					break;									
+					break;		
+				case 'Show':							
 				case '':
 					$this->folderFieldsConfiguration[$cryptedFullFieldName]['edit'] = '0';
 					$replacementString = $this->renderItem($cryptedFullFieldName);
@@ -284,16 +309,27 @@ class Tx_SavLibraryPlus_Viewers_FormViewer extends Tx_SavLibraryPlus_Viewers_Abs
       			)
     			);
 
+    			// Sets the checked attribute
+    			$fieldValidation = $this->getController()->getQuerier()->getFieldValidation($cryptedFullFieldName);
+    			if ($fieldValidation !== NULL) {
+    				$checked = $fieldValidation;
+    			} else {
+    				$checked = $this->folderFieldsConfiguration[$cryptedFullFieldName]['checkedinupdateformadmin'];
+    			}
+    			
     			// Adds the checkbox element
     			$checkboxElement = Tx_SavLibraryPlus_Utility_HtmlElements::htmlInputCheckBoxElement(
       			array(
         			Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('name', $checkboxName),
         			Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('value', '1'),
-        			Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttributeIfNotNull('checked', $this->folderFieldsConfiguration[$cryptedFullFieldName]['checkedinupdateformadmin']),
+        			Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttributeIfNotNull('checked', $checked),
       			)
     			);	
 					$replacementString = $hiddenElement . $checkboxElement;
-					break;    												
+					break;
+				case 'NoValidation':
+					$replacementString = '';
+					break;  												
 			} 
       
       // Renders the item
@@ -363,7 +399,7 @@ class Tx_SavLibraryPlus_Viewers_FormViewer extends Tx_SavLibraryPlus_Viewers_Abs
       array(
         Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('class', 'submitButton'),      
         Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('value', Tx_SavLibraryPlus_Controller_FlashMessages::translate('button.submit')),
-        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('onclick', 'update();'),       
+        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('onclick', 'update(\'' . Tx_SavLibraryPlus_Controller_AbstractController::getFormName() . '\');'),       
       )
     );
     

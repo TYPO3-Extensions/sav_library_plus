@@ -31,7 +31,14 @@
  
 class Tx_SavLibraryPlus_Queriers_FormAdminUpdateQuerier extends Tx_SavLibraryPlus_Queriers_UpdateQuerier {
 
-
+	/**
+   * The validation array
+   *
+   * @var array
+   */
+	protected $validation;	
+	
+		
   /**
    * Executes the query
    *
@@ -68,62 +75,96 @@ class Tx_SavLibraryPlus_Queriers_FormAdminUpdateQuerier extends Tx_SavLibraryPlu
     // Gets the POST variables
     $postVariables = $this->getController()->getUriManager()->getPostVariables();
     unset($postVariables['formAction']);
-    
+       
     $this->validation = $postVariables['validation'];
     unset($postVariables['validation']);
-    
+   
     // Gets the main table
     $mainTable = $this->getQueryConfigurationManager()->getMainTable();
+		$mainTableUid = Tx_SavLibraryPlus_Managers_UriManager::getUid();
 
+		// Initializes special marker array
+		$markerItemsManual = array();
+		$markerItemsAuto = array();
+		
 		// Processes the regular fields. Explode the key to get the table and field names
 		$variablesToUpdate = array();
-		foreach($postVariables as $postVariableKey => $postVariable) {
-		  foreach ($postVariable as $uid => $value) {
-
+		foreach ($this->validation as $fieldKey => $validated) {
+			if ($validated) {
         // Sets the field configuration
-        $this->fieldConfiguration = $this->searchConfiguration($folderFieldsConfiguration, $postVariableKey);
+        $this->fieldConfiguration = $this->searchConfiguration($folderFieldsConfiguration, $fieldKey);
 
         $tableName = $this->fieldConfiguration['tableName'];
         $fieldName = $this->fieldConfiguration['fieldName'];
         $fieldType = $this->fieldConfiguration['fieldType'];
+        $fullFieldName = $tableName . '.' . $fieldName;
         
         // Adds the cryted full field name
-        $this->fieldConfiguration['cryptedFullFieldName'] = $postVariableKey;        
-
+        $this->fieldConfiguration['cryptedFullFieldName'] = $fieldKey;        
+        
+        // Gets the field value and uid
+        $uid = key($postVariables[$fieldKey]);        
+				$value = current($postVariables[$fieldKey]);
+				        
         // Adds the uid to the configuration
-        $this->fieldConfiguration['uid'] = $uid;
-
+        $this->fieldConfiguration['uid'] = $uid;  
+             
         // Makes pre-processings.
         self::$doNotAddValueToUpdateOrInsert = false;
-        if ($this->verifier($value)) {
-          $value = $this->preProcessor($value);
-        }
+        $value = $this->preProcessor($value);
+        
+				// Sets the items markers
+				if ($uid === 0) {
+					$markerItemsManual = array_merge($markerItemsManual, array($fullFieldName => $value));
+				} elseif ($uid > 0) {
+					$markerItemsAuto = array_merge($markerItemsAuto, array($fullFieldName => $value));					
+				} else {
+					self::$doNotAddValueToUpdateOrInsert = true;
+				}    
         
         // Adds the variables
         if (self::$doNotAddValueToUpdateOrInsert === false) {
-		      $variablesToUpdateOrInsert[$tableName][$uid][$tableName . '.' . $fieldName] = $value;
-        }
-      }
+		      $variablesToUpdateOrInsert[$tableName][$uid][$fullFieldName] = $value;
+        }       		
+			}
 		}
-
+		
+		// Injects the markers
+		$markerContent = '';
+		foreach($markerItemsAuto as $markerKey => $marker) {
+			$markerContent .= $markerKey . ' : ' . $marker .chr(10);
+		}
+		$this->getController()->getQuerier()->injectAdditionalMarkers(array('###ITEMS_AUTO###' => $markerContent));
+  	$markerContent = '';
+		foreach($markerItemsManual as $markerKey => $marker) {
+			$markerContent .= $markerKey . ' : ' . $marker .chr(10);
+		}		
+		$this->getController()->getQuerier()->injectAdditionalMarkers(array('###ITEMS_MANUAL###' => $markerContent));	
+		
 		// Updates the fields if any
 		if (empty($variablesToUpdateOrInsert) === false) {
+    	$variableToSerialize = array();		
+	
   		foreach ($variablesToUpdateOrInsert as $tableName => $variableToUpdateOrInsert) {
         if (empty($tableName) === false) {
-
-        	// Updates the serialized fields
-					$shortFormName = Tx_SavLibraryPlus_Controller_AbstractController::getShortFormName();
-					$variableToSerialize = array($shortFormName => array('temporary' => current($variableToUpdateOrInsert)));          	
-			    $this->updateFields($mainTable, array('_submitted_data_' => serialize($variableToSerialize)), key($variableToUpdateOrInsert));   
-        	
+        	$variableToSerialize = $variableToSerialize + $variableToUpdateOrInsert; 	
+      	
     			// Updates the data
-    			$fields = array_merge(current($variableToUpdateOrInsert), array('_validated_' => 1));
+    			$key =  key($variableToUpdateOrInsert);
+    			$fields = current($variableToUpdateOrInsert);
 
-			    $this->updateFields($mainTable, $fields, key($variableToUpdateOrInsert));   
-
-			    Tx_SavLibraryPlus_Controller_FlashMessages::addMessage('message.dataSaved');
+    			if ($key > 0) { 				
+				    $this->updateFields($tableName, $fields, $key);  
+    			} 
         }
       }
+    
+      // Updates the _submitted_data_ field
+      $shortFormName = Tx_SavLibraryPlus_Controller_AbstractController::getShortFormName();
+			$variableToSerialize = $variableToSerialize + array('validation' => $this->validation);
+			$serializedVariable = serialize(array($shortFormName => array('temporary' => $variableToSerialize)));  
+      $this->updateFields($mainTable, array('_submitted_data_' => $serializedVariable,'_validated_' => 1), $mainTableUid);   
+			Tx_SavLibraryPlus_Controller_FlashMessages::addMessage('message.dataSaved'); 			    	      
     }
 
     if (empty($this->postProcessingList) === false) {
@@ -145,8 +186,24 @@ class Tx_SavLibraryPlus_Queriers_FormAdminUpdateQuerier extends Tx_SavLibraryPlu
 	 */
   protected function preProcessor($value) {
   
-    // Builds the method name
+    // Builds the field type
     $fieldType = $this->getFieldConfigurationAttribute('fieldType');
+    if ($fieldType == 'ShowOnly') {
+    	$renderType = $this->getFieldConfigurationAttribute('renderType');
+    	$fieldType = (empty($renderType) ? 'String' : $renderType);
+    }
+    
+    $fieldType = $this->getFieldConfigurationAttribute('fieldType');
+
+    // Calls the verification method for the type if it exists
+    $verifierMethod = 'verifierFor' . $fieldType;
+    if (method_exists($this,$verifierMethod) && $this->$verifierMethod($value) !== true) {
+     	self::$doNotAddValueToUpdateOrInsert = true;
+    	self::$doNotUpdateOrInsert = true;
+      return $value;
+    }
+  	
+  	// Builds the method name
     $preProcessorMethod = 'preProcessorFor' . $fieldType;
     
     // Gets the crypted full field name
@@ -181,7 +238,20 @@ class Tx_SavLibraryPlus_Queriers_FormAdminUpdateQuerier extends Tx_SavLibraryPlu
     	// Gets the row before processing
     	$this->rows['before'] = $this->getCurrentRowInEditView();
     } 
-       
+    
+    // Calls the verifier if it exists
+    $verifierMethod = $this->getFieldConfigurationAttribute('verifier');
+    if (!empty($verifierMethod)) {
+    	if(!method_exists($this,$verifierMethod)) {
+    		self::$doNotAddValueToUpdateOrInsert = true;
+    		self::$doNotUpdateOrInsert = true;
+    		Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.verifierUnknown');
+    	} elseif ($this->$verifierMethod($newValue) !== true) {
+    		self::$doNotAddValueToUpdateOrInsert = true;
+    		self::$doNotUpdateOrInsert = true;    		
+    	}
+    }
+    
     return $newValue;
   }
   

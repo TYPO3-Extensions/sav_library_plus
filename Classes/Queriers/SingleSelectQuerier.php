@@ -60,12 +60,10 @@ class Tx_SavLibraryPlus_Queriers_SingleSelectQuerier extends Tx_SavLibraryPlus_Q
    * @return string The WHERE clause
    */
   protected function buildWhereClause() {
-    // Gets the uid
-    $uid = Tx_SavLibraryPlus_Managers_UriManager::getUid();
     
     // Builds the where clause
-    $whereClause = '1 AND ';
-    $whereClause .= $this->getQueryConfigurationManager()->getMainTable(). '.uid = ' . intval($uid);
+    $whereClause = '1';
+    $whereClause .= $this->getQueryConfigurationManager()->getUidPartToWhereClause();   
     
     return $whereClause;
   }

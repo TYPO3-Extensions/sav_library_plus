@@ -15,6 +15,6 @@
           <f:image class="help" src="{sav:getIcon(fileName:'help')}" onclick="vHWin=window.open('index.php?id={configuration.general.helpPage}&amp;help=1','viewHelp','height=500,width=600,status=0,menubar=0,scrollbars=1'); vHWin.focus();return false;" alt="{sav:translate(key:'button.help')}" title="{sav:translate(key:'button.help')}" />
         </f:link.page>
       </f:if>
-      <f:form.submit value="{sav:translate(key:'button.submit')}" onclick="update();" />
+      <f:form.submit value="{sav:translate(key:'button.submit')}" onclick="update(\'{configuration.general.formName}\');" />
       </div>
     </div>

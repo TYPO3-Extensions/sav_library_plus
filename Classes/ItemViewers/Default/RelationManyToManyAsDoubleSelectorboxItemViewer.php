@@ -88,21 +88,42 @@ class Tx_SavLibraryPlus_ItemViewers_Default_RelationManyToManyAsDoubleSelectorbo
     $this->foreignTableSelectQuerier->processQuery();
     $rows = $this->foreignTableSelectQuerier->getRows();
 
-		// Gets the label for the foreign_table
-		$label = $this->getItemConfiguration('foreign_table') . '.' . (
-      $this->getItemConfiguration('labelselect') ?
-      $this->getItemConfiguration('labelselect') :
-      Tx_SavLibraryPlus_Managers_TcaConfigurationManager::getTcaCtrlField($this->getItemConfiguration('foreign_table'), 'label')
-    );
+    // Gets the label for the foreign_table
+		$label = $this->getItemConfiguration('labelselect');
+		if (!empty($label)) {
+			// Checks if it is an alias
+			if (!$this->foreignTableSelectQuerier->fieldExistsInCurrentRow($label)) {
+				$label = $this->getItemConfiguration('foreign_table') . '.' . $label;
+			}
+		} else {
+			$label = $this->getItemConfiguration('foreign_table') . '.' . Tx_SavLibraryPlus_Managers_TcaConfigurationManager::getTcaCtrlField($this->getItemConfiguration('foreign_table'), 'label');	
+		}
 
     // Processes the rows
     $maxCount = count($rows) - 1;
     foreach ($rows as $rowKey => $row) {
+    	$content = $row[$label];
+			// Applies the function if any and allowed
+    	if ($this->getItemConfiguration('func') && $this->getItemConfiguration('applyfunctorecords')) {
+    	  // Injects the special markers
+    	  $specialFields = str_replace(' ', '', $this->getItemConfiguration('specialfields'));
+    	  if (!empty($specialFields)) {
+    	  	$specialFieldsArray = explode(',', $specialFields);
+    			foreach($row as $fieldKey => $field) {
+    				if (in_array($fieldKey, $specialFieldsArray)) {
+    					$this->getController()->getQuerier()->injectAdditionalMarkers(array('###special[' . $fieldKey . ']###' => $field));
+    				}
+    			}
+    		}
+    		$content = $this->processFuncAttribute($content);
+    	}
+    	$content .= ($rowKey < $maxCount  ? $this->getItemConfiguration('separator') : '');
+    	
       $htmlArray[] = Tx_SavLibraryPlus_Utility_HtmlElements::htmlDivElement(
         array(
           Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('class', 'item' . $row['uid']),
         ),
-        $row[$label] . ($rowKey < $maxCount  ? $this->getItemConfiguration('separator') : '')
+        $content
       );
     }
 

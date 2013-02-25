@@ -76,8 +76,8 @@ class Tx_SavLibraryPlus_Viewers_EditViewer extends Tx_SavLibraryPlus_Viewers_Abs
       $itemName = Tx_SavLibraryPlus_Controller_AbstractController::getFormName() . '[' . $fieldConfigurationKey . '][' . intval($uid) . ']';
       $this->folderFieldsConfiguration[$fieldConfigurationKey]['itemName'] = $itemName;
 
-      // Calls the item viewer
-      $this->folderFieldsConfiguration[$fieldConfigurationKey]['value'] = $this->renderItem($fieldConfigurationKey);
+      // Processes the field
+      $this->processField($fieldConfigurationKey);
     }
 
     // Adds the folders configuration
@@ -119,6 +119,11 @@ class Tx_SavLibraryPlus_Viewers_EditViewer extends Tx_SavLibraryPlus_Viewers_Abs
   		$javaScript = '';
   	}
   	Tx_SavLibraryPlus_Managers_AdditionalHeaderManager::addJavaScript('documentChanged', $javaScript);
+  	
+  	// Adds the javascript for submitting the form on changes
+    Tx_SavLibraryPlus_Managers_AdditionalHeaderManager::addJavaScript('submit', 
+    	'if (x == \'' . Tx_SavLibraryPlus_Controller_AbstractController::getFormName() . '\')	document.' . Tx_SavLibraryPlus_Controller_AbstractController::getFormName() . '.submit();');
+  	
 	}
   
 }

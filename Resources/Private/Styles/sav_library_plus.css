@@ -76,6 +76,7 @@
 .savLibraryPlus IMG.orderDesc {padding:3px 5px 0px 5px;}
 .savLibraryPlus IMG.orderAscAbove {padding:3px 5px 0px 5px;}
 .savLibraryPlus IMG.orderDescBelow {clear:left;padding:3px 5px 0px 5px;}
+.savLibraryPlus IMG.checkboxNotSelected {padding:0px;}
 .savLibraryPlus IMG.printButton {width:18px; height:16px;}
 .savLibraryPlus INPUT.exportokButton {float:left;padding-right:5px;}
 .savLibraryPlus INPUT.submitButton {font-size:9px;margin-top:1px;}
@@ -394,6 +395,9 @@
 	/**
 	 * Form view specific configuration 
 	 */
+.savLibraryPlus DIV.formView DIV.footer, .savLibraryPlus DIV.formAdminView DIV.footer {
+	background-color:#9999cc;
+}	 
 .savLibraryPlus DIV.formView DIV.label, .savLibraryPlus DIV.formAdminView DIV.label {
 	font-weight:bold;
 	padding:0px 5px 0px 5px;

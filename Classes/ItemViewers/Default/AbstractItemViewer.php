@@ -43,7 +43,7 @@ abstract class Tx_SavLibraryPlus_ItemViewers_Default_AbstractItemViewer {
    * 
    * @var array
    */
-  static protected $allowedFunctionNames = array('makeItemLink', 'makeNewWindowLink', 'makeDateFormat', 'makeEmailLink', 'makeUrlLink', 'makeLink');
+  static protected $allowedFunctionNames = array('makeItemLink', 'makeNewWindowLink', 'makeDateFormat', 'makeEmailLink', 'makeUrlLink', 'makeLink', 'makeExtLink', 'makeXmlLabel');
   
   /**
    * The controller
@@ -94,7 +94,25 @@ abstract class Tx_SavLibraryPlus_ItemViewers_Default_AbstractItemViewer {
   public function injectItemConfiguration(&$itemConfiguration) {
     $this->itemConfiguration = $itemConfiguration;
   }
-  
+
+	/**
+	 * Injects the item configuration attribute
+	 *
+	 * @param string $key 
+	 * @param mixed $value 
+	 *
+	 * @return none
+	 */
+  public function injectItemConfigurationAttribute($value, $key = NULL) {
+  	if ($key === NULL) {
+  		if(is_array($value)) {
+  			$this->itemConfiguration = array_merge($this->itemConfiguration, $value);
+  		}
+  	} else {
+    	$this->itemConfiguration[$key] = $value;
+  	}
+  }
+   
 	/**
 	 * Checks if the item is an edit item viewer
 	 *
@@ -158,27 +176,22 @@ abstract class Tx_SavLibraryPlus_ItemViewers_Default_AbstractItemViewer {
 	 *
 	 * @return string the rendered item
 	 */
-  public function render() { 
-    // Renders the item
-    $content = $this->renderItem();
+  public function render() {
 
-    // Applies a function if not in edit mode and if any
-    if ($this->isEditItemViewer() === false) {
-      // Checks if a function should be applied
-      $functionName = $this->getItemConfiguration('func');
-			if (empty($functionName) === false) {
-	      if (in_array($functionName, self::$allowedFunctionNames)) {
-	      	// Adds the function letf and right content if any.
-	        if (empty($content)) {
-	        	$content = $this->getItemConfiguration('funcaddleftifnull') . $content . $this->getItemConfiguration('funcaddrighttifnull');
-	        } else {
-	        	$content = $this->getItemConfiguration('funcaddleftifnotnull') . $content . $this->getItemConfiguration('funcaddrighttifnotnull');
-	        }	    
-	        // Calls the function  	
-	        $content = $this->$functionName($content);
-	      } else {
-	      	Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.unknownFunction',array($functionName));
-	      }
+    // Renders the item if the value is not obtained from a reqValue attribute
+    $reqValueAttribute = $this->getItemConfiguration('reqvalue');
+    $renderReqValueAttribute = $this->getItemConfiguration('renderreqvalue');    
+  	if (!empty($reqValueAttribute) && empty($renderReqValueAttribute)) {
+			$content = $this->getItemConfiguration('value');
+  	} else {   
+    	$content = $this->renderItem();
+
+    	// Applies a function if not in edit mode and if any
+   		if ($this->isEditItemViewer() === false) {
+      	// Checks if a function should be applied
+      	if (!$this->getItemConfiguration('applyfunctorecords')) {
+					$content = $this->processFuncAttribute($content);
+      	}
 			}
     }
     
@@ -187,8 +200,11 @@ abstract class Tx_SavLibraryPlus_ItemViewers_Default_AbstractItemViewer {
     // Applies a TypoScript StdWrap to the item, if any
     $stdWrapItem = $this->getItemConfiguration('stdwrapitem');
     if (empty($stdWrapItem) === false) {
+      $configuration = $this->getController()->getQuerier()->parseLocalizationTags($stdWrapItem);
+      $configuration = $this->getController()->getQuerier()->parseFieldTags($configuration);   	
+    	
     	$TSparser = t3lib_div::makeInstance('t3lib_TSparser');
-    	$TSparser->parse($stdWrapItem);
+    	$TSparser->parse($configuration);
     	$contentObject = $this->getController()->getExtensionConfigurationManager()->getExtensionContentObject();
     	$content = $contentObject->stdWrap($content, $TSparser->setup);
     }
@@ -196,6 +212,34 @@ abstract class Tx_SavLibraryPlus_ItemViewers_Default_AbstractItemViewer {
     return $content;
   }
 
+  
+  /**
+	 * Processes func attribute
+	 *
+	 * @param string $content
+	 *
+	 * @return string the rendered item
+	 */
+ 	public function processFuncAttribute($content) {
+
+ 		$functionName = $this->getItemConfiguration('func');
+ 		if (empty($functionName) === false) { 
+	  	if (in_array($functionName, self::$allowedFunctionNames)) {
+	    	// Adds the function letf and right content if any.
+	      if (empty($content)) {
+	        $content = $this->getItemConfiguration('funcaddleftifnull') . $content . $this->getItemConfiguration('funcaddrighttifnull');
+	      } else {
+	        $content = $this->getItemConfiguration('funcaddleftifnotnull') . $content . $this->getItemConfiguration('funcaddrighttifnotnull');
+	      }	    
+	      // Calls the function  	
+	      $content = $this->$functionName($content);
+	    } else {
+	      Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.unknownFunction',array($functionName));
+	    }
+ 		}
+ 	  return $content;		
+ 	}  
+  
 	/**
 	 * Builds the right value content.
 	 *
@@ -305,10 +349,19 @@ abstract class Tx_SavLibraryPlus_ItemViewers_Default_AbstractItemViewer {
 	  	$formAction = 'single';
 	  }
 
+	  // Builds the uid
+	  if ($this->getItemConfiguration('setuid' . $special)) {
+    	$uid = $this->getController()->getQuerier()->parseFieldTags($this->getItemConfiguration('setuid' . $special));
+    } elseif ($this->getItemConfiguration('valueisuid' . $special) || $this->getItemConfiguration('setuid' . $special) == 'this') {
+    	$uid = $this->getItemConfiguration('value');
+    } else {
+    	$uid = $this->getController()->getQuerier()->getFieldValueFromCurrentRow('uid');
+    }	  
+	  
 	  // Builds the parameters
     $formParameters = array(
       'formAction' => $formAction,
-      'uid' => $this->getController()->getQuerier()->getFieldValueFromCurrentRow('uid'),
+      'uid' => $uid,
     );
 
     // Adds parameter to access to a folder tab (page is an alias)
@@ -330,6 +383,84 @@ abstract class Tx_SavLibraryPlus_ItemViewers_Default_AbstractItemViewer {
     return $this->getController()->buildLinkToPage($value, $formParameters, $cacheHash, $additionalParameters);
 	}
 
+	/**
+	 * Create an extension link
+	 *
+	 * @param $value string Value to display
+	 *
+	 * @return string The link
+	 */	
+	public function makeExtLink ($value) {
+
+    // Gets the funcspecial attribute
+	  $special = $this->getItemConfiguration('funcspecial');
+	  
+	  // Gets the content id
+	  $contentId =  $this->getItemConfiguration('contentid' . $special);
+	  
+	  // Builds the form name
+    $formName = $this->getItemConfiguration('ext' . $special) . ($contentId ? '_' . $contentId : '');
+    
+    // Builds the uid
+    if ($this->getItemConfiguration('setuid' . $special)) {
+    	$uid = $this->getController()->getQuerier()->parseFieldTags($this->getItemConfiguration('setuid' . $special));
+    } elseif ($this->getItemConfiguration('valueisuid' . $special) || $this->getItemConfiguration('setuid' . $special) == 'this') {
+    	$uid = $this->getItemConfiguration('value');
+    } else {
+    	$uid = $this->getItemConfiguration('uid');
+    }
+    
+	  // Builds the parameters
+    $formParameters = array(
+      'formName' => $formName,    
+      'formAction' => 'single',
+      'uid' => intval($uid),
+    	'pageId' => $this->getItemConfiguration('pageid' . $special)
+    );  
+    
+	  // Adds parameter to access to a folder tab (page is an alias)
+    if ($this->getItemConfiguration('page' . $special)) {
+      $formParameters['folderKey'] =
+        Tx_SavLibraryPlus_Controller_AbstractController::cryptTag($this->getItemConfiguration('page' . $special));
+    }
+    if ($this->getItemConfiguration('foldertab' . $special)) {
+      $formParameters['folderKey'] =
+        Tx_SavLibraryPlus_Controller_AbstractController::cryptTag($this->getItemConfiguration('foldertab' . $special));
+    }
+    
+    // Check if the link should be displayed	
+    if ($params['restrictlinkto'] . $special) {
+      if (preg_match('/###usergroup[ ]*(!?)=[ ]*(.*?)###/', $params['restrictlinkto' . $special], $match)) {
+        $rows = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows(
+				  /* SELECT   */	'uid,title',
+				  /* FROM     */	'fe_groups',
+	 			  /* WHERE    */	'title=\'' . $match[2] . '\'' .
+            $this->cObj->enableFields('fe_groups')
+		    );
+        $cond = (bool)$match[1] ^ in_array($rows[0]['uid'], explode(',',$GLOBALS['TSFE']->fe_user->user['usergroup'])); 	
+        return (
+          $cond ?
+          $this->buildLinkToPage(
+            $value,
+            $params['pageid' . $special],
+            '',
+            $formParams
+          ) :
+          $value
+        );
+      } else {
+        return $this->buildLinkToPage(
+          $value,
+          $params['pageid' . $special],
+          '',
+          $formParams
+        );
+      }
+    } else {  
+    	return $this->getController()->buildLinkToPage($value, $formParameters);
+    }
+	}	
+	
 	/**
 	 * Create an internal link
 	 *
@@ -353,9 +484,9 @@ abstract class Tx_SavLibraryPlus_ItemViewers_Default_AbstractItemViewer {
     // Builds the parameter attribute
     if (empty($message) === false) {
     	if ($this->getItemConfiguration('setuid' . $special)) {
-    		$parameter = $this->getItemConfiguration('setuid' . $special);
+    		$parameter = $this->getController()->getQuerier()->parseFieldTags($this->getItemConfiguration('setuid' . $special));
     	} elseif ($this->getItemConfiguration('valueisuid' . $special)) {
-    		$parameter = $value;
+    		$parameter = $this->getItemConfiguration('value');
     	} else {
     		$parameter = $folder . '/' . rawurlencode($value);
     	}
@@ -384,7 +515,7 @@ abstract class Tx_SavLibraryPlus_ItemViewers_Default_AbstractItemViewer {
 	 * @return string (link)
 	 */
 	protected function makeNewWindowLink($value) {
-	
+
     // Gets the funcspecial attribute
  	  $special = $this->getItemConfiguration('funcspecial');
 
@@ -395,10 +526,12 @@ abstract class Tx_SavLibraryPlus_ItemViewers_Default_AbstractItemViewer {
     
     // Gets the window url
     $windowUrl = $this->getItemConfiguration('windowurl' . $special);
-
+    $windowUrl = $this->getController()->getQuerier()->parseFieldTags($windowUrl);
+   
     // Gets the window text
     $windowText = $this->getItemConfiguration('windowtext' . $special);
-
+    $windowText = $this->getController()->getQuerier()->parseFieldTags($windowText);
+    
     // Gets the window style
     $windowBodyStyle = ($this->getItemConfiguration('windowbodystyle' . $special) ? ' style="' . $this->getItemConfiguration('windowbodystyle' . $special) . '"' : '');
 
@@ -458,7 +591,6 @@ abstract class Tx_SavLibraryPlus_ItemViewers_Default_AbstractItemViewer {
 		
 		// Gets the funcspecial attribute
  	  $special = $this->getItemConfiguration('funcspecial');
-	  $special = $params['funcspecial'];
 	  
     // Gets the message and processes it
     $message = ($this->getItemConfiguration('message' . $special) ? $this->getItemConfiguration('message' . $special) : $value);
@@ -474,6 +606,18 @@ abstract class Tx_SavLibraryPlus_ItemViewers_Default_AbstractItemViewer {
     $contentObject = $this->getController()->getExtensionConfigurationManager()->getExtensionContentObject();
     
   	return $contentObject->typolink($message, $typoScriptConfiguration);
+	}
+		/**
+	 * Generates the xml label 
+	 *
+	 * @param $value string (value to display)
+	 *
+	 * @return string (xml label)
+	 */
+  protected function makeXmlLabel ($value) {
+		// Gets the funcspecial attribute
+ 	  $special = $this->getItemConfiguration('funcspecial');   	
+		return $GLOBALS['TSFE']->sL($this->getItemConfiguration('xmllabel' . $special) . $value);
 	}	
 	
 	/**

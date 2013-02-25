@@ -56,7 +56,7 @@ class Tx_SavLibraryPlus_Viewers_SingleViewer extends Tx_SavLibraryPlus_Viewers_A
 
     // Sets the library view configuration
     $this->setLibraryViewConfiguration('SingleView');
- 
+
     // Sets the active folder Key
     $this->setActiveFolderKey();
 
@@ -68,13 +68,13 @@ class Tx_SavLibraryPlus_Viewers_SingleViewer extends Tx_SavLibraryPlus_Viewers_A
 
     // Processes the fields
     foreach ($this->folderFieldsConfiguration as $fieldConfigurationKey => $fieldConfiguration) {
-      // Calls the item viewer
-      $this->folderFieldsConfiguration[$fieldConfigurationKey]['value'] = $this->renderItem($fieldConfigurationKey);
+      // Processes the field
+     	$this->processField($fieldConfigurationKey);
     }
 
     // Adds the folders configuration
     $this->addToViewConfiguration('folders', $this->getFoldersConfiguration());
-    
+ 
     // Adds the fields configuration
     $this->addToViewConfiguration('fields', $this->folderFieldsConfiguration);
 
@@ -86,7 +86,7 @@ class Tx_SavLibraryPlus_Viewers_SingleViewer extends Tx_SavLibraryPlus_Viewers_A
         'helpPage' => $this->getController()->getExtensionConfigurationManager()->getHelpPageForSingleView(),
         'addPrintIcon' => $this->getActiveFolderField('addPrintIcon'),
         'activeFolderKey' => $this->getActiveFolderKey(),
-        'userIsAllowedToInputData' => $this->getController()->getUserManager()->userIsAllowedToInputData(),
+        'userIsAllowedToInputData' => $this->getController()->getUserManager()->userIsAllowedToInputData() && $this->getController()->getUserManager()->userIsAllowedToChangeData(),
         'title' => $this->processTitle($this->getActiveFolderTitle()),
       )
     );

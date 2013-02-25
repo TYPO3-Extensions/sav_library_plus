@@ -42,7 +42,7 @@ class Tx_SavLibraryPlus_ItemViewers_Default_DateItemViewer extends Tx_SavLibrary
 
     // Gets the value
     $value = $this->getItemConfiguration('value');
-    
+   
     if (empty($value)) {
       $content = '';
     } else {

@@ -49,6 +49,23 @@ class Tx_SavLibraryPlus_Queriers_FormAdminSelectQuerier extends Tx_SavLibraryPlu
     // Processes the parent query
     parent::executeQuery();   
   }
+
+  /**
+   * Processes the form unserialized data
+   *
+   * @param none
+   *
+   * @return none
+   */  
+	protected function processFormUnserializedData() {
+		foreach($this->formUnserializedData['temporary'] as $key => $row) {
+    	if ($key === 0) {
+    		$this->newRow = $row;
+    	} else {
+    		$this->rows[$this->currentRowId] = array_merge($this->rows[$this->currentRowId], $row);    				
+    	}
+    }
+	}
   
   /**
    * Builds the WHERE clause

@@ -64,7 +64,7 @@ class Tx_SavLibraryPlus_ItemViewers_Default_CheckboxesItemViewer extends Tx_SavL
       );
 
       // Checks if donotdisplayifnotchecked is set
-      if ($this->getItemConfiguration('donotdisplayifnotchecked')) {
+      if ($this->getItemConfiguration('donotdisplayifnotchecked') && !$checked) {
         $message = '';
       }
 

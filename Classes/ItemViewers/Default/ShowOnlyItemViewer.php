@@ -57,7 +57,6 @@ class Tx_SavLibraryPlus_ItemViewers_Default_ShowOnlyItemViewer extends Tx_SavLib
       
     // Renders the item
     return $itemViewer->render();
-
   }
     
 }

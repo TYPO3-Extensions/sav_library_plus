@@ -123,16 +123,16 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_CheckboxItemViewer extends Tx_SavLibrar
   	// Gets the value to check for mail
   	$fieldForCheckMail = $this->getItemConfiguration('fieldforcheckmail');
   	if (empty($fieldForCheckMail) === true) {
-  		Tx_SavLibraryPlus_Controller_FlashMessages::addError(error.noAttributeInField, array('fieldforcheckmail', $this->getItemConfiguration('fieldName')));
+  		Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.noAttributeInField', array('fieldForCheckMail', $this->getItemConfiguration('fieldName')));
   		return '';
   	}
   	
   	// Gets the value associated with the field
   	$querier = $this->getController()->getQuerier();
-  	$valueForChecking = $querier->getFieldValueFromCurrentRow($querier->buildFullFieldName($fieldForCheckMail));
- 	
+  	$valueForChecking = $querier->getFieldValue($querier->buildFullFieldName($fieldForCheckMail));
+
   	// Adds the image
-  	if (empty($valueForChecking) === false) {
+  	if (empty($valueForChecking) === false) {	
   		if ($this->getItemConfiguration('value')) {
   			// Adds an image element
 		    $content = Tx_SavLibraryPlus_Utility_HtmlElements::htmlImgElement(
@@ -152,7 +152,7 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_CheckboxItemViewer extends Tx_SavLibrar
 	        	Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('name', Tx_SavLibraryPlus_Controller_AbstractController::getFormName() . '[formAction][saveAndSendMail][' . $this->getCryptedFullFieldName() . ']'),	        
 		        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('title', Tx_Extbase_Utility_Localization::translate('button.mail', 'sav_library_plus')),
 		        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('alt', Tx_Extbase_Utility_Localization::translate('button.mail', 'sav_library_plus')),
-		        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('onclick', 'return update();'),
+		        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('onclick', 'return update(\'' . Tx_SavLibraryPlus_Controller_AbstractController::getFormName() . '\');'),
 		      )
 		    );
   		}    		

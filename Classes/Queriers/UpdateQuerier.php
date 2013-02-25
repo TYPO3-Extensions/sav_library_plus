@@ -34,6 +34,9 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
   // Error constants
   const ERROR_NONE = 0;
   const ERROR_FIELD_REQUIRED = 1;  
+  
+  // Line feed
+  const LF = "\n";
   	
 	/**
 	 * The POST variables
@@ -58,12 +61,19 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
   public static $doNotAddValueToUpdateOrInsert = false;
 
 	/**
-	 * If true, the no data are updated or inserted
+	 * If true, then no data are updated nor inserted
 	 * 
 	 * @var boolean
 	 */  
   public static $doNotUpdateOrInsert = false;  
-  
+
+	/**
+	 * If true, the no data are updated or inserted
+	 * 
+	 * @var boolean
+	 */  
+  protected $newRecord = false;  
+    
 	/**
 	 * The error code
 	 * 
@@ -118,14 +128,37 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
 	}  
 
 	/**
-	 * Gets processed post variable
+	 * Checks if a field exists in the post variable
 	 *
-	 * @param string $fieldName
+	 * @param string $cryptedFullFieldName
 	 *
 	 * @return mixed
 	 */
-	public function getProcessedPostVariable($fieldName, $uid) {
-		return $this->processedPostVariables[$fieldName][$uid];
+	protected function fieldExistsInPostVariable($cryptedFullFieldName) {
+		return array_key_exists($cryptedFullFieldName, $this->postVariables);
+	} 	
+		
+	/**
+	 * Gets the current value of a post variable field
+	 *
+	 * @param string $cryptedFullFieldName
+	 *
+	 * @return mixed
+	 */
+	protected function getPostVariable($cryptedFullFieldName) {
+		return current($this->postVariables[$cryptedFullFieldName]);
+	} 	
+	
+	/**
+	 * Gets processed post variable
+	 *
+	 * @param string $fullFieldName
+	 *
+	 * @return mixed
+	 */
+	public function getProcessedPostVariable($fullFieldName, $uid) {
+debug($this->processedPostVariables);
+		return $this->processedPostVariables[$fullFieldName][$uid];
 	} 
 
 	/**
@@ -137,6 +170,17 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
 	 */	
 	public function errorDuringUpdate() {
 		return self::$doNotUpdateOrInsert;
+	}	
+
+	/**
+	 * Returns true if the record is a new one
+	 *
+	 * @param none
+	 *
+	 * @return boolean
+	 */	
+	public function isNewRecord() {
+		return $this->newRecord;
 	}	
 		
   /**
@@ -185,9 +229,11 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
 
 		// Processes the fields
 		$variablesToUpdate = array();
-
 		foreach($this->postVariables as $postVariableKey => $postVariable) {
 		  foreach ($postVariable as $uid => $value) {
+		  	
+		  	// Sets the new record flag
+		  	$this->newRecord = ($uid === 0);	   
 
         // Sets the field configuration
         $this->fieldConfiguration = $this->searchConfiguration($folderFieldsConfiguration, $postVariableKey);
@@ -206,9 +252,7 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
 
         // Makes pre-processings.
         self::$doNotAddValueToUpdateOrInsert = false;
-        if ($this->verifier($value)) {
-          $value = $this->preProcessor($value);
-        }      
+        $value = $this->preProcessor($value);    
         
         // Sets the processed Post variables to retrieve for error processing if any
         $fullFieldName = $tableName . '.' . $fieldName;
@@ -233,7 +277,7 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
 	    		  foreach ($variableToUpdateOrInsert as $uid => $fields) {
 	            if ($uid > 0) {
 	              // Updates the fields
-	              $this->updateFields($tableName, $fields, $uid);
+	              $this->updateFields($tableName, $fields, $uid);           
 	            } else {
 	              // Inserts the fields
 	              $this->insertFields($tableName, $fields);
@@ -264,16 +308,24 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
 	 */
   protected function preProcessor($value) {
 
-    // Builds the method name
+    // Builds the field type
     $fieldType = $this->getFieldConfigurationAttribute('fieldType');
     if ($fieldType == 'ShowOnly') {
     	$renderType = $this->getFieldConfigurationAttribute('renderType');
     	$fieldType = (empty($renderType) ? 'String' : $renderType);
     }
-    $preProcessorMethod = 'preProcessorFor' . $fieldType;
+    
+    // Calls the verification method for the type if it exists
+    $verifierMethod = 'verifierFor' . $fieldType;
+    if (method_exists($this,$verifierMethod) && $this->$verifierMethod($value) !== true) {
+     	self::$doNotAddValueToUpdateOrInsert = true;
+    	self::$doNotUpdateOrInsert = true;
+      return $value;
+    }
  
-    // Calls the methods if it exists
-    if (method_exists($this, $preProcessorMethod)) {
+    // Calls the pre-processing method if it exists
+    $preProcessorMethod = 'preProcessorFor' . $fieldType;
+      if (method_exists($this, $preProcessorMethod)) {
       $newValue =  $this->$preProcessorMethod($value);
     } else {
       $newValue = $value;
@@ -285,7 +337,27 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
 			self::$errorCode = self::ERROR_FIELD_REQUIRED;
 			Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.fieldRequired', array($this->fieldConfiguration['label']));		
 		}  
-		    
+
+    // Sets a post-processor for query attribute if any
+    if ($this->getFieldConfigurationAttribute('query')) {
+    	// Sets a post processor
+    	$this->postProcessingList[] = array(
+      	'method' => 'postProcessorToExecuteQuery',
+      	'value' => $value,
+      	'fieldConfiguration' => $this->fieldConfiguration
+    	);
+    }
+  
+    // Sets a post-processor for the rtf if any 
+    if ($this->getFieldConfigurationAttribute('generatertf')) {
+    	// Sets a post processor
+    	$this->postProcessingList[] = array(
+      	'method' => 'postProcessorToGenerateRTF',
+      	'value' => $value,
+      	'fieldConfiguration' => $this->fieldConfiguration
+    	);
+    }
+  		    
     // Sets a post-processor for the email if any 
     if ($this->getFieldConfigurationAttribute('mail')) {
     	// Sets a post processor
@@ -299,26 +371,19 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
     	$this->rows['before'] = $this->getCurrentRowInEditView();
     }
 
-    // Sets a post-processor for the rtf if any 
-    if ($this->getFieldConfigurationAttribute('generatertf')) {
-    	// Sets a post processor
-    	$this->postProcessingList[] = array(
-      	'method' => 'postProcessorToGenerateRTF',
-      	'value' => $value,
-      	'fieldConfiguration' => $this->fieldConfiguration
-    	);
+    // Calls the verifier if it exists
+    $verifierMethod = $this->getFieldConfigurationAttribute('verifier');
+    if (!empty($verifierMethod)) {
+    	if(!method_exists($this,$verifierMethod)) {
+    		self::$doNotAddValueToUpdateOrInsert = true;
+    		self::$doNotUpdateOrInsert = true;
+    		Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.verifierUnknown');
+    	} elseif ($this->$verifierMethod($newValue) !== true) {
+    		self::$doNotAddValueToUpdateOrInsert = true;
+    		self::$doNotUpdateOrInsert = true;    		
+    	}
     }
 
-    // Sets a post-processor for query attribute if any
-    if ($this->getFieldConfigurationAttribute('query')) {
-    	// Sets a post processor
-    	$this->postProcessingList[] = array(
-      	'method' => 'postProcessorToExecuteQuery',
-      	'value' => $value,
-      	'fieldConfiguration' => $this->fieldConfiguration
-    	);
-    }
-    
     return $newValue;
   }
 
@@ -397,34 +462,16 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
   protected function preProcessorForRelationManyToManyAsDoubleSelectorbox($value) {
 
     if($this->getFieldConfigurationAttribute('MM')) {
-
-//      if ($this->getFieldConfigurationAttribute('uid') > 0) {
-        //True MM
-        // Deletes existing fields in the MM table
-//        $this->deleteRecordsInRelationManyToMany($this->getFieldConfigurationAttribute('MM'), $this->getFieldConfigurationAttribute('uid'));
-
-        // Inserts the new fields
-//        foreach($value as $itemKey => $item) {
-//          $this->insertFieldsInRelationManyToMany($this->getFieldConfigurationAttribute('MM'), array(
-//            'uid_local' => $this->getFieldConfigurationAttribute('uid'),
-//            'uid_foreign' => $item,
-//            'sorting' => $itemKey +1 // The order of the selector is assumed
-//            )
-//          );
-//        }
-//      } else {
-
-				$fullFieldName = $this->getFieldConfigurationAttribute('MM'). '.uid_foreign';	
-				$uid = $this->getFieldConfigurationAttribute('uid');			
-        $this->processedPostVariables[$fullFieldName][$uid] = array('value' => $value, 'errorCode' => self::$errorCode);
+			$fullFieldName = $this->getFieldConfigurationAttribute('MM'). '.uid_foreign';	
+			$uid = $this->getFieldConfigurationAttribute('uid');			
+      $this->processedPostVariables[$fullFieldName][$uid] = array('value' => $value, 'errorCode' => self::$errorCode);
     	
-        $this->postProcessingList[] = array(
-          'method' => 'postProcessorForRelationManyToManyAsDoubleSelectorbox',
-          'value' => $value,
-          'fieldConfiguration' => $this->fieldConfiguration
-        );
+      $this->postProcessingList[] = array(
+        'method' => 'postProcessorForRelationManyToManyAsDoubleSelectorbox',
+        'value' => $value,
+        'fieldConfiguration' => $this->fieldConfiguration
+      );
 
-//      }
       // The value is replaced by the number of relations
       $value = count($value);
     } else {
@@ -452,7 +499,27 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
 
     return $value;
   }
+ 
+	/**
+	 * Gets the uid for post processors
+	 *
+	 * @param none
+	 *
+	 * @return integer 
+	 */
+  protected function getUidForPostProcessor() {
 
+	  // Gets the uid
+	  $tableName = $this->getFieldConfigurationAttribute('tableName');
+	  if ($this->getFieldConfigurationAttribute('uid') > 0) {
+	  	$uid = $this->getFieldConfigurationAttribute('uid');
+	  } else {
+	  	// Gets the last inserted uid
+	  	$uid = $this->newInsertedUid[$tableName];
+	  } 
+	  return $uid;
+  } 
+  
 	/**
 	 * Post-processor for RelationManyToManyAsDoubleSelectorbox
 	 *
@@ -463,13 +530,7 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
   protected function postProcessorForRelationManyToManyAsDoubleSelectorbox($value) {
 
 	  // Gets the uid
-	  $tableName = $this->getFieldConfigurationAttribute('tableName');
-	  if ($this->getFieldConfigurationAttribute('uid') > 0) {
-	  	$uid = $this->getFieldConfigurationAttribute('uid');
-	  } else {
-	  	// Gets the last inserted uid
-	  	$uid = $this->newInsertedUid[$tableName];
-	  }
+	  $uid = $this->getUidForPostProcessor();
 	  
 		// Deletes existing fields in the MM table
 	  $this->deleteRecordsInRelationManyToMany($this->getFieldConfigurationAttribute('MM'), $uid);
@@ -543,7 +604,7 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
 	 * @return boolean 
 	 */
   protected function postProcessorToSendEmail($value) {
-  	
+ 	
   	// Gets the key of the email button if it was hit
 		$formAction = $this->getController()->getUriManager()->getFormActionFromPostVariables();
     if (isset($formAction['saveAndSendMail'])) {
@@ -555,39 +616,48 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
 		if ($this->getFieldConfigurationAttribute('mailauto')) {
 			// Mail is sent if a field has changed
 			// Gets the current row in the edit view after insert or update
-			$this->rows['after'] = $this->getCurrentRowInEditView();
+			$this->rows['after'] = $this->getCurrentRowInEditView();		
 			foreach($this->rows['after'] as $fieldKey => $field) {
-				if ($field != $this->rows['before'][$fieldKey]) {
+				if (array_key_exists(Tx_SavLibraryPlus_Controller_AbstractController::cryptTag($fieldKey), $this->postVariables) && $field != $this->rows['before'][$fieldKey]) {
 					$mailCanBeSent = true;
 				}
-			}		
+			}				
 		} elseif($this->getFieldConfigurationAttribute('mailalways')) {
 			$mailCanBeSent = true;				
-		}	elseif (empty($value) && $sendMailFieldKey == $this->getFieldConfigurationAttribute('cryptedFullFieldName')) {
-			// A checkbox with an email button was hit
-			$mailCanBeSent = true;		
-		} 
+		}	
 		
 		// Processes additional conditions
 		$mailIfFieldSetTo =  $this->getFieldConfigurationAttribute('mailiffieldsetto');
-		if (empty($mailIfFieldSetTo) === false) {
-			$tableName = $this->getFieldConfigurationAttribute('tableName');
-			$fieldName = $this->getFieldConfigurationAttribute('fieldName');
+		if (!empty($mailIfFieldSetTo)) {
+			$fieldForCheckMail = $this->getFieldConfigurationAttribute('fieldforcheckmail');
+			if (empty($fieldForCheckMail)) {
+				$tableName = $this->getFieldConfigurationAttribute('tableName');
+				$fieldName = $this->getFieldConfigurationAttribute('fieldName');
+				$fullFieldName = $tableName . '.' . $fieldName;
+			} else {
+				$fullFieldName = $this->buildFullFieldName($fieldForCheckMail);	
+				$this->rows['after'] = $this->getCurrentRowInEditView();
+				$value = $this->rows['after'][$fullFieldName];			
+			}
 			$mailIfFieldSetToArray = explode(',', $mailIfFieldSetTo);
-			$fullFieldName = $tableName . '.' . $fieldName;
 			if (empty($this->rows['before'][$fullFieldName]) && in_array($value, $mailIfFieldSetToArray)) {
 				$mailCanBeSent = true;	
 			} else {
 				$mailCanBeSent = false;						
 			}	
-		}
-		
-		$fieldForCheckMail = $this->getFieldConfigurationAttribute('fieldforcheckmail');
-		$fullFieldName = $this->buildFullFieldName($fieldForCheckMail);
-		if (empty($this->rows['before'][$fullFieldName])) {
-			$mailCanBeSent = false;					
-		}
-		
+		} elseif (empty($value) && $sendMailFieldKey == $this->getFieldConfigurationAttribute('cryptedFullFieldName')) {
+			// A checkbox with an email button was hit
+			$mailCanBeSent = true;		
+		} else {
+	  	$fieldForCheckMail = $this->getFieldConfigurationAttribute('fieldforcheckmail');
+	  	if (!empty($fieldForCheckMail)) {
+				$fullFieldName = $this->buildFullFieldName($fieldForCheckMail);
+				if (empty($this->rows['after'][$fullFieldName])) {
+					$mailCanBeSent = false;					
+				}		
+	  	}		
+		}		
+				
 		// Send the email
 		if ($mailCanBeSent === true) {
 			$mailSuccesFlag = $this->sendEmail();
@@ -596,7 +666,7 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
 			if ($mailSuccesFlag && $sendMailFieldKey == $this->getFieldConfigurationAttribute('cryptedFullFieldName')) {
 				$tableName = $this->getFieldConfigurationAttribute('tableName');
 				$fields = array($this->getFieldConfigurationAttribute('fieldName') => $mailSuccesFlag);
-				$uid = $this->getFieldConfigurationAttribute('uid');
+				$uid = $this->getUidForPostProcessor();
 				$this->updateFields($tableName, $fields, $uid);
 			}
 		}
@@ -605,7 +675,7 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
   }
 
   /**
-	 * Post-processor for generating email.
+	 * Post-processor for generating RTF.
 	 *
 	 * @param mixed $value
 	 *
@@ -618,18 +688,54 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
     if (isset($formAction['saveAndGenerateRtf'])) {
       $generateRtfFieldKey = key($formAction['saveAndGenerateRtf']);
     } 
-	
-		if ($generateRtfFieldKey == $this->getFieldConfigurationAttribute('cryptedFullFieldName')) {
-			
-	  	// Creates the querier
+
+		if ($generateRtfFieldKey == $this->getFieldConfigurationAttribute('cryptedFullFieldName') || $this->getFieldConfigurationAttribute('generatertfonsave')) {		
+			// Creates the querier
 	    $querierClassName = 'Tx_SavLibraryPlus_Queriers_EditSelectQuerier';
 	    $querier = t3lib_div::makeInstance($querierClassName);
 	    $querier->injectController($this->getController());
-	    $querier->injectQueryConfiguration();  
-	    $querier->processQuery();			
-	
+	    $querier->injectQueryConfiguration();
+	    if ($this->isSubformField()) {
+	    	$additionalPartToWhereClause = $this->buildAdditionalPartToWhereClause();
+	    	$querier->getQueryConfigurationManager()->setAdditionalPartToWhereClause($additionalPartToWhereClause);
+	    }
+	    $querier->injectAdditionalMarkers($this->additionalMarkers);
+	    $querier->processQuery();	
+
+	    // Checks if there is a condition for the generation
+	    $generateCondition = $this->getFieldConfigurationAttribute('generatertfif');
+	    if (!empty($generateCondition)) {
+    		$fieldConfigurationManager = t3lib_div::makeInstance('Tx_SavLibraryPlus_Managers_FieldConfigurationManager');
+    		$fieldConfigurationManager->injectController($this->getController());	
+    		$fieldConfigurationManager->injectQuerier($querier);	
+    		if (!$fieldConfigurationManager->processFieldCondition($generateCondition)) {
+    			return true;
+    		}
+	    }	
+    		
+	    // Checks if there exist replacement strings for fields
+	    foreach($this->fieldConfiguration as $fieldKey => $field) {
+	    	if (preg_match('/^(?<tableName>[^\.]+)\.(?<fieldName>.+)$/', $fieldKey, $matchFieldKey) && preg_match('/^(?<source>[^-]+)->(?<destination>.+)$/', $field, $matchField)) {
+					// Defines the replacement
+					switch (trim($matchField['source'])) {
+						case 'NL':
+							$source = chr(10);
+							$destination = $matchField['destination'];
+							break;
+						default:
+							$source = $matchField['source'];
+							$destination = $matchField['destination'];
+							break;							
+					}
+					// Gets the ful field name
+					$fullFieldName = $matchFieldKey[0];			
+					// Replaces the row only for the parsing
+					$querier->setFieldValueFromCurrentRow($fullFieldName, str_replace($source, $destination, $querier->getFieldValueFromCurrentRow($fullFieldName)));
+	    	}
+	    }
+	    
 			// Gets the template
-			$templateRtf = $querier->parseFieldTags($this->getFieldConfigurationAttribute('templatertf'));	
+			$templateRtf = $querier->parseFieldTags($this->getFieldConfigurationAttribute('templatertf'));			
 			if (empty($templateRtf)) {
 				return Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.incorrectRTFTemplateFileConfig');
 			}
@@ -646,7 +752,15 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
 				return Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.incorrectRTFTemplateFileName');			
 			}
 			
-			// Parses the file
+			// Cleans the file content
+			$file = preg_replace('/(###[^\r\n#]*)[\r\n]*([^#]*###)/m', '$1$2' ,$file);
+    	preg_match_all('/###([^#]+)###/', $file, $matches);
+    	foreach($matches[0] as $matchKey => $match) {
+				$match = preg_replace('/\\\\[^ ]+ /', '' , $match);
+				$file = str_replace($matches[0][$matchKey], $match ,$file);
+    	}
+          	
+			// Parses the file content
 			$file = $querier->parseFieldTags($file);
 			
 			// Gets the file name for saving the file	
@@ -670,9 +784,9 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
       file_put_contents($path . $pathParts['basename'], $file);
 
       // Updates the record
-			$tableName = $this->getFieldConfigurationAttribute('tableName');
 			$fields = array($this->getFieldConfigurationAttribute('fieldName') => $pathParts['basename']);
-			$uid = $this->getFieldConfigurationAttribute('uid');
+			$tableName = $this->getFieldConfigurationAttribute('tableName');
+			$uid = $this->getUidForPostProcessor();
 			$this->updateFields($tableName, $fields, $uid);      	
 		}
 		return true;
@@ -699,25 +813,25 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
   	
   	// Gets the queryOnValue attribute
   	$queryOnValueAttribute = $this->getFieldConfigurationAttribute('queryonvalue');
-  	if (empty($queryOnValueAttribute) || $queryOnValueAttribute == $value) {
-  		$markers = this;
-  		 
+  	if (empty($queryOnValueAttribute) || $queryOnValueAttribute == $value) {		 
   		// Sets the markers
   		$markers = $this->buildSpecialMarkers();
-  		$markers = array_merge($markers, array('###uidItem###' => $this->getFieldConfigurationAttribute('uid'))); 		
+  		if ($this->isSubformField()) {
+  			$markers = array_merge($markers, array('###uidItem###' => $uidSubform, '###uidSubform###' => $uidSubform)); 
+  		} 					
       $markers = array_merge($markers, array('###value###' => $value));
 
   		// Gets the queryForeach attribute      
-  		$queryForeachAttribute = $this->getFieldConfigurationAttribute('queryforeach');  		 
+  		$queryForeachAttribute = $this->getFieldConfigurationAttribute('queryforeach');  	
+  			 
   		if (empty($queryForeachAttribute) === false) {
-  			$foreachCryptedFieldName = Tx_SavLibraryPlus_Controller_AbstractController::cryptag($this->buildFullFieldName($queryForeachAttribute));
-        $foreachValues = explode(',', current($this->postVariables[$foreachCryptedFieldName]));
-
+  			$foreachCryptedFieldName = Tx_SavLibraryPlus_Controller_AbstractController::cryptTag($this->buildFullFieldName($queryForeachAttribute));
+  			$foreachValues = current($this->postVariables[$foreachCryptedFieldName]);
   		  foreach($foreachValues as $foreachValue) {
 					$markers['###' . $queryForeachAttribute . '###'] = $foreachValue;
           $temporaryQueryStrings = $contentObject->substituteMarkerArrayCached($this->getFieldConfigurationAttribute('query'), $markers, array(), array());
           $queryStrings = explode(';', $temporaryQueryStrings);
-          foreach($queryStrings as $queryString) {
+          foreach($queryStrings as $queryString) {         	
             $resource = $GLOBALS['TYPO3_DB']->sql_query($queryString);
             if ($GLOBALS['TYPO3_DB']->sql_error($resource)) {
             	Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.incorrectQueryInQueryProperty');
@@ -739,41 +853,133 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
   	}
   	return true;
   }    
-  
-	/**
-	 * Verifier which calls the method according to the type
-	 *
-	 * @param mixed $value Value to be verified
-	 *
-	 * @return boolean
-	 */
-  protected function verifier($value) {
-    $fieldType = $this->getFieldConfigurationAttribute('fieldType');
-    $verifierMethod = 'verifierFor' . $fieldType;
 
-    if (method_exists($this,$verifierMethod)) {
-      return $this->$verifierMethod($value);
-    } else {
-      return true;
-    }
-  }
+  
+  /**
+	 * Builds an additional part to a WHERE clause
+	 *
+	 * @param none
+	 *
+	 * @return string
+	 */
+  protected function buildAdditionalPartToWhereClause() {  
+		$tableName = $this->getFieldConfigurationAttribute('tableName');	    
+		$uid = $this->getUidForPostProcessor();
+	  $whereClausePart = ' AND ' . $tableName . '.uid=' . intval($uid);
+	  
+	  return $whereClausePart; 
+	}  
   
 	/**
 	 * Verifier for Integer
 	 *
 	 * @param mixed $value Value to be pre-processed
 	 *
-	 * @return mixed
+	 * @return boolean
 	 */
   protected function verifierForInteger($value) {
-    if (preg_match('/^[-]?\d+$/', $value) == 0) {
-      self::$doNotAddValueToUpdateOrInsert = true;
+    if (!empty($value) && preg_match('/^[-]?\d+$/', $value) == 0) {
       return Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.isNotValidInteger', array($value));
     } else {
       return true;
     }
   }
 
+	/**
+	 * Checks if the input is a valid pattern.
+	 *
+	 * @param  mixed $value Value to be checked
+   *       
+	 * @return boolean
+	 */
+	protected function isValidPattern($value) {
+		$verifierParameter = $this->getFieldConfigurationAttribute('verifierparam');
+		if (!preg_match($verifierParameter, $value)) {
+      return Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.isValidPattern', array($value));
+    } else {
+      return true;
+    }			
+  }
+
+	/**
+	 * Checks if the input is a valid pattern if not empty.
+	 *
+	 * @param  mixed $value Value to be checked
+   *       
+	 * @return boolean
+	 */
+	protected function isValidPatternIfNotNull($value) {
+		if (empty($value)) {
+			return true;
+		} else {
+			return $this->isValidPattern($value);
+		}	
+  }
+    
+	/**
+	 * Checks if the input is lower or equal to a given length.
+	 *
+	 * @param  mixed $value Value to be checked
+   *       
+	 * @return boolean
+	 */
+  protected function isValidLength($value) {
+		$verifierParameter = $this->getFieldConfigurationAttribute('verifierparam');  	
+    if (strlen($value) > $verifierParameter) {
+      return Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.isValidLength', array($value));
+    } else {
+      return true;
+    }	   	
+  }
+
+	/**
+	 * Checks if the input is in a given interval.
+	 *
+	 * @param  mixed $value Value to be checked
+   *       
+	 * @return boolean
+	 */
+  protected function isValidInterval($value) {
+ 		$verifierParameter = $this->getFieldConfigurationAttribute('verifierparam');  	 	
+    if (!preg_match('/\[([\d]+),[ ]*([\d]+)\]/', $verifierParameter, $matches)) {
+      return Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.verifierInvalidIntervalParameter', array($value)); 
+    }
+    
+    if ((int)$value < (int)$matches[1] || (int)$value > (int)$matches[2]) {
+      return Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.isValidInterval', array($value));
+    } else {
+      return true;
+    }	      	
+  }
+
+	/**
+	 * Checks if the input is a valid query.
+	 *
+	 * @param  mixed $value Value to be checked
+   *       
+	 * @return boolean
+	 */
+  protected function isValidQuery($value) {
+ 		$verifierParameter = $this->getFieldConfigurationAttribute('verifierparam');   
+    // Gets the field from a query. The value marker is replaced by the selected value
+    $query = str_replace('###value###', $value, $verifierParameter);
+    $query = str_replace('###uid###', $this->getFieldConfigurationAttribute('uid'), $query);
+
+    // Checks if the query is a SELECT query and for errors
+    if (!$this->isSelectQuery($query)) {
+      return Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.onlySelectQueryAllowed');
+    } elseif (!($resource = $GLOBALS['TYPO3_DB']->sql_query($query))) {
+      return Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.incorrectQueryInContent');
+    } else {
+      $row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($resource);
+      if (!current($row)) {
+      	return Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.isValidQuery');      	
+      } else {
+      	return true;
+      }
+    }
+  }  
+  
 	/**
 	 * Returns true if a field is required
 	 * 
@@ -785,6 +991,17 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
   	return ($this->fieldConfiguration['required'] || preg_match('/required/', $this->fieldConfiguration['eval'])>0);	
   }
 
+	/**
+	 * Returns true if the field is in a subform
+	 * 
+	 * @param none
+	 * 
+	 * @return boolean
+	 */
+  protected function isSubformField() {
+  	return (!empty($this->fieldConfiguration['parentTableName']));	
+  }
+  
 	/**
 	 * Inserts fields in a table
 	 *
@@ -993,8 +1210,14 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
     $querier = t3lib_div::makeInstance($querierClassName);
     $querier->injectController($this->getController());
     $querier->injectQueryConfiguration();  
+    // Special processing if the field is in a subform
+  	if ($this->isSubformField()) {
+	    $additionalPartToWhereClause = $this->buildAdditionalPartToWhereClause();
+	    $querier->getQueryConfigurationManager()->setAdditionalPartToWhereClause($additionalPartToWhereClause);
+	  }  
+    $querier->injectAdditionalMarkers($this->additionalMarkers);    
     $querier->processQuery();
-  	
+    
   	// Gets the content object
   	$contentObject = $this->getController()->getExtensionConfigurationManager()->getExtensionContentObject();
 
@@ -1011,8 +1234,7 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
     );
 
     // Processes the mail receiver
-    $mailReceiverFromQuery = $this->getFieldConfigurationAttribute('mailreceiverfromquery');
-    
+    $mailReceiverFromQuery = $this->getFieldConfigurationAttribute('mailreceiverfromquery');   
     if (empty($mailReceiverFromQuery) === false) {
     	$mailReceiverFromQuery = $querier->parseLocalizationTags($mailReceiverFromQuery); 
     	$mailReceiverFromQuery = $querier->parseFieldTags($mailReceiverFromQuery); 
@@ -1025,7 +1247,13 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
       } 
      	// Processes the query
       $row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($resource);
-      $mailReceiver = $row['email'];      
+      $mailReceiver = $row['email']; 
+      // Injects the row since query aliases may be used as markers
+      $additionalMarkers = array();
+      foreach($row as $key => $value) {
+      	$additionalMarkers['###' . $key . '###'] = $value;
+      }
+      $querier->injectAdditionalMarkers($additionalMarkers);     
     } elseif ($this->getFieldConfigurationAttribute('mailreceiverfromfield')) {
     	$mailReceiver = $querier->getFieldValueFromCurrentRow($querier->buildFullFieldName($this->getFieldConfigurationAttribute('mailreceiverfromfield')));
     } elseif ($this->getFieldConfigurationAttribute('mailreceiver')) {
@@ -1066,7 +1294,14 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
 		// Replaces the field tags in the message and the subject, i.e. tags defined as ###tag###
 		$mailMessage = $querier->parseFieldTags($mailMessage);
 		$mailSubject = $querier->parseFieldTags($mailSubject);
-				
+		
+    // Gets the attachements if any
+		$mailAttachments = $this->getFieldConfigurationAttribute('mailattachments');		
+    if (empty($mailAttachments) === false) {
+			$mailAttachments = $querier->parseLocalizationTags($mailAttachments);  
+			$mailAttachments = $querier->parseFieldTags($mailAttachments);
+    }	
+		
     // Resets the language key
     if (empty($mailMessageLanguage) === false) {
       $GLOBALS['TSFE']->config['config']['language'] = $languageKey;
@@ -1083,24 +1318,70 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
 
     // Builds the header
     $charset = mb_detect_encoding($mailMessage);
-    $headers  = 'MIME-Version: 1.0' . "\r\n";
-    $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
-    $headers .= 'From: ' . $mailSender . "\r\n";
-    $headers .= 'Reply-To: ' . $mailSender . "\r\n";
-    $headers .= 'Return-Path: ' . $mailSender . "\r\n";
+		$headers = 'MIME-Version: 1.0' . LF;
+    $headers .= 'From: ' . $mailSender . LF;
+    $headers .= 'Reply-To: ' . $mailSender . LF;
+    $headers .= 'Return-Path: ' . $mailSender . LF;
     $mailCarbonCopy = $this->getFieldConfigurationAttribute('mailcc');
     if (empty($mailCarbonCopy) === false) {
-      $headers .= 'Cc: ' . $mailCarbonCopy . "\r\n";
+      $headers .= 'Cc: ' . $mailCarbonCopy . LF;
     }
+    
+		// Sets the content type
+
+		if (empty($mailAttachments)) {  
+    	$headers .= 'Content-type: text/html; charset=iso-8859-1' . LF;
+		} else {
+    	// Boundary  
+    	$boundary = '--' . md5(time()); 
+ 
+     	// Headers for attachment 
+    	$headers .= 'Content-Type: multipart/mixed; ' . 'boundary="' . $boundary . '"'; 
+    	
+     	// Multipart boundary 
+    	$message = $mailMessage;      	
+    	$mimeBoundary = '--' . $boundary;
+    	$mailMessage = $mimeBoundary . PHP_EOL;    	
+    	
+    	// Alternative boundary
+      $mailMessage .= 'Content-Type: multipart/alternative; boundary="' . $boundary . '--alt"' . PHP_EOL . PHP_EOL; 
+    	$alternativeBoundary = '--' . $boundary . '--alt';    	
+    
+    	$mailMessage .= $alternativeBoundary . PHP_EOL;    	 	
+    	$mailMessage .= 'Content-Type: text/html; charset=iso-8859-1' . PHP_EOL;
+      $mailMessage .= 'Content-Transfer-Encoding: 8bit' . PHP_EOL;    	
+    	$mailMessage .= PHP_EOL . $message. PHP_EOL . PHP_EOL; 
+     	$mailMessage .= $alternativeBoundary. '--' . PHP_EOL;	 
+    	
+     	// Attaches the files
+     	$files = explode(',', $mailAttachments);
+			foreach($files as $file) {
+				if(is_file($file)) {
+					$mailMessage .= $mimeBoundary . PHP_EOL;
+          $fileDescriptor =	@fopen($file,'rb');
+         	$data = @fread($fileDescriptor, filesize($file));
+          @fclose($fileDescriptor);
+          $data = chunk_split(base64_encode($data));
+      		// Gets the mime type
+      		$fileInfo = finfo_open(FILEINFO_MIME_TYPE);
+					$mimeContentType = finfo_file($fileInfo, $file);
+          $mailMessage .= 'Content-Type: ' . $mimeContentType . '; name="' . basename($file) . '"' . PHP_EOL;
+          $mailMessage .= 'Content-Transfer-Encoding: base64' . PHP_EOL ;
+          $mailMessage .= 'Content-Disposition: attachment; filename="' . basename($file) . '"' . PHP_EOL; 
+          $mailMessage .= PHP_EOL .$data . PHP_EOL . PHP_EOL;
+				}
+			}
+			$mailMessage .= $mimeBoundary . '--' . PHP_EOL;	
+		}
 
     // Sends the email
     if (!ini_get('safe_mode')) {
 			// If safe mode is on, the fifth parameter to mail is not allowed,
-      // so the fix wont work on unix with safe_mode=On
+      // so the fix wont work on unix with safe_mode=On         
       return @mail($mailReceiver, $mailSubject, $mailMessage, $headers, '-f'.$mailSender);
-    } else {
+    } else {	
       return @mail($mailReceiver, $mailSubject, $mailMessage, $headers);
-    }
+    }  
   }
 
 }
