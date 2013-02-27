@@ -157,7 +157,6 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
 	 * @return mixed
 	 */
 	public function getProcessedPostVariable($fullFieldName, $uid) {
-debug($this->processedPostVariables);
 		return $this->processedPostVariables[$fullFieldName][$uid];
 	} 
 

@@ -145,6 +145,11 @@ abstract class Tx_SavLibraryPlus_Filters_AbstractFilter extends tslib_pibase {
 		  if (!$this->conf['fileCSS'] && !$this->conf['stylesheet']) {
 		    if (file_exists(t3lib_extMgm::siteRelPath($this->extKey) . 'res/' . $this->extKey . '.css')) {
           $css = '<link rel="stylesheet" type="text/css" href="' . t3lib_extMgm::siteRelPath($this->extKey) . 'res/' . $this->extKey . '.css" />';
+        } elseif (file_exists(t3lib_extMgm::siteRelPath($this->extKey) . 'Resources/Private/Styles/' . $this->extKey . '.css')) {
+          $css = '<link rel="stylesheet" type="text/css" href="' . t3lib_extMgm::siteRelPath($this->extKey) . 'Resources/Private/Styles/' . $this->extKey . '.css" />';
+        } else {
+        	$this->addError('error.incorrectCSS');
+        	return false;        	
         }
 		  } elseif  (file_exists($this->conf['fileCSS'])) {
         $css = '<link rel="stylesheet" type="text/css" href="' . $this->conf['fileCSS'] . '" />';

@@ -458,8 +458,6 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
   	
  			// Gets the value   	
     	if ($querier->errorDuringUpdate() === true) {		
-debug($fieldName);
-debug($value);
 				$value = $querier->getFieldValueFromProcessedPostVariables($fieldName);
 			} else {
       	$value = $querier->getFieldValueFromCurrentRow($fieldName);					
