@@ -1169,7 +1169,7 @@ die('pb');
   	// Initaializes the markers
   	$markers = $this->buildSpecialMarkers();
   	$markers = array_merge($markers, $this->additionalMarkers);
-  	
+ 	
 		// Processes special tags
     $markers['###linkToPage###'] = str_replace(
       '<a href="',
@@ -1403,7 +1403,7 @@ die('pb');
 
     // ###SITEROOT### marker
     $markers['###SITEROOT###'] = $GLOBALS['TSFE']->rootLine[0]['uid'];
-        
+     
     return $markers;  
   } 
   
@@ -1452,11 +1452,8 @@ die('pb');
 	 */
   protected function setRows() {
     $counter = 0;
-    $mainTable = $this->queryConfigurationManager->getMainTable();
     $this->rows = array();
 		while ($row = $this->getRowWithFullFieldNames($counter++)) {
-		  $row['uid'] = $row[$mainTable . '.uid'];
-		  $row['cruser_id'] = $row[$mainTable . '.cruser_id'];
 			$this->rows[] = $row;
 		}
 		$GLOBALS['TYPO3_DB']->sql_free_result($this->resource);
@@ -1474,6 +1471,7 @@ die('pb');
     $rows = array();
 		$row = $GLOBALS['TYPO3_DB']->sql_fetch_row($this->resource);
     if ($row) {
+    	
   		foreach($row as $fieldKey => $field) {
   	    if ($rowCounter == 0) {
     		  $this->fieldObjects[$fieldKey] = mysql_fetch_field($this->resource, $fieldKey);
@@ -1486,6 +1484,11 @@ die('pb');
     		  $result[$fieldObject->name] = $field;
         }
       }
+      // Adds the uid and cruser_id aliases
+    	$mainTable = $this->queryConfigurationManager->getMainTable(); 
+		  $result['uid'] = $result[$mainTable . '.uid'];
+		  $result['cruser_id'] = $result[$mainTable . '.cruser_id'];  
+		    	     
     return $result;
     } else {
       return false;

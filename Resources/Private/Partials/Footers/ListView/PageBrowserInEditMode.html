@@ -2,13 +2,13 @@
     <div class="footer">
     <f:if condition="{configuration.general.lastPage} > 0">
       <f:if condition="{configuration.general.showFirstLastButtons}">
-      <sav:link.action action="firstPageInEditMode">
+      <sav:link.action action="firstPageInEditMode" additionalParams="{configuration.general.additionalParams}">
         <f:image class="backwardFirstPage" src="{sav:getIcon(fileName:'backwardFirstPage')}" alt="{f:translate(key:'button.backwardFirstPage')}" title="{f:translate(key:'button.backwardFirstPage')}" />
       </sav:link.action>
       </f:if>
       <f:if condition="{configuration.general.page} > 0">
         <f:then>
-        <sav:link.action action="previousPageInEditMode">
+        <sav:link.action action="previousPageInEditMode" additionalParams="{configuration.general.additionalParams}">
           <f:image class="backwardPage" src="{sav:getIcon(fileName:'backwardPage')}" alt="{f:translate(key:'button.backwardPage')}" title="{f:translate(key:'button.backwardPage')}" />
         </sav:link.action>
         </f:then>
@@ -17,13 +17,13 @@
         </f:else>
       </f:if>
       <f:for each="{configuration.general.pages}" as="page" key="pageKey">
-        <sav:link.action action="listInEditMode" arguments="{page:pageKey}" class="{f:if(condition:'{configuration.general.page} == {pageKey}',then:'selected',else:'notSelected')}">
+        <sav:link.action action="listInEditMode" additionalParams="{configuration.general.additionalParams}" arguments="{page:pageKey}" class="{f:if(condition:'{configuration.general.page} == {pageKey}',then:'selected',else:'notSelected')}">
           {page}
         </sav:link.action>
       </f:for>
       <f:if condition="{configuration.general.page} < {configuration.general.lastPage}">
         <f:then>
-        <sav:link.action action="nextPageInEditMode">
+        <sav:link.action action="nextPageInEditMode" additionalParams="{configuration.general.additionalParams}">
           <f:image class="forwardPage" src="{sav:getIcon(fileName:'forwardPage')}" alt="{f:translate(key:'button.forwardPage')}" title="{f:translate(key:'button.forwardPage')}" />
         </sav:link.action>
         </f:then>
@@ -32,7 +32,7 @@
         </f:else>
       </f:if>
       <f:if condition="{configuration.general.showFirstLastButtons}">
-      <sav:link.action action="lastPageInEditMode">
+      <sav:link.action action="lastPageInEditMode" additionalParams="{configuration.general.additionalParams}">
         <f:image class="forwardLastPage" src="{sav:getIcon(fileName:'forwardLastPage')}" alt="{f:translate(key:'button.forwardLastPage')}" title="{f:translate(key:'button.forwardLastPage')}" />
       </sav:link.action>
       </f:if>

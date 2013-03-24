@@ -111,13 +111,27 @@ class Tx_SavLibraryPlus_Queriers_FormAdminUpdateQuerier extends Tx_SavLibraryPlu
              
         // Makes pre-processings.
         self::$doNotAddValueToUpdateOrInsert = false;
-        $value = $this->preProcessor($value);
-        
+        $value = $this->preProcessor($value);  
+
+				// Gets the rendered value 
+				$fieldConfiguration = $this->fieldConfiguration;
+				$fieldConfiguration['value'] = $value;
+      	$className = 'Tx_SavLibraryPlus_ItemViewers_Default_' . $fieldConfiguration['fieldType'] . 'ItemViewer';
+      	$itemViewer = t3lib_div::makeInstance($className);
+      	$itemViewer->injectController($this->getController());
+      	$itemViewer->injectItemConfiguration($fieldConfiguration);
+      	$renderedValue = $itemViewer->render();
+      	if ($renderedValue == $value) {
+      		$markerValue = $renderedValue;
+      	}	else {
+      		$markerValue = $renderedValue . ' (' . $value .')';
+      	}
+      				
 				// Sets the items markers
 				if ($uid === 0) {
-					$markerItemsManual = array_merge($markerItemsManual, array($fullFieldName => $value));
+					$markerItemsManual = array_merge($markerItemsManual, array($fullFieldName => $markerValue));
 				} elseif ($uid > 0) {
-					$markerItemsAuto = array_merge($markerItemsAuto, array($fullFieldName => $value));					
+					$markerItemsAuto = array_merge($markerItemsAuto, array($fullFieldName => $markerValue));					
 				} else {
 					self::$doNotAddValueToUpdateOrInsert = true;
 				}    
@@ -131,13 +145,14 @@ class Tx_SavLibraryPlus_Queriers_FormAdminUpdateQuerier extends Tx_SavLibraryPlu
 		
 		// Injects the markers
 		$markerContent = '';
+		
 		foreach($markerItemsAuto as $markerKey => $marker) {
-			$markerContent .= $markerKey . ' : ' . $marker .chr(10);
+			$markerContent .= $markerKey . ' : ' . $marker . chr(10);
 		}
 		$this->getController()->getQuerier()->injectAdditionalMarkers(array('###ITEMS_AUTO###' => $markerContent));
   	$markerContent = '';
 		foreach($markerItemsManual as $markerKey => $marker) {
-			$markerContent .= $markerKey . ' : ' . $marker .chr(10);
+			$markerContent .= $markerKey . ' : ' . $marker . chr(10);
 		}		
 		$this->getController()->getQuerier()->injectAdditionalMarkers(array('###ITEMS_MANUAL###' => $markerContent));	
 		

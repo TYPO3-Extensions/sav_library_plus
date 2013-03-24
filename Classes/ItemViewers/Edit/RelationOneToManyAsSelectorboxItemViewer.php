@@ -101,7 +101,8 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_RelationOneToManyAsSelectorboxItemViewe
 			$option = $querier->parseLocalizationTags($option);
 			$option = $querier->parseFieldTags($option);    	
 			// Sets the selected attribute
-      $selected = ($row['uid'] == $this->getItemConfiguration('value') ? 'selected' : '');
+			$value = $this->getItemConfiguration('value');
+      $selected = ($row['uid'] == $value || (empty($value) && $row['uid'] == $this->getItemConfiguration('default')) ? 'selected' : ''); 
 			// Adds the Option element
 			$htmlOptionArray[] = Tx_SavLibraryPlus_Utility_HtmlElements::htmlOptionElement(
         array(

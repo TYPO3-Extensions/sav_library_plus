@@ -10,15 +10,15 @@
             <div class="itemIconLeft">
             <f:if condition="{field.isFirstField}">
             <f:if condition="{configuration.general.deleteButtonIsAllowed}">
-              <sav:link.action action="deleteInSubform" arguments="{subformUidForeign:field.uid,subformUidLocal:configuration.general.subformUidLocal,subformFieldKey:configuration.general.subformFieldKey}" noCacheHash="1">
+              <sav:link.action action="deleteInSubform" additionalParams="{configuration.general.additionalParams}" arguments="{subformUidForeign:field.uid,subformUidLocal:configuration.general.subformUidLocal,subformFieldKey:configuration.general.subformFieldKey}" noCacheHash="1">
                 <f:image src="{sav:getIcon(fileName:'delete')}" alt="{sav:translate(key:'button.delete')}" title="{sav:translate(key:'button.delete')}" />
               </sav:link.action>
             </f:if>
             <f:if condition="{configuration.general.upDownButtonIsAllowed}">
-              <sav:link.action action="upInSubform" arguments="{subformUidForeign:field.uid,subformUidLocal:configuration.general.subformUidLocal,subformFieldKey:configuration.general.subformFieldKey}" noCacheHash="1">
+              <sav:link.action action="upInSubform" additionalParams="{configuration.general.additionalParams}" arguments="{subformUidForeign:field.uid,subformUidLocal:configuration.general.subformUidLocal,subformFieldKey:configuration.general.subformFieldKey}" noCacheHash="1">
                 <f:image src="{sav:getIcon(fileName:'up')}" alt="{sav:translate(key:'button.up')}" title="{sav:translate(key:'button.up')}" />
               </sav:link.action>
-              <sav:link.action action="downInSubform" arguments="{subformUidForeign:field.uid,subformUidLocal:configuration.general.subformUidLocal,subformFieldKey:configuration.general.subformFieldKey}" noCacheHash="1">
+              <sav:link.action action="downInSubform" additionalParams="{configuration.general.additionalParams}" arguments="{subformUidForeign:field.uid,subformUidLocal:configuration.general.subformUidLocal,subformFieldKey:configuration.general.subformFieldKey}" noCacheHash="1">
                 <f:image src="{sav:getIcon(fileName:'down')}" alt="{sav:translate(key:'button.down')}" title="{sav:translate(key:'button.down')}" />
               </sav:link.action>
             </f:if>

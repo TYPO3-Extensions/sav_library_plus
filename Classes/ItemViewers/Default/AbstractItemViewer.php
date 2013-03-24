@@ -194,7 +194,7 @@ abstract class Tx_SavLibraryPlus_ItemViewers_Default_AbstractItemViewer {
       	}
 			}
     }
-    
+   
     $content = $this->getLeftValue() . $content . $this->getRightValue();
 
     // Applies a TypoScript StdWrap to the item, if any
@@ -379,7 +379,7 @@ abstract class Tx_SavLibraryPlus_ItemViewers_Default_AbstractItemViewer {
  		
  		// Adds no_cache if required
  		$additionalParameters = (Tx_SavLibraryPlus_Managers_UriManager::hasNoCacheParameter() ? array('no_cache' => 1) : array());
-  
+ 		  
     return $this->getController()->buildLinkToPage($value, $formParameters, $cacheHash, $additionalParameters);
 	}
 
@@ -409,7 +409,7 @@ abstract class Tx_SavLibraryPlus_ItemViewers_Default_AbstractItemViewer {
     } else {
     	$uid = $this->getItemConfiguration('uid');
     }
-    
+   
 	  // Builds the parameters
     $formParameters = array(
       'formName' => $formName,    

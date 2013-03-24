@@ -321,15 +321,15 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
     	self::$doNotUpdateOrInsert = true;
       return $value;
     }
- 
+
     // Calls the pre-processing method if it exists
     $preProcessorMethod = 'preProcessorFor' . $fieldType;
-      if (method_exists($this, $preProcessorMethod)) {
+    if (method_exists($this, $preProcessorMethod)) {
       $newValue =  $this->$preProcessorMethod($value);
     } else {
       $newValue = $value;
     }
-    
+  
 		// Checks if a required field is not empty
 		if ($this->isRequired() && empty($newValue)) {
 			self::$doNotUpdateOrInsert = true;
@@ -472,7 +472,11 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
       );
 
       // The value is replaced by the number of relations
-      $value = count($value);
+      if (count($value) == 1 && empty($value[0])) {
+      	$value = 0;
+      } else {
+      	$value = count($value);
+      }
     } else {
       // Comma list
       $value = implode(',', $value);
@@ -536,12 +540,14 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
 
 	  // Inserts the new fields
 	  foreach($value as $itemKey => $item) {
-	    $this->insertFieldsInRelationManyToMany($this->getFieldConfigurationAttribute('MM'), array(
-	      'uid_local' => $uid,
-	      'uid_foreign' => $item,
-	      'sorting' => $itemKey +1 // The order of the selector is assumed
-	      )
-	    );
+	  	if ($item != 0) {
+		    $this->insertFieldsInRelationManyToMany($this->getFieldConfigurationAttribute('MM'), array(
+		      'uid_local' => $uid,
+		      'uid_foreign' => $item,
+		      'sorting' => $itemKey +1 // The order of the selector is assumed
+		      )
+	    	);
+	  	}
 		}
   }
 
@@ -651,23 +657,58 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
 	  	$fieldForCheckMail = $this->getFieldConfigurationAttribute('fieldforcheckmail');
 	  	if (!empty($fieldForCheckMail)) {
 				$fullFieldName = $this->buildFullFieldName($fieldForCheckMail);
-				if (empty($this->rows['after'][$fullFieldName])) {
-					$mailCanBeSent = false;					
+	  		$mailIf = $this->getFieldConfigurationAttribute('mailif');
+	  		if(!empty($mailIf)) {
+					// Creates the querier
+	    		$querierClassName = 'Tx_SavLibraryPlus_Queriers_EditSelectQuerier';
+	    		$querier = t3lib_div::makeInstance($querierClassName);
+	    		$querier->injectController($this->getController());
+	    		$querier->injectQueryConfiguration();
+	    		if ($this->isSubformField()) {
+	    			$additionalPartToWhereClause = $this->buildAdditionalPartToWhereClause();
+	    			$querier->getQueryConfigurationManager()->setAdditionalPartToWhereClause($additionalPartToWhereClause);
+	    		}
+	    		$querier->injectAdditionalMarkers($this->additionalMarkers);
+	    		$querier->processQuery();		
+
+	    		// Creates the field configuration manager
+	  			$fieldConfigurationManager = t3lib_div::makeInstance('Tx_SavLibraryPlus_Managers_FieldConfigurationManager');
+    			$fieldConfigurationManager->injectController($this->getController());	
+    			$fieldConfigurationManager->injectQuerier($querier);	
+    			$mailCanBeSent = $fieldConfigurationManager->processFieldCondition($mailIf);	
+	  		} else {
+	  			if (empty($this->rows['after'][$fullFieldName])) {
+						$mailCanBeSent = false;		
+	  			}			
 				}		
 	  	}		
 		}		
-				
+		
 		// Send the email
 		if ($mailCanBeSent === true) {
 			$mailSuccesFlag = $this->sendEmail();
 
-			// Updates the fields if it is a checkbox with an email button
-			if ($mailSuccesFlag && $sendMailFieldKey == $this->getFieldConfigurationAttribute('cryptedFullFieldName')) {
-				$tableName = $this->getFieldConfigurationAttribute('tableName');
-				$fields = array($this->getFieldConfigurationAttribute('fieldName') => $mailSuccesFlag);
-				$uid = $this->getUidForPostProcessor();
-				$this->updateFields($tableName, $fields, $uid);
-			}
+			// Updates the fields if needed
+			if ($mailSuccesFlag) {
+				$update = false;
+				// Checkbox with an email button				
+				if ($sendMailFieldKey == $this->getFieldConfigurationAttribute('cryptedFullFieldName')) {
+					$fields = array($this->getFieldConfigurationAttribute('fieldName') => $mailSuccesFlag);
+					$update = true;
+				}
+
+				// Attribute fieldToSetAfterMailSent is used					
+				if ($this->getFieldConfigurationAttribute('fieldtosetaftermailsent')) {
+					$fields = array($this->getFieldConfigurationAttribute('fieldtosetaftermailsent') => $mailSuccesFlag);
+					$update = true;					
+				}
+	
+				if ($update === true) {
+					$tableName = $this->getFieldConfigurationAttribute('tableName');
+					$uid = $this->getUidForPostProcessor();
+					$this->updateFields($tableName, $fields, $uid);
+				}
+			}	
 		}
 
 		return false;
@@ -808,14 +849,14 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
   	}
 
   	// Gets the content object
-  	$contentObject = $this->getController()->getExtensionConfigurationManager()->getExtensionContentObject();
-  	
+  	$contentObject = $this->getController()->getExtensionConfigurationManager()->getExtensionContentObject();	
   	// Gets the queryOnValue attribute
   	$queryOnValueAttribute = $this->getFieldConfigurationAttribute('queryonvalue');
   	if (empty($queryOnValueAttribute) || $queryOnValueAttribute == $value) {		 
   		// Sets the markers
   		$markers = $this->buildSpecialMarkers();
   		if ($this->isSubformField()) {
+ 				$uidSubform = $this->getFieldConfigurationAttribute('uid');
   			$markers = array_merge($markers, array('###uidItem###' => $uidSubform, '###uidSubform###' => $uidSubform)); 
   		} 					
       $markers = array_merge($markers, array('###value###' => $value));
@@ -1203,7 +1244,6 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
 	 * @return boolean True if sent successfully
 	 */
   public function sendEmail() {
-
   	// Calls the querier
     $querierClassName = 'Tx_SavLibraryPlus_Queriers_EditSelectQuerier';
     $querier = t3lib_div::makeInstance($querierClassName);
@@ -1236,7 +1276,7 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
     $mailReceiverFromQuery = $this->getFieldConfigurationAttribute('mailreceiverfromquery');   
     if (empty($mailReceiverFromQuery) === false) {
     	$mailReceiverFromQuery = $querier->parseLocalizationTags($mailReceiverFromQuery); 
-    	$mailReceiverFromQuery = $querier->parseFieldTags($mailReceiverFromQuery); 
+    	$mailReceiverFromQuery = $querier->parseFieldTags($mailReceiverFromQuery);
 
       // Checks if the query is a SELECT query and for errors
       if ($this->isSelectQuery($mailReceiverFromQuery) === false) {
@@ -1260,7 +1300,7 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
     } else {
        return Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.noEmailReceiver');    	
     }
-		
+	
     // Checks if a language configuration is set for the message
     $mailMessageLanguageFromField = $this->getFieldConfigurationAttribute('mailmessagelanguagefromfield');
     if (empty($mailMessageLanguageFromField) === false) {

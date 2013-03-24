@@ -74,6 +74,13 @@ abstract class Tx_SavLibraryPlus_Viewers_AbstractViewer {
   protected $templateFile;
 
   /**
+   * The link configuration
+   *
+   * @var array
+   */
+  protected $linkConfiguration = array();  
+    
+  /**
    * Item viewer directory
    *
    * @var string
@@ -345,8 +352,30 @@ abstract class Tx_SavLibraryPlus_Viewers_AbstractViewer {
 				throw new Tx_SavLibraryPlus_Exception('The file "' . htmlspecialchars(PATH_site . $templateFile) . '" does not exist');  			
   		}				
   	}
-  }  
+  }   
 
+	/**
+	 * Sets the link configuration
+	 *
+	 * @param array $linkConfiguration
+	 *
+	 * @return none
+	 */
+  public function setLinkConfiguration($linkConfiguration) {
+  	$this->linkConfiguration = $linkConfiguration; 	
+  }
+
+	/**
+	 * Gets the link configuration
+	 *
+	 * @param none
+	 *
+	 * @return array The link configuration
+	 */
+  public function getLinkConfiguration() {
+  	return $this->linkConfiguration;
+  } 
+  
  	/**
 	 * Creates the field configuration manager
 	 *
@@ -530,10 +559,13 @@ abstract class Tx_SavLibraryPlus_Viewers_AbstractViewer {
 	 * @return string the rendered view
 	 */
   public function renderView() {
-  	 	
+	 	
   	// Sets the view configuration files
   	$this->setViewConfigurationFilesFromTypoScriptConfiguration();
- 	
+
+  	// Sets the link configuration
+  	$this->setViewLinkConfigurationFromTypoScriptConfiguration();  	
+	
     // Creates the view
     $view = t3lib_div::makeInstance('Tx_Fluid_View_StandaloneView');
     
@@ -543,12 +575,16 @@ abstract class Tx_SavLibraryPlus_Viewers_AbstractViewer {
     // Sets the layout and the partial root paths
     $view->setLayoutRootPath($this->getLayoutRootPath());
     $view->setPartialRootPath($this->getPartialRootPath());
-   
+    
+    //Gets the link configuration
+    $linkConfiguration = $this->getLinkConfiguration();
+     
     // Adds the short form name to the general configuration
     $this->addToViewConfiguration('general',
       array(
         'shortFormName' => Tx_SavLibraryPlus_Controller_AbstractController::getShortFormName(),
         'contentIdentifier' => $this->getController()->getExtensionConfigurationManager()->getContentIdentifier(), 
+      	'additionalParams' => Tx_SavLibraryPlus_Controller_AbstractController::convertLinkAdditionalParametersToArray($linkConfiguration['additionalParams']),
       )
     );    
   
@@ -568,7 +604,7 @@ abstract class Tx_SavLibraryPlus_Viewers_AbstractViewer {
 	 *
 	 * @param none
 	 *
-	 * @return string the rendered view
+	 * @return none
 	 */
   public function setViewConfigurationFilesFromTypoScriptConfiguration() {  
   	// Sets the template root path with the default
@@ -577,7 +613,23 @@ abstract class Tx_SavLibraryPlus_Viewers_AbstractViewer {
   	$this->getController()->getExtensionConfigurationManager()->setViewConfigurationFilesFromTypoScriptConfiguration();
   	$this->getController()->getLibraryConfigurationManager()->setViewConfigurationFilesFromTypoScriptConfiguration();  
   }  
-  
+
+	/**
+	 * Sets the link configuration:
+	 * - from the Page TypoScript Configuration if any
+	 * - else from the extension TypoScript Configuration if any,
+	 * - else from the library TypoScript Configuration if any.
+	 *
+	 * @param none
+	 *
+	 * @return none
+	 */
+  public function setViewLinkConfigurationFromTypoScriptConfiguration() {  	
+  	$this->getController()->getPageTypoScriptConfigurationManager()->setViewLinkConfigurationFromPageTypoScriptConfiguration();
+  	$this->getController()->getExtensionConfigurationManager()->setViewLinkConfigurationFromTypoScriptConfiguration();
+  	$this->getController()->getLibraryConfigurationManager()->setViewLinkConfigurationFromTypoScriptConfiguration();  
+  }    
+    
 	/**
 	 * Renders an item
 	 *
@@ -586,7 +638,7 @@ abstract class Tx_SavLibraryPlus_Viewers_AbstractViewer {
 	 * @return string the rendered item
 	 */
   public function renderItem($fieldKey) {
-  	
+
     if (array_key_exists ($fieldKey, $this->folderFieldsConfiguration) === true) {
       $itemConfiguration = $this->folderFieldsConfiguration[$fieldKey];
 
@@ -599,7 +651,7 @@ abstract class Tx_SavLibraryPlus_Viewers_AbstractViewer {
 
 			// Changes the item viewer directory to Default if the attribute edit is set to zero
       $itemViewerDirectory = ($itemConfiguration['edit'] === '0' ? 'Default' : $this->getItemViewerDirectory());
-      
+        
       // Creates the item viewer
       $className = 'Tx_SavLibraryPlus_ItemViewers_' . $itemViewerDirectory . '_' . $itemConfiguration['fieldType'] . 'ItemViewer';
       $itemViewer = t3lib_div::makeInstance($className);

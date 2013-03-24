@@ -2,7 +2,7 @@
     <div class="titleBar {f:if(condition:configuration.general.isInDraftWorkspace,then:'draftWorkspace')}">
       <div class="titleIconLeft">
       <f:if condition="{configuration.general.userIsAllowedToInputData}">
-      <sav:link.action action="edit">
+      <sav:link.action action="edit" additionalParams="{configuration.general.additionalParams}">
         <f:image class="edit" src="{sav:getIcon(fileName:'edit')}" alt="{sav:translate(key:'button.edit')}" title="{sav:translate(key:'button.edit')}" />
       </sav:link.action>
       </f:if>
@@ -12,7 +12,7 @@
       </f:if>
       <div class="titleIconRight">
       <f:if condition="{configuration.general.addPrintIcon}">
-        <sav:link.action action="single" additionalParams="{print:1,cid:configuration.general.contentIdentifier}">
+        <sav:link.action action="single" additionalParams="{sav:merge(array1:'{print:1,cid:configuration.general.contentIdentifier}', array2:configuration.general.additionalParams)}">
           <f:image class="print" src="{sav:getIcon(fileName:'print')}" alt="{sav:translate(key:'button.print')}" title="{sav:translate(key:'button.print')}" />
         </sav:link.action>
       </f:if>
@@ -21,7 +21,7 @@
           <f:image class="help" src="{sav:getIcon(fileName:'help')}" onclick="vHWin=window.open('index.php?id={configuration.general.helpPage}&amp;help=1','viewHelp','height=500,width=600,status=0,menubar=0,scrollbars=1'); vHWin.focus();return false;" alt="{sav:translate(key:'button.help')}" title="{sav:translate(key:'button.help')}" />
         </f:link.page>
       </f:if>
-       <sav:link.action action="close">
+       <sav:link.action action="close" additionalParams="{configuration.general.additionalParams}">
         <f:image class="close" src="{sav:getIcon(fileName:'close')}" alt="{sav:translate(key:'button.close')}" title="{sav:translate(key:'button.close')}" />
       </sav:link.action>
       </div>

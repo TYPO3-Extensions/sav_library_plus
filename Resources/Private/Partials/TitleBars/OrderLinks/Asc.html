@@ -4,7 +4,7 @@
   <f:image class="orderAsc" src="{sav:getIcon(fileName:'orderAscSelected')}" alt="{sav:translate(key:'button.orderAsc')}" title="{sav:translate(key:'button.orderAsc')}" />
   </f:then>
   <f:else>
-  <sav:link.action action="list{field.inEditMode}"  arguments="{whereTagKey:field.whereTagAscendingOrderKey}">
+  <sav:link.action action="list{field.inEditMode}" additionalParams="{configuration.general.additionalParams}" arguments="{whereTagKey:field.whereTagAscendingOrderKey}">
     <f:image class="orderAsc" src="{sav:getIcon(fileName:'orderAsc')}" alt="{sav:translate(key:'button.orderAsc')}" title="{sav:translate(key:'button.orderAsc')}" />
   </sav:link.action>
   </f:else>

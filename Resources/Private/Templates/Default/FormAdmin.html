@@ -3,7 +3,7 @@
 
 <f:section name="content">
   <div class="formAdminView">
-    <sav:form name="{configuration.general.formName}" method="post" enctype="multipart/form-data" action="saveFormAdmin" >
+    <sav:form name="{configuration.general.formName}" method="post" enctype="multipart/form-data" action="saveFormAdmin" additionalParams="{configuration.general.additionalParams}" >
     <f:render partial="TitleBars/FormView/Default.html" arguments="{configuration: configuration}" />
     <div class="items">
       <f:if condition="{configuration.general.message}">

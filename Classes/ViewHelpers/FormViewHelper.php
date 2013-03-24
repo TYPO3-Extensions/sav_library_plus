@@ -72,12 +72,13 @@ class Tx_SavLibraryPlus_ViewHelpers_FormViewHelper extends Tx_Fluid_ViewHelpers_
 	 * @param string $pluginName Target plugin. If empty, the current plugin name is used
 	 * @param integer $pageUid Target page uid
 	 * @param mixed $object Object to use for the form. Use in conjunction with the "property" attribute on the sub tags
+	 * @param array $additionalParams additional action URI query parameters that won't be prefixed like $arguments (overrule $arguments) (only active if $actionUri is not set)
 	 * @param integer $pageType Target page type
 	 * @param string $fieldNamePrefix Prefix that will be added to all field names within this form. If not set the prefix will be tx_yourExtension_plugin
 	 * @param string $actionUri can be used to overwrite the "action" attribute of the form tag
 	 * @return string rendered form
 	 */
-	public function render($action = NULL, array $arguments = array(), $controller = NULL, $extensionName = NULL, $pluginName = NULL, $pageUid = NULL, $object = NULL, $pageType = 0, $fieldNamePrefix = NULL, $actionUri = NULL) {
+	public function render($action = NULL, array $arguments = array(), $controller = NULL, $extensionName = NULL, $pluginName = NULL, $pageUid = NULL, $object = NULL, array $additionalParams = array(), $pageType = 0, $fieldNamePrefix = NULL, $actionUri = NULL) {
 
     // Sets the new action
     $compressedParameters = Tx_SavLibraryPlus_Managers_UriManager::getCompressedParameters();
@@ -89,7 +90,7 @@ class Tx_SavLibraryPlus_ViewHelpers_FormViewHelper extends Tx_Fluid_ViewHelpers_
     }
 
     // sets the additionalParams
-    $additionalParams = array(Tx_SavLibraryPlus_Controller_AbstractController::LIBRARY_NAME => $libraryParam);
+    $additionalParams = array_merge($additionalParams, array(Tx_SavLibraryPlus_Controller_AbstractController::LIBRARY_NAME => $libraryParam));
 
     // Sets the noCacheHash based on the extension type
     $noCacheHash = !Tx_SavLibraryPlus_Managers_ExtensionConfigurationManager::isUserPlugin();

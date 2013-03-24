@@ -852,11 +852,12 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
     	
     // Matchs the pattern
     preg_match_all(self::CUT_IF_PATTERN, $fieldCondition, $matches);
-   
+  
     // Processes the expressions
     foreach($matches['expression'] as $matchKey => $match) {
       // Processes the left hand side
       $lhs = $matches['lhs'][$matchKey];
+
       switch ($lhs) {
 				case 'group':
 					$isGroupCondition = true;

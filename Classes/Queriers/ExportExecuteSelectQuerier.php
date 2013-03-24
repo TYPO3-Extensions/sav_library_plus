@@ -77,7 +77,7 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
 			/* ORDER BY */  $this->buildOrderByClause(),
 			/* LIMIT    */  $this->buildLimitClause()
 		);
-  
+		 
     // Exports the data in CSV
     if (count($this->getController()->getUriManager()->getPostVariablesItem('fields')) > 0) {
     	$exportStatus = $this->exportDataInCsv();
@@ -431,9 +431,9 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
 			}			
 		}
 
-    foreach ($fieldNames as $fieldNameKey => $fieldName) {
+    foreach ($fieldNames as $fieldNameKey => $fieldName) {    	
     	// Checks if the field is selected
-    	if ($fields[$fieldName]['selected']) {
+    	if ($fields[$fieldName]['selected']) {   		
     		// Sets the marker according to the rendering mode
     		if (empty($fields[$fieldName]['render'])) {
     			// Raw rendering : the value is taken from the row

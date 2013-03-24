@@ -10,7 +10,7 @@
       <ul class="folderTabs">
         <f:for each="{configuration.folders}" as="folder" key="folderKey">
         <li {f:if(condition:'{folderKey} == {configuration.general.activeFolderKey}',then:'class="currentTab"')}>
-          <sav:link.action action="single" arguments="{folderKey:folderKey}">
+          <sav:link.action action="single" additionalParams="{configuration.general.additionalParams}" arguments="{folderKey:folderKey}">
           <span><sav:translate key="{folder.label}" extension="{configuration.general.extensionKey}" /></span>
           </sav:link.action>
         </li>

@@ -2,13 +2,13 @@
     <div class="footer">
     <f:if condition="{configuration.general.lastPageInSubform} > 0">
       <f:if condition="{configuration.general.showFirstLastButtons}">     
-      <sav:link.action action="firstPageInSubform" arguments="{subformUidLocal:configuration.general.subformUidLocal,subformFieldKey:configuration.general.subformFieldKey}">
+      <sav:link.action action="firstPageInSubform" arguments="{subformUidLocal:configuration.general.subformUidLocal,subformFieldKey:configuration.general.subformFieldKey}" additionalParams="{configuration.general.additionalParams}">
         <f:image class="backwardFirstPage" src="{sav:getIcon(fileName:'backwardFirstPage')}" alt="{f:translate(key:'button.backwardFirstPage')}" title="{f:translate(key:'button.backwardFirstPage')}" />
       </sav:link.action>
       </f:if>
       <f:if condition="{configuration.general.pageInSubform} > 0">
         <f:then>
-        <sav:link.action action="previousPageInSubform" arguments="{subformFieldKey:configuration.general.subformFieldKey}">
+        <sav:link.action action="previousPageInSubform" arguments="{subformFieldKey:configuration.general.subformFieldKey}" additionalParams="{configuration.general.additionalParams}">
           <f:image class="backwardPage" src="{sav:getIcon(fileName:'backwardPage')}" alt="{f:translate(key:'button.backwardPage')}" title="{f:translate(key:'button.backwardPage')}" />
         </sav:link.action>
         </f:then>
@@ -17,13 +17,13 @@
         </f:else>
       </f:if>
       <f:for each="{configuration.general.pagesInSubform}" as="page" key="pageKey">
-        <sav:link.action action="changePageInSubform" arguments="{pageInSubform:pageKey,subformFieldKey:configuration.general.subformFieldKey}" class="{f:if(condition:'{configuration.general.pageInSubform} == {pageKey}',then:'selected',else:'notSelected')}">
+        <sav:link.action action="changePageInSubform" additionalParams="{configuration.general.additionalParams}" arguments="{pageInSubform:pageKey,subformFieldKey:configuration.general.subformFieldKey}" class="{f:if(condition:'{configuration.general.pageInSubform} == {pageKey}',then:'selected',else:'notSelected')}">
           {page}
         </sav:link.action>
       </f:for>
       <f:if condition="{configuration.general.pageInSubform} < {configuration.general.lastPageInSubform}">
         <f:then>
-        <sav:link.action action="nextPageInSubform" arguments="{subformFieldKey:configuration.general.subformFieldKey}">
+        <sav:link.action action="nextPageInSubform" additionalParams="{configuration.general.additionalParams}" arguments="{subformFieldKey:configuration.general.subformFieldKey}">
           <f:image class="forwardPage" src="{sav:getIcon(fileName:'forwardPage')}" alt="{f:translate(key:'button.forwardPage')}" title="{f:translate(key:'button.forwardPage')}" />
         </sav:link.action>
         </f:then>
@@ -32,7 +32,7 @@
         </f:else>
       </f:if>
       <f:if condition="{configuration.general.showFirstLastButtons}">       
-      <sav:link.action action="lastPageInSubform" arguments="{subformUidLocal:configuration.general.subformUidLocal,subformFieldKey:configuration.general.subformFieldKey}">
+      <sav:link.action action="lastPageInSubform" additionalParams="{configuration.general.additionalParams}" arguments="{subformUidLocal:configuration.general.subformUidLocal,subformFieldKey:configuration.general.subformFieldKey}">
         <f:image class="forwardLastPage" src="{sav:getIcon(fileName:'forwardLastPage')}" alt="{f:translate(key:'button.forwardLastPage')}" title="{f:translate(key:'button.forwardLastPage')}" />
       </sav:link.action>
       </f:if>

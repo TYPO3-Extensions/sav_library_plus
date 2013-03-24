@@ -60,6 +60,9 @@ class Tx_SavLibraryPlus_ItemViewers_Default_GraphItemViewer extends Tx_SavLibrar
       // Creates the xlmgraph
       $this->createXmlGraph();
 
+      // Allows the queries
+      $this->xmlGraph->injectConfiguration(array('allowQueries' => 1));      
+      
       // Processes the markes
       $this->processMarkers();
 

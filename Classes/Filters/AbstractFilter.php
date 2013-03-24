@@ -166,7 +166,7 @@ abstract class Tx_SavLibraryPlus_Filters_AbstractFilter extends tslib_pibase {
 		// Sets the icon root path if any
 		if (empty($this->conf['iconRootPath']) === false) {
 			$this->iconRootPath = $this->conf['iconRootPath'];
-		}
+		}     
     return true;		
   }
   
@@ -386,12 +386,38 @@ abstract class Tx_SavLibraryPlus_Filters_AbstractFilter extends tslib_pibase {
 	/**
 	 * Transforms an array of HTML code into HTML code
 	 *
+	 * @param array $htmlArray
+	 * @param string $space
+	 * 
 	 * @return  string
 	 */
   protected function arrayToHTML($htmlArray, $space='') {
   
 		return  implode($this->EOL . $space, $htmlArray);
   }  	
-	
+
+	/**
+	 * Gets the page URI
+	 * 
+	 * @param integer $pageId
+	 *
+	 * @return  string
+	 */
+  public function pi_getPageLink($pageId) {
+ 		$additionalParameters = array();
+ 		$target = '';
+
+ 		if (is_array($this->conf['link.'])) {
+ 			if (!empty($this->conf['link.']['target'])) {
+ 				$target = $this->conf['link.']['target'];
+ 			}
+ 		 	if (!empty($this->conf['link.']['additionalParams'])) {
+ 				$additionalParameters = $this->conf['link.']['additionalParams'];
+ 			} 		
+ 		}
+
+    return parent::pi_getPageLink($pageId, $target, $additionalParameters);
+  }  
+  
 }
 ?>

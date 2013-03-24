@@ -3,19 +3,19 @@
 <f:then>
 <f:if condition="{field.whereTagKey} == {field.whereTagAscendingOrderKey}" >
 <f:then>
-<sav:link.action action="list{field.inEditMode}" class="orderAsc" arguments="{whereTagKey:field.whereTagDescendingOrderKey}">
+<sav:link.action action="list{field.inEditMode}" additionalParams="{configuration.general.additionalParams}" class="orderAsc" arguments="{whereTagKey:field.whereTagDescendingOrderKey}">
 <span class="linkLabel">{field.value}</span>
 </sav:link.action>
 </f:then>
 <f:else>
-<sav:link.action action="list{field.inEditMode}" class="orderDesc" arguments="{whereTagKey:field.whereTagAscendingOrderKey}">
+<sav:link.action action="list{field.inEditMode}" additionalParams="{configuration.general.additionalParams}" class="orderDesc" arguments="{whereTagKey:field.whereTagAscendingOrderKey}">
 <span class="linkLabel">{field.value}</span>
 </sav:link.action>
 </f:else>
 </f:if>
 </f:then>
 <f:else>
-<sav:link.action action="list{field.inEditMode}" class="orderAsc" arguments="{whereTagKey:field.whereTagDescendingOrderKey}">
+<sav:link.action action="list{field.inEditMode}" additionalParams="{configuration.general.additionalParams}" class="orderAsc" arguments="{whereTagKey:field.whereTagDescendingOrderKey}">
 <span class="linkLabel">{field.value}</span>
 </sav:link.action>
 </f:else>

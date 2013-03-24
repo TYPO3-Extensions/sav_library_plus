@@ -12,12 +12,12 @@
       <div class="{field.classItem} {f:if(condition:field.configuration.isInDraftWorkspace,then:'draftWorkspace')}">
         <div class="itemIconLeft {f:if(condition:configuration.general.hideIconLeft,then:'listHidden')}">
         <f:if condition="{field.editButtonIsAllowed}">
-          <sav:link.action action="edit" arguments="{uid:field.uid}" noCacheHash="1">
+          <sav:link.action action="edit" additionalParams="{configuration.general.additionalParams}" arguments="{uid:field.uid}" noCacheHash="1">
             <f:image src="{sav:getIcon(fileName:'edit')}" alt="{sav:translate(key:'button.edit')}" title="{sav:translate(key:'button.edit')}" />
           </sav:link.action>
         </f:if>
         <f:if condition="{field.deleteButtonIsAllowed}">
-          <sav:link.action action="delete" arguments="{uid:field.uid}" noCacheHash="1">
+          <sav:link.action action="delete" additionalParams="{configuration.general.additionalParams}" arguments="{uid:field.uid}" noCacheHash="1">
             <f:image src="{sav:getIcon(fileName:'delete')}" alt="{sav:translate(key:'button.delete')}" title="{sav:translate(key:'button.delete')}" />
           </sav:link.action>
         </f:if>

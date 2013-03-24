@@ -369,7 +369,16 @@ class Tx_SavLibraryPlus_Viewers_ListViewer extends Tx_SavLibraryPlus_Viewers_Abs
 					'inEditMode' => ($this->inEditMode ? 'InEditMode' : ''),
 					)
 				);
-
+				
+    		//Gets the link configuration
+    		$linkConfiguration = $this->getLinkConfiguration();				
+				$view->assign('configuration',array(
+					'general' => array(
+	      		'additionalParams' => Tx_SavLibraryPlus_Controller_AbstractController::convertLinkAdditionalParametersToArray($linkConfiguration['additionalParams']),
+	      		)	
+	      	)
+    		);
+    		
 				$replacementString .= $view->render();	
 			}  
     }
