@@ -64,7 +64,7 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_RelationOneToManyAsSelectorboxItemViewe
    
 		// Sets the SELECT Clause
 		$this->itemConfiguration['selectclause'] = $this->getItemConfiguration('foreign_table') . '.uid' . $labelSelect;
-		
+	
     // Builds the querier
     $querierClassName = 'Tx_SavLibraryPlus_Queriers_ForeignTableSelectQuerier';
     $querier = t3lib_div::makeInstance($querierClassName);

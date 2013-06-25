@@ -3,7 +3,7 @@
 
 <f:section name="content">
 
-  <div class="singleView">
+  <div class="singleView view">
     <f:render partial="TitleBars/SingleView/Default.html" arguments="{configuration:configuration}" />
     <f:if condition="{configuration.folders}">
     <div class="folderTabs">
@@ -19,7 +19,6 @@
       <div class="right"></div>
     </div>
     </f:if>
-    
     <div class="items">  
     <f:for each="{configuration.fields}" as="field">
       <sav:typoscript.wrap configuration="{field.wrapItem}">

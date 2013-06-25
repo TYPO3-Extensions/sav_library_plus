@@ -88,8 +88,12 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_RelationManyToManyAsSubformItemViewer e
 
     // Processes the query
     if (Tx_SavLibraryPlus_Managers_UriManager::getFormAction() == 'newInSubform' && Tx_SavLibraryPlus_Managers_UriManager::getSubformFieldKey() == $cryptedFullFieldName) {
-      $isNewInSubform = true;
-      $querier->addEmptyRow();
+			if (Tx_SavLibraryPlus_Managers_UriManager::getSubformUidLocal() == $this->itemConfiguration['uidLocal']) {
+	      $isNewInSubform = true;
+	      $querier->addEmptyRow();
+      } else {
+      	return '';
+      }      
     } else {
       $isNewInSubform = false;
       $querier->processQuery();
@@ -101,6 +105,7 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_RelationManyToManyAsSubformItemViewer e
     $controller->injectViewer($viewer);
     $viewer->injectController($controller);
     $subformConfiguration = $this->getItemConfiguration('subform');
+    
     if ($subformConfiguration === NULL) {
       Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.noFieldSelectedInSubForm');
     }

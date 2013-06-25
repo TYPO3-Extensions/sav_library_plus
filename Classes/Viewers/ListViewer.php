@@ -281,7 +281,8 @@ class Tx_SavLibraryPlus_Viewers_ListViewer extends Tx_SavLibraryPlus_Viewers_Abs
       		'orderlinkintitle' => 1,
       	  'linkwithnoordering' => 1,
       		'orderlinkintitlesetup' => ':' . $matches[1][$matchKey] . ':',
-      		'label' => $label,
+      		'labelAsc' => $label,
+      		'labelDesc' => $label,      	
       		'fieldName' => $matches[2][$matchKey],
       	); 
       } elseif ($matches[3][$matchKey]) {
@@ -326,12 +327,15 @@ class Tx_SavLibraryPlus_Viewers_ListViewer extends Tx_SavLibraryPlus_Viewers_Abs
 		
 		//Builds the field name and full field name
     $fieldName = $fieldConfiguration['fieldName'];
-    $fullFieldName = ($fieldConfiguration['tableName'] ? $fieldConfiguration['tableName'] . '.' . $fieldName : $fieldName);
-   		
+    $fieldNameParts = explode(',', $fieldName);
+    $fullFieldName = ($fieldConfiguration['tableName'] ? $fieldConfiguration['tableName'] . '.' . $fieldName : $fieldName); 
+  		
     // Gets the ascending whereTag Key
 		$order = ($fieldConfiguration['linkwithnoordering'] ? '' : '+');
 		$whereTagAscendingOrderKey = Tx_SavLibraryPlus_Controller_AbstractController::cryptTag($fullFieldName . $order);
 		if ($queryConfigurationManager->getWhereTag($whereTagAscendingOrderKey) == NULL) {
+			$fieldName = trim($fieldNameParts[0]);
+			$fieldConfiguration['labelAsc'] = $fieldName;
 			$whereTagAscendingOrderKey = Tx_SavLibraryPlus_Controller_AbstractController::cryptTag($fieldName . $order);
 		}
 		if ($queryConfigurationManager->getWhereTag($whereTagAscendingOrderKey) == NULL) {
@@ -341,6 +345,8 @@ class Tx_SavLibraryPlus_Viewers_ListViewer extends Tx_SavLibraryPlus_Viewers_Abs
 		$order = ($fieldConfiguration['linkwithnoordering'] ? '' : '-');        
 		$whereTagDescendingOrderKey = Tx_SavLibraryPlus_Controller_AbstractController::cryptTag($fullFieldName . $order);
 		if ($queryConfigurationManager->getWhereTag($whereTagDescendingOrderKey) == NULL) {
+			$fieldName = (empty($fieldNameParts[1]) ? trim($fieldNameParts[0]) : trim($fieldNameParts[1]));
+			$fieldConfiguration['labelDesc'] = $fieldName;			
 			$whereTagDescendingOrderKey = Tx_SavLibraryPlus_Controller_AbstractController::cryptTag($fieldName . $order);
 		}
 		if ($queryConfigurationManager->getWhereTag($whereTagDescendingOrderKey) == NULL) {
@@ -362,7 +368,8 @@ class Tx_SavLibraryPlus_Viewers_ListViewer extends Tx_SavLibraryPlus_Viewers_Abs
 
 				// Assigns the view configuration
 				$view->assign('field', array(
-					'value' => $fieldConfiguration['label'],
+					'valueAsc' => $fieldConfiguration['labelAsc'],
+					'valueDesc' => $fieldConfiguration['labelDesc'],				
 					'whereTagAscendingOrderKey' => $whereTagAscendingOrderKey,
 					'whereTagDescendingOrderKey' => $whereTagDescendingOrderKey,
 					'whereTagKey' => Tx_SavLibraryPlus_Managers_UriManager::getWhereTagKey(),

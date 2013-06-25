@@ -98,6 +98,7 @@ class Tx_SavLibraryPlus_Queriers_ListSelectQuerier extends Tx_SavLibraryPlus_Que
 		  $fieldName = Tx_SavLibraryPlus_Managers_SessionManager::getFilterField($selectedFilterKey, 'fieldName');    
 			$selectClause .= (empty($fieldName)=== false ? ', ' . $fieldName . ' as fieldname' : '');
 		}
+
 		return $selectClause;
   }
 
@@ -120,8 +121,8 @@ class Tx_SavLibraryPlus_Queriers_ListSelectQuerier extends Tx_SavLibraryPlus_Que
 		$selectedFilterKey = Tx_SavLibraryPlus_Managers_SessionManager::getSelectedFilterKey();
 
 		if (empty($selectedFilterKey) === false) {
-		  $additionalWhereClause = Tx_SavLibraryPlus_Managers_SessionManager::getFilterField($selectedFilterKey, 'addWhere');	  
-		  $searchRequestFromFilter = Tx_SavLibraryPlus_Managers_SessionManager::getFilterField($selectedFilterKey, 'search');
+		  $additionalWhereClause = Tx_SavLibraryPlus_Managers_SessionManager::getFilterField($selectedFilterKey, 'addWhere');  	  
+		  $searchRequestFromFilter = Tx_SavLibraryPlus_Managers_SessionManager::getFilterField($selectedFilterKey, 'search');	  
 		  if (empty($searchRequestFromFilter) === false) {
 		  	// The WHERE clause coming from the filter replaces the default WHERE Clause
 		  	$whereClause = (empty($additionalWhereClause) ? '0' : $additionalWhereClause);

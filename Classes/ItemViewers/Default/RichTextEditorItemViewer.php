@@ -42,8 +42,14 @@ class Tx_SavLibraryPlus_ItemViewers_Default_RichTextEditorItemViewer extends Tx_
   
     // Adds the content
     $content = html_entity_decode(stripslashes($this->getItemConfiguration('value')), ENT_QUOTES, $GLOBALS['TSFE']->renderCharset);
-
-    return $content;
+    $htmlArray[] = Tx_SavLibraryPlus_Utility_HtmlElements::htmlDivElement(
+        array(
+          Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('class', 'richText'),
+        ),
+        $content
+      );
+    
+    return $this->arrayToHTML($htmlArray);
   }
 }
 ?>

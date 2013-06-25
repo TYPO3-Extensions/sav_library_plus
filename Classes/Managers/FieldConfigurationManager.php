@@ -237,7 +237,7 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
 	 * @return array
 	 */
   public function getFolderFieldsConfiguration($folder, $flatten = false, $flattenAll = false) {
-
+  	
     $folderFieldsConfiguration = array();
     
     foreach ($folder['fields'] as $fieldId => $kickstarterFieldConfiguration) {
@@ -253,9 +253,8 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
 
       // If it is a subform, gets the configuration for each subform field
       if (isset($fieldConfiguration['subform']) && $flatten === true) {
-
         foreach ($fieldConfiguration['subform'] as $subformFolderKey => $subformFolder) {
-          $subfromFolderFieldsConfiguration = $this->getFolderFieldsConfiguration($subformFolder);
+          $subfromFolderFieldsConfiguration = $this->getFolderFieldsConfiguration($subformFolder, $flatten);
           foreach ($subfromFolderFieldsConfiguration as $subfromFolderFieldConfigurationKey => $subfromFolderFieldConfiguration) {
             $subfromFolderFieldsConfiguration[$subfromFolderFieldConfigurationKey ]['parentTableName'] = $fieldConfiguration['tableName'];
             $subfromFolderFieldsConfiguration[$subfromFolderFieldConfigurationKey ]['parentFieldName'] = $fieldConfiguration['fieldName'];
@@ -644,11 +643,13 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
 
     // Adds subform if the type is a RelationManyToManyAsSubform
     if ($this->kickstarterFieldConfiguration['fieldType'] == 'RelationManyToManyAsSubform') {
-      $class = ' subform';
-    } elseif (empty($this->kickstarterFieldConfiguration['classfield'])) {
-      $class = 'field';
+      $class = 'subform ';
     } else {
-      $class = 'field ' . $this->kickstarterFieldConfiguration['classfield'];
+      $class = 'field ';
+    } 
+    
+    if (!empty($this->kickstarterFieldConfiguration['classfield'])) {
+      $class = $class . $this->kickstarterFieldConfiguration['classfield'];
     }
     
     return $class;
@@ -959,15 +960,33 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
           }          	
           break;
         case '>=':
+          if ($isGroupCondition !== true) {
+            $condition = $lhsValue >= $rhsValue;
+          } else {
+          	return Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.operatorNotAllowed', array($operator));
+          }          	
+          break;          	
         case '<=':
+          if ($isGroupCondition !== true) {
+            $condition = $lhsValue <= $rhsValue;
+          } else {
+          	return Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.operatorNotAllowed', array($operator));
+          }          	
+          break;          	
         case '>':
+          if ($isGroupCondition !== true) {
+            $condition = $lhsValue > $rhsValue;
+          } else {
+          	return Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.operatorNotAllowed', array($operator));
+          }          	
+          break;          	
         case '<':
           if ($isGroupCondition !== true) {
-            $condition = eval('return ' . $lhsValue . $operator . $rhsValue . ';');
+            $condition = $lhsValue < $rhsValue;
           } else {
-          		return Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.operatorNotAllowed', array($operator));
+          	return Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.operatorNotAllowed', array($operator));
           }          	
-          break;                          
+          break;                           
       }
 
       // Processes the connector

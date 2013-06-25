@@ -2,7 +2,7 @@
 <f:layout name="Default.html" />
 
 <f:section name="content">
-  <div class="editView">
+  <div class="editView view">
   <sav:form name="{configuration.general.formName}" method="post" enctype="multipart/form-data" action="save" additionalParams="{configuration.general.additionalParams}" arguments="{viewId:configuration.general.viewIdentifier}">
     <f:render partial="TitleBars/EditView/Default.html" arguments="{configuration:configuration}" />
     <f:if condition="{configuration.folders}">

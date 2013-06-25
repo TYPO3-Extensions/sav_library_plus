@@ -195,9 +195,10 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
     if($this->getController()->getUserManager()->userIsAuthenticated() === false) {
       return Tx_SavLibraryPlus_Controller_FlashMessages::addError('fatal.notAuthenticated');
     }
-    
+ 
     // Gets the POST variables
     $this->postVariables = $this->getController()->getUriManager()->getPostVariables();
+   
     if ($this->postVariables === NULL) {
     	return;
     }
@@ -238,8 +239,8 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
         $this->fieldConfiguration = $this->searchConfiguration($folderFieldsConfiguration, $postVariableKey);
         $tableName = $this->fieldConfiguration['tableName'];
         $fieldName = $this->fieldConfiguration['fieldName'];
-        $fieldType = $this->fieldConfiguration['fieldType'];
-        
+        $fieldType = $this->fieldConfiguration['fieldType']; 
+      
         // Adds the cryted full field name
         $this->fieldConfiguration['cryptedFullFieldName'] = $postVariableKey;        
 
@@ -492,7 +493,7 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
 	 * @return mixed
 	 */
   protected function preProcessorForRelationManyToManyAsSubform($value) {
-
+  	
     // Sets a post processor
     $this->postProcessingList[] = array(
       'method' => 'postProcessorForRelationManyToManyAsSubform',
@@ -562,6 +563,7 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
 
     // Checks if a new record was inserted in the foreign table
     $foreignTableName = $this->getFieldConfigurationAttribute('foreign_table');
+
     if (isset($this->newInsertedUid[$foreignTableName])) {
       // Sets the uid_foreign field with the inserted record
       $uidForeign = $this->newInsertedUid[$foreignTableName];

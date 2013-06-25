@@ -98,6 +98,30 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_RichTextEditorItemViewer extends Tx_Sav
       '<textarea $1' . ' onchange="document.changed=1;">'	,
       $content
     );
+    
+    // Replaces the height
+    $height = $this->getItemConfiguration('height');
+    if (!empty($height)) {
+      $content = preg_replace('/height:[^p]*/',
+      	'height:' . $height,
+        $content
+			);
+        
+      // Adds 2px to the first div
+      $content = preg_replace('/height:([^p]*)/', 'height:$1+2', $content, 1);
+    }	
+    
+    // Replaces the width   
+    $width = $this->getItemConfiguration('width');             
+    if (!empty($width)) {
+      $content = preg_replace('/width:[^p]*/',
+        'width:' . $width,
+        $content
+      );
+      // Adds 2px to the first div
+      $content = preg_replace('/width:([^p]*)/', 'width:$1+2', $content, 1);
+    }    
+    
     $htmlArray[] = $content;
 
     // Adds the javaScript after the textarea tag
