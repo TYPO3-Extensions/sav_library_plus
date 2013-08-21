@@ -579,6 +579,7 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
   	// Processes the rows
   	$value = '';
   	while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($resource)) {
+		
 			// Checks if the field value is in the row
       if (array_key_exists('value', $row)) {
       	$valueFromRow = $row['value'];

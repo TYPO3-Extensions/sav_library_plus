@@ -9,8 +9,8 @@
       <span class="message">{configuration.general.message}</span>
       </f:if>
       <f:for each="{configuration.fields}" as="field">
-      <div class="{field.classItem} {f:if(condition:field.configuration.isInDraftWorkspace,then:'draftWorkspace')}">
-        <div class="itemIconLeft {f:if(condition:configuration.general.hideIconLeft,then:'listHidden')}">
+      <div class="{field.classItem}{f:if(condition:field.configuration.isInDraftWorkspace,then:' draftWorkspace')}">
+        <div class="itemIconLeft{f:if(condition:configuration.general.hideIconLeft,then:' listHidden')}">
         <f:if condition="{field.editButtonIsAllowed}">
           <sav:link.action action="edit" additionalParams="{configuration.general.additionalParams}" arguments="{uid:field.uid}" noCacheHash="1">
             <f:image src="{sav:getIcon(fileName:'edit')}" alt="{sav:translate(key:'button.edit')}" title="{sav:translate(key:'button.edit')}" />

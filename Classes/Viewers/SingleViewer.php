@@ -44,6 +44,13 @@ class Tx_SavLibraryPlus_Viewers_SingleViewer extends Tx_SavLibraryPlus_Viewers_A
    * @var string
    */
   protected $templateFile = 'Single.html';
+  
+  /**
+   * The view type
+   *
+   * @var string
+   */
+	protected $viewType = 'SingleView';   
 
   /**
    * Renders the view
@@ -55,7 +62,7 @@ class Tx_SavLibraryPlus_Viewers_SingleViewer extends Tx_SavLibraryPlus_Viewers_A
   public function render() {
 
     // Sets the library view configuration
-    $this->setLibraryViewConfiguration('SingleView');
+    $this->setLibraryViewConfiguration();
 
     // Sets the active folder Key
     $this->setActiveFolderKey();

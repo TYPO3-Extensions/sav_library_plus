@@ -121,7 +121,7 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_RichTextEditorItemViewer extends Tx_Sav
       // Adds 2px to the first div
       $content = preg_replace('/width:([^p]*)/', 'width:$1+2', $content, 1);
     }    
-    
+   
     $htmlArray[] = $content;
 
     // Adds the javaScript after the textarea tag

@@ -40,8 +40,8 @@ $TCA['tx_savlibraryplus_export_configuration'] = array (
 			'label' => 'LLL:EXT:sav_library_plus/Resources/Private/Language/locallang_db.xml:tx_savlibraryplus_export_configuration.cid',		
 			'config' => Array (
 				'type'     => 'input',
-				'size'     => '4',
-				'max'      => '4',
+				'size'     => '6',
+				'max'      => '6',
 				'eval'     => 'int',
 				'default' => 0
 			)

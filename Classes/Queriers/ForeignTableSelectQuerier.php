@@ -47,6 +47,7 @@ class Tx_SavLibraryPlus_Queriers_ForeignTableSelectQuerier extends Tx_SavLibrary
    * @return none
    */  
   protected function executeQuery() {
+
     // Checks if the query must be processed  
     if ($this->doNotProcessQuery) {
     	return;
@@ -224,7 +225,7 @@ class Tx_SavLibraryPlus_Queriers_ForeignTableSelectQuerier extends Tx_SavLibrary
       'groupByClause' => $fieldConfiguration['groupbyselect'],
       'orderByClause' => $fieldConfiguration['orderselect'] ? $fieldConfiguration['orderselect'] : $fieldConfiguration['MM'] . '.sorting',
       'limitClause' => ($fieldConfiguration['maxsubformitems'] ?	($fieldConfiguration['maxsubformitems'] *	$fieldConfiguration['pageInSubform']) . ',' . ($fieldConfiguration['maxsubformitems']) : ''),
-    );   
+    );  
   }
 
   /**

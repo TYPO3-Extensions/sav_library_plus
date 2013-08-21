@@ -64,7 +64,7 @@
       <div class="item">
         <div class="field">
           <div class="label"><sav:translate key="itemviewer.xmlFile" /></div>
-          <div class="value"><input type="text" name="{configuration.general.formName}[xmlFile]" value="{configuration.exportConfiguration.xmlFile}" size="80" /></div>
+          <div class="value"><input type="text" class="xmlFile" name="{configuration.general.formName}[xmlFile]" value="{configuration.exportConfiguration.xmlFile}" /></div>
         </div>    
       </div>
       
@@ -72,7 +72,7 @@
       <div class="item">
         <div class="field">
           <div class="label"><sav:translate key="itemviewer.xsltFile" /></div>
-          <div class="value"><input type="text" name="{configuration.general.formName}[xsltFile]" value="{configuration.exportConfiguration.xsltFile}" size="80" /></div>
+          <div class="value"><input type="text" class="xsltFile" name="{configuration.general.formName}[xsltFile]" value="{configuration.exportConfiguration.xsltFile}" /></div>
         </div>    
       </div>      
 
@@ -81,7 +81,7 @@
       <div class="item">
         <div class="field">
           <div class="label"><sav:translate key="itemviewer.exec" /></div>
-          <div class="value"><input type="text" name="{configuration.general.formName}[exec]" value="{configuration.exportConfiguration.exec}" size="80" /></div>
+          <div class="value"><input type="text" class="exec" name="{configuration.general.formName}[exec]" value="{configuration.exportConfiguration.exec}" /></div>
         </div>    
       </div> 
       </f:if> 
@@ -110,7 +110,7 @@
       <div class="item">
         <div class="field">
           <div class="label"><sav:translate key="itemviewer.whereClause" /></div>
-          <div class="value"><textarea name="{configuration.general.formName}[whereClause]" rows="5" cols="70" />{configuration.exportConfiguration.whereClause}</textarea></div>
+          <div class="value"><textarea class="whereClause" name="{configuration.general.formName}[whereClause]" />{configuration.exportConfiguration.whereClause}</textarea></div>
         </div>    
       </div> 
 
@@ -118,7 +118,7 @@
       <div class="item">
         <div class="field">
           <div class="label"><sav:translate key="itemviewer.orderByClause" /></div>
-          <div class="value"><input type="text" name="{configuration.general.formName}[orderByClause]" value="{configuration.exportConfiguration.orderByClause}" size="80" /></div>
+          <div class="value"><input type="text" class="orderByClause" name="{configuration.general.formName}[orderByClause]" value="{configuration.exportConfiguration.orderByClause}" /></div>
         </div>    
       </div>  
       
@@ -126,7 +126,7 @@
       <div class="item">
         <div class="field">
           <div class="label"><sav:translate key="itemviewer.additionalTables" /></div>
-          <div class="value"><input type="text" name="{configuration.general.formName}[additionalTables]" value="{configuration.exportConfiguration.additionalTables}" size="80" /></div>
+          <div class="value"><input type="text" class="additionalTables" name="{configuration.general.formName}[additionalTables]" value="{configuration.exportConfiguration.additionalTables}" /></div>
         </div>    
       </div>        
 
@@ -134,7 +134,7 @@
       <div class="item">
         <div class="field">
           <div class="label"><sav:translate key="itemviewer.additionalFields" /></div>
-          <div class="value"><input type="text" name="{configuration.general.formName}[additionalFields]" value="{configuration.exportConfiguration.additionalFields}" size="80" /></div>
+          <div class="value"><input type="text" class="additionalFields" name="{configuration.general.formName}[additionalFields]" value="{configuration.exportConfiguration.additionalFields}" /></div>
         </div>    
       </div>   
 
@@ -153,7 +153,7 @@
         <sav:comment><!-- Displays groupByClause --></sav:comment>      
         <div class="field">
           <div class="label"><sav:translate key="itemviewer.groupByClause" /></div>
-          <div class="value"><input type="text" name="{configuration.general.formName}[groupByClause]" value="{configuration.exportConfiguration.groupByClause}" size="50" /></div>
+          <div class="value"><input type="text" class="groupByClause" name="{configuration.general.formName}[groupByClause]" value="{configuration.exportConfiguration.groupByClause}" /></div>
         </div>    
       </div> 
 
@@ -185,7 +185,7 @@
       <div class="item">
         <div class="field">
           <div class="label"><sav:translate key="itemviewer.orderedFieldList" /></div>
-          <div class="value"><textarea name="{configuration.general.formName}[orderedFieldList]" rows="5" cols="70" onchange="document.changed=1;" />{configuration.exportConfiguration.orderedFieldList}</textarea></div>
+          <div class="value"><textarea class="orderedFieldList" name="{configuration.general.formName}[orderedFieldList]" onchange="document.changed=1;" />{configuration.exportConfiguration.orderedFieldList}</textarea></div>
         </div>    
       </div> 
 
@@ -193,7 +193,7 @@
       <div class="item">
         <div class="field">
           <div class="label"><sav:translate key="itemviewer.fieldsConfiguration" /></div>
-          <div class="value"><textarea name="{configuration.general.formName}[fieldsConfiguration]" rows="2" cols="70" onchange="document.changed=1;" />{configuration.exportConfiguration.fieldsConfiguration}</textarea></div>
+          <div class="value"><textarea class="fieldsConfiguration" name="{configuration.general.formName}[fieldsConfiguration]" onchange="document.changed=1;" />{configuration.exportConfiguration.fieldsConfiguration}</textarea></div>
         </div>    
       </div> 
                       

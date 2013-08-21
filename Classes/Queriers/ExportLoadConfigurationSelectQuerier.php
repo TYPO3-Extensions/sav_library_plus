@@ -55,17 +55,20 @@ class Tx_SavLibraryPlus_Queriers_ExportLoadConfigurationSelectQuerier extends Tx
     
     // Gets the serialized exportConfiguration
     $serializedExportConfiguration = $this->getFieldValueFromCurrentRow(self::$exportTableName . '.configuration');
-
-    // Calls the parent Query to get the field names
-    parent::executeQuery();
-    
+   
     // Unserializes the export configuration, if not empty
     if (empty($serializedExportConfiguration) === false) {
     	$loadedExportConfiguration = unserialize($serializedExportConfiguration);
     } else {
     	$loadedExportConfiguration = $this->getController()->getUriManager()->getPostVariables();
     }	
-  	
+    
+    // Injects the additional tables
+    $this->queryConfigurationManager->setQueryConfigurationParameter('foreignTables', $loadedExportConfiguration['additionalTables']);
+    
+    // Calls the parent Query to get the field names
+    parent::executeQuery();    
+     	
     // Sets the export configuration and removes the fields
     $this->exportConfiguration = $loadedExportConfiguration;
     unset($this->exportConfiguration['fields']);

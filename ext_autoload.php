@@ -1,27 +1,17 @@
 <?php
 
-$extensionClassesPath = t3lib_extMgm::extPath('sav_library_plus') . 'Classes/';
+$extensionClassesPath = t3lib_extMgm::extPath('sav_library_plus') . 'Classes/';	
+
 return array(
-
-	'tx_savlibraryplus_datepicker_datepicker' => $extensionClassesPath . 'DatePicker/DatePicker.php',
-
-	'tx_savlibraryplus_managers_abstractmanager' => $extensionClassesPath . 'Managers/AbstractManager.php',
-	'tx_savlibraryplus_managers_additionalheadermanager' => $extensionClassesPath . 'Managers/AdditionalHeaderManager.php',
-	'tx_savlibraryplus_managers_extensionconfigurationmanager' => $extensionClassesPath . 'Managers/ExtensionConfigurationManager.php',
-	'tx_savlibraryplus_managers_fieldconfigurationmanager' => $extensionClassesPath . 'Managers/FieldConfigurationManager.php',
-	'tx_savlibraryplus_managers_formconfigurationmanager' => $extensionClassesPath . 'Managers/FormConfigurationManager.php',
-	'tx_savlibraryplus_managers_libraryconfigurationmanager' => $extensionClassesPath . 'Managers/LibraryConfigurationManager.php',
-	'tx_savlibraryplus_managers_tcaconfigurationmanager' => $extensionClassesPath . 'Managers/TcaConfigurationManager.php',
-	'tx_savlibraryplus_managers_templateconfigurationmanager' => $extensionClassesPath . 'Managers/TemplateConfigurationManager.php',
-	'tx_savlibraryplus_managers_pagetyposcriptconfigurationmanager' => $extensionClassesPath . 'Managers/PageTypoScriptConfigurationManager.php',
-	'tx_savlibraryplus_managers_queryconfigurationmanager' => $extensionClassesPath . 'Managers/QueryConfigurationManager.php',
-	'tx_savlibraryplus_managers_sessionmanager' => $extensionClassesPath . 'Managers/SessionManager.php',
-  'tx_savlibraryplus_managers_urimanager' => $extensionClassesPath . 'Managers/UriManager.php',
-	'tx_savlibraryplus_managers_usermanager' => $extensionClassesPath . 'Managers/UserManager.php',
+	'tx_savlibraryplus_compatibility_database_databaseconnection' =>  $extensionClassesPath . 'Compatibility/Database/DatabaseConnection.php',
+	'tx_savlibraryplus_compatibility_utility_extensionmanagementutility' =>  $extensionClassesPath . 'Compatibility/Utility/ExtensionManagementUtility.php',
+	'tx_savlibraryplus_compatibility_utility_generalutility' =>  $extensionClassesPath . 'Compatibility/Utility/GeneralUtility.php',
 
 	'tx_savlibraryplus_controller_abstractcontroller' => $extensionClassesPath . 'Controller/AbstractController.php',
 	'tx_savlibraryplus_controller_flashmessages' => $extensionClassesPath . 'Controller/FlashMessages.php',
-	
+
+	'tx_savlibraryplus_datepicker_datepicker' => $extensionClassesPath . 'DatePicker/DatePicker.php',
+
 	'tx_savlibraryplus_exception' => $extensionClassesPath . 'Exception.php',
 
 	'tx_savlibraryplus_filters_abstractfilter' => $extensionClassesPath . 'Filters/AbstractFilter.php',
@@ -64,6 +54,20 @@ return array(
 	'tx_savlibraryplus_itemviewers_edit_richtexteditoritemviewer' => $extensionClassesPath . 'ItemViewers/Edit/RichTextEditorItemViewer.php',
 	'tx_savlibraryplus_itemviewers_edit_textitemviewer' => $extensionClassesPath . 'ItemViewers/Edit/TextItemViewer.php',
 
+	'tx_savlibraryplus_managers_abstractmanager' => $extensionClassesPath . 'Managers/AbstractManager.php',
+	'tx_savlibraryplus_managers_additionalheadermanager' => $extensionClassesPath . 'Managers/AdditionalHeaderManager.php',
+	'tx_savlibraryplus_managers_extensionconfigurationmanager' => $extensionClassesPath . 'Managers/ExtensionConfigurationManager.php',
+	'tx_savlibraryplus_managers_fieldconfigurationmanager' => $extensionClassesPath . 'Managers/FieldConfigurationManager.php',
+	'tx_savlibraryplus_managers_formconfigurationmanager' => $extensionClassesPath . 'Managers/FormConfigurationManager.php',
+	'tx_savlibraryplus_managers_libraryconfigurationmanager' => $extensionClassesPath . 'Managers/LibraryConfigurationManager.php',
+	'tx_savlibraryplus_managers_tcaconfigurationmanager' => $extensionClassesPath . 'Managers/TcaConfigurationManager.php',
+	'tx_savlibraryplus_managers_templateconfigurationmanager' => $extensionClassesPath . 'Managers/TemplateConfigurationManager.php',
+	'tx_savlibraryplus_managers_pagetyposcriptconfigurationmanager' => $extensionClassesPath . 'Managers/PageTypoScriptConfigurationManager.php',
+	'tx_savlibraryplus_managers_queryconfigurationmanager' => $extensionClassesPath . 'Managers/QueryConfigurationManager.php',
+	'tx_savlibraryplus_managers_sessionmanager' => $extensionClassesPath . 'Managers/SessionManager.php',
+  'tx_savlibraryplus_managers_urimanager' => $extensionClassesPath . 'Managers/UriManager.php',
+	'tx_savlibraryplus_managers_usermanager' => $extensionClassesPath . 'Managers/UserManager.php',
+
 	'tx_savlibraryplus_queriers_abstractquerier' => $extensionClassesPath . 'Queriers/AbstractQuerier.php',
 	'tx_savlibraryplus_queriers_deletequerier' => $extensionClassesPath . 'Queriers/DeleteQuerier.php',
 	'tx_savlibraryplus_queriers_deleteinsubformquerier' => $extensionClassesPath . 'Queriers/DeleteInSubformQuerier.php',
@@ -84,6 +88,8 @@ return array(
 	'tx_savlibraryplus_queriers_listineditmodeselectquerier' => $extensionClassesPath . 'Queriers/ListInEditModeSelectQuerier.php',
 	'tx_savlibraryplus_queriers_newselectquerier' => $extensionClassesPath . 'Queriers/NewSelectQuerier.php',
 	'tx_savlibraryplus_queriers_newinsubformselectquerier' => $extensionClassesPath . 'Queriers/NewInSubformSelectQuerier.php',
+	'tx_savlibraryplus_queriers_printinlistselectquerier' => $extensionClassesPath . 'Queriers/PrintInListSelectQuerier.php',
+	'tx_savlibraryplus_queriers_printinsingleselectquerier' => $extensionClassesPath . 'Queriers/PrintInSingleSelectQuerier.php',
 	'tx_savlibraryplus_queriers_singleselectquerier' => $extensionClassesPath . 'Queriers/SingleSelectQuerier.php',
 	'tx_savlibraryplus_queriers_upinsubformquerier' => $extensionClassesPath . 'Queriers/UpInSubformQuerier.php',
 	'tx_savlibraryplus_queriers_updatequerier' => $extensionClassesPath . 'Queriers/UpdateQuerier.php',
@@ -106,6 +112,8 @@ return array(
 	'tx_savlibraryplus_viewers_listineditmodeviewer' => $extensionClassesPath . 'Viewers/ListInEditModeViewer.php',
 	'tx_savlibraryplus_viewers_newviewer' => $extensionClassesPath . 'Viewers/NewViewer.php',
 	'tx_savlibraryplus_viewers_newinsubformviewer' => $extensionClassesPath . 'Viewers/NewInSubformViewer.php',
+	'tx_savlibraryplus_viewers_printinlistviewer' => $extensionClassesPath . 'Viewers/PrintInListViewer.php',
+	'tx_savlibraryplus_viewers_printinsingleviewer' => $extensionClassesPath . 'Viewers/PrintInSingleViewer.php',
 	'tx_savlibraryplus_viewers_singleviewer' => $extensionClassesPath . 'Viewers/SingleViewer.php',
 	'tx_savlibraryplus_viewers_subformeditviewer' => $extensionClassesPath . 'Viewers/SubformEditViewer.php',
 	'tx_savlibraryplus_viewers_subformsingleviewer' => $extensionClassesPath . 'Viewers/SubformSingleViewer.php',

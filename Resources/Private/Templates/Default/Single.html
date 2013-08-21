@@ -37,7 +37,7 @@
             <sav:html>{field.value}</sav:html>
             </f:then>
             <f:else>
-            <div class="{field.classValue}{f:if(condition:'{field.styleValue}',then:' style="{field.styleValue}"')}"><sav:html>{field.value}</sav:html></div>
+            <div class="{field.classValue}"{f:if(condition:'{field.styleValue}',then:' style="{field.styleValue}"')}><sav:html>{field.value}</sav:html></div>
             </f:else>
           </f:if>
           </div>

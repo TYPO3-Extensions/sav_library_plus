@@ -64,7 +64,6 @@
  */
 class Tx_SavLibraryPlus_ViewHelpers_FlashMessagesViewHelper extends Tx_Fluid_ViewHelpers_FlashMessagesViewHelper {
 
-
 	/**
 	 * Render method.
 	 *
@@ -75,7 +74,7 @@ class Tx_SavLibraryPlus_ViewHelpers_FlashMessagesViewHelper extends Tx_Fluid_Vie
 	 */
 	public function render($renderMode = self::RENDER_MODE_UL) {
 	
-		$flashMessages = t3lib_FlashMessageQueue::getAllMessagesAndFlush();
+		$flashMessages = Tx_SavLibraryPlus_Controller_FlashMessages::getAllMessagesAndFlush();
 
 		if ($flashMessages === NULL || count($flashMessages) === 0) {
 			return '';

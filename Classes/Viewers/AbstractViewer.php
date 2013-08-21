@@ -222,22 +222,20 @@ abstract class Tx_SavLibraryPlus_Viewers_AbstractViewer {
 	/**
 	 * Sets the library view configuration
 	 *
-	 * @param string $viewType The view type
+	 * @param none
 	 *
 	 * @return none
 	 */
-  public function setLibraryViewConfiguration($viewType) {
-    // Sets the view type 	
-  	$this->viewType = $viewType;
+  public function setLibraryViewConfiguration() {
   	
     // Gets the library configuration manager
     $this->libraryConfigurationManager = $this->getController()->getLibraryConfigurationManager();
   
     // Gets the view identifier
-    $this->viewIdentifier =  $this->libraryConfigurationManager->getViewIdentifier($viewType);
+    $this->viewIdentifier =  $this->libraryConfigurationManager->getViewIdentifier($this->viewType);
   
     // Gets the view configuration
-    $this->libraryViewConfiguration =  $this->libraryConfigurationManager->getViewConfiguration($this->viewIdentifier);  
+    $this->libraryViewConfiguration =  $this->libraryConfigurationManager->getViewConfiguration($this->viewIdentifier);    
   }
      				
 	/**
@@ -653,7 +651,7 @@ abstract class Tx_SavLibraryPlus_Viewers_AbstractViewer {
       $itemViewerDirectory = ($itemConfiguration['edit'] === '0' ? 'Default' : $this->getItemViewerDirectory());
         
       // Creates the item viewer
-      $className = 'Tx_SavLibraryPlus_ItemViewers_' . $itemViewerDirectory . '_' . $itemConfiguration['fieldType'] . 'ItemViewer';
+      $className = 'Tx_SavLibraryPlus_ItemViewers_' . $itemViewerDirectory . '_' . $itemConfiguration['fieldType'] . 'ItemViewer';      
       $itemViewer = t3lib_div::makeInstance($className);
       $itemViewer->injectController($this->getController());
       $itemViewer->injectItemConfiguration($itemConfiguration);

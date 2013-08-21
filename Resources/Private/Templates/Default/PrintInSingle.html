@@ -2,8 +2,9 @@
 <f:layout name="Default.html" />
 
 <f:section name="content">
-  <div class="listView view">
-    <f:render partial="TitleBars/ListView/Default.html" arguments="{configuration: configuration}" />
+
+  <div class="printView view">
+    <f:render partial="TitleBars/SingleView/Default.html" arguments="{configuration:configuration}" />
     <div class="items">
       <f:if condition="{configuration.general.message}">
       <span class="message">{configuration.general.message}</span>
@@ -15,6 +16,6 @@
       </div>
       </f:for>
     </div>
-    <f:render partial="Footers/ListView/PageBrowser.html" arguments="{configuration: configuration}" />
-  </div>
+    <f:render partial="Footers/SingleView/Default.html" arguments="{configuration:configuration}" />
+  </div>  
 </f:section>

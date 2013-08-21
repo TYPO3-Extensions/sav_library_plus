@@ -39,6 +39,13 @@ class Tx_SavLibraryPlus_Viewers_SubformSingleViewer extends Tx_SavLibraryPlus_Vi
   protected $templateFile = 'SubformSingle.html';
   
   /**
+   * The view type
+   *
+   * @var string
+   */
+	protected $viewType = 'SingleView';     
+  
+  /**
    * Renders the view
    *
    * @param none

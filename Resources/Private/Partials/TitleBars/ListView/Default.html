@@ -6,7 +6,7 @@
       <div class="right"></div>
       <div class="titleIconRight">
       <f:if condition="{configuration.general.addPrintIcon}">
-        <sav:link.action action="list" additionalParams="{sav:merge(array1:'{print:1,cid:configuration.general.contentIdentifier}',array2:configuration.general.additionalParams)}">
+        <sav:link.action action="printInList" additionalParams="{sav:merge(array1:'{print:1}',array2:configuration.general.additionalParams)}">
           <f:image class="print" src="{sav:getIcon(fileName:'print')}" alt="{sav:translate(key:'button.print')}" title="{sav:translate(key:'button.print')}" />
         </sav:link.action>
       </f:if>

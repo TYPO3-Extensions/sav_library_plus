@@ -360,12 +360,15 @@
 	text-align:left;
 }
 .savLibraryPlus .listView DIV.block, .savLibraryPlus .formView DIV.block, .savLibraryPlus .formAdminView DIV.block, .savLibraryPlus .printView DIV.block {
-	width:100%;
-	border-top:solid 1px #004898;
-	border-bottom:solid 1px #004898;
+	width:99%;
+	width:calc(100% - 14px);
+	border:solid 1px #004898;
 	padding:4px;
-	margin-top:2px;
-	margin-bottom:2px;
+	margin:2px;
+}
+.savLibraryPlus .listView DIV.blockFields, .savLibraryPlus .formView DIV.blockFields, .savLibraryPlus .formAdminView DIV.blockFields, .savLibraryPlus .printView DIV.blockFields {
+	clear:left;
+	width:100%;
 }
 .savLibraryPlus .listView DIV.blockHide, .savLibraryPlus .formView DIV.blockHide, .savLibraryPlus .formAdminView DIV.blockHide, .savLibraryPlus .printView DIV.blockHide  {
 	visibility:hidden;
@@ -383,65 +386,66 @@
 	/**
 	 * List view specific configuration 
 	 */
-.savLibraryPlus .listView .items DIV.draftWorkspace {
+.savLibraryPlus .listView .items DIV.draftWorkspace{
 	background-color:#f1dbdd;
 }
     
 	/**
 	 * Form view specific configuration 
 	 */
-.savLibraryPlus .formView DIV.footer, .savLibraryPlus .formAdminView DIV.footer {
+.savLibraryPlus .formView DIV.footer, .savLibraryPlus .formAdminView DIV.footer{
 	background-color:#9999cc;
 }	 
-.savLibraryPlus .formView DIV.label, .savLibraryPlus .formAdminView DIV.label {
+.savLibraryPlus .formView DIV.label, .savLibraryPlus .formAdminView DIV.label{
 	font-weight:bold;
 	padding:0 5px 0 5px;
 }
-.savLibraryPlus .formView DIV.field, .savLibraryPlus .formAdminView DIV.field {
+.savLibraryPlus .formView DIV.field, .savLibraryPlus .formAdminView DIV.field{
 	padding:2px 5px 2px 5px;
 }
-.savLibraryPlus .formView SPAN.required, .savLibraryPlus .formAdminView SPAN.required {
+.savLibraryPlus .formView SPAN.required, .savLibraryPlus .formAdminView SPAN.required{
 	color:red;
 	font-weight:bold;
 	padding:0 5px 0 5px;
 }
-.savLibraryPlus .formView DIV.column1, .savLibraryPlus .formAdminView DIV.column1 {
+.savLibraryPlus .formView DIV.column1, .savLibraryPlus .formAdminView DIV.column1{
 	clear:both;
-	width:20%;
-	min-width:140px;
+	min-width:20%;
 	font-weight:bold;
 	min-height:25px;
 }
-.savLibraryPlus .formView DIV.column2, .savLibraryPlus .formAdminView DIV.column2 {
-	width:30%;
-	min-width:210px;
+.savLibraryPlus .formView DIV.column2, .savLibraryPlus .formAdminView DIV.column2{
+	min-width:30%;
 	min-height:25px;
 	padding:0 10px 0 10px;
 }
-.savLibraryPlus .formView .column2 SPAN.checkbox, .savLibraryPlus .formAdminView .column2 SPAN.checkbox {
+.savLibraryPlus .formView .column2 SPAN.checkbox, .savLibraryPlus .formAdminView .column2 SPAN.checkbox{
 	text-align:left;
 }
-.savLibraryPlus .formView DIV.column3, .savLibraryPlus .formAdminView DIV.column3 {
-	width:40%;
-	min-width:300px;
+.savLibraryPlus .formView DIV.column3, .savLibraryPlus .formAdminView DIV.column3{
+	min-width:40%;
   min-height:25px;
 }
-.savLibraryPlus .formView .column3 INPUT, .savLibraryPlus .formAdminView .column3 INPUT {
+.savLibraryPlus .formView .column3 INPUT, .savLibraryPlus .formAdminView .column3 INPUT{
 	font-size:12px;
 }
-.savLibraryPlus .formView .column3 SELECT, .savLibraryPlus .formAdminView .column3 SELECT {
+.savLibraryPlus .formView .column3 SELECT, .savLibraryPlus .formAdminView .column3 SELECT{
 	font-size:12px;
 }
-.savLibraryPlus DIV.formView .column3 TEXTAREA, .savLibraryPlus .formAdminView .column3 TEXTAREA {
+.savLibraryPlus DIV.formView .column3 TEXTAREA, .savLibraryPlus .formAdminView .column3 TEXTAREA{
 	font-size:12px;
 }
-.savLibraryPlus .formView DIV.column4, .savLibraryPlus .formAdminView DIV.column4Different {
+.savLibraryPlus DIV.formView .column3 SPAN, .savLibraryPlus .formAdminView .column3 SPAN{
+	font-size:12px;
+	margin:-3px 0 0 3px;	
+}
+.savLibraryPlus .formView DIV.column4, .savLibraryPlus .formAdminView DIV.column4Different{
 	float:right;
 	width:20px;
 	background-color:red;
 	margin-right:10px;
 }
-.savLibraryPlus .formView DIV.column4Manual, .savLibraryPlus .formAdminView DIV.column4Same {
+.savLibraryPlus .formView DIV.column4Manual, .savLibraryPlus .formAdminView DIV.column4Same{
 	float:right;
 	width:20px;
 	background-color:green;
@@ -453,26 +457,25 @@
 	 */
 .savLibraryPlus .printView DIV.label{
 	clear:left;
-	width:130px;
+	width:20%;
 	font-weight:bold;
-	min-height:20px;
-	padding:0px 10px 0px 10px;
+	min-height:25px;
 }
 .savLibraryPlus .printView DIV.field{
-	width:450px;
-	min-height:20px;
-	padding:0px 10px 0px 10px;
+	width:78%;
+	min-height:25px;
+	padding:0 1% 0 1%;
 }
 .savLibraryPlus .printView DIV.printCol1{
 	clear:left;
-	width:130px;
+	width:20%;
 	font-weight:bold;
 	min-height:25px;
 }
 .savLibraryPlus .printView DIV.printCol2{
-	width:450px;
+	width:78%;
 	min-height:25px;
-	padding:0px 10px 0px 10px;
+	padding:0 1% 0 1%;
 }
 
 
@@ -516,7 +519,9 @@
 	background-color:#ffffff;
 	padding:4px;
 }
-
+.savLibraryPlus .singleView .field DIV.doubleSelectorbox{
+	padding-right:5px;
+}
 .savLibraryPlus .singleView .field DIV.file{
 	clear:left;
 }
@@ -574,7 +579,7 @@
 	margin:0 3px 0 3px;
 	border:1px #000099 solid;
 }
-.savLibraryPlus .singleView .subform DIV.subform {
+.savLibraryPlus .singleView .subform DIV.subform{
 	width:100%;
 	width:calc(100% - 8px);
 	margin:0 3px 0 3px;
@@ -648,6 +653,7 @@
   width:inherit;  
 }
 .savLibraryPlus .editView .field .value DIV.file INPUT.fileText{
+	margin-right:3px;
 }
 .savLibraryPlus .editView .field .value DIV.file INPUT.fileInput{
 }
@@ -773,16 +779,13 @@
 	border-bottom:1px #ddeeee solid;
 	background-color:#ffffff;
 	margin:1px 0 0 0;
-}
-.savLibraryPlus .exportView .items .item DIV.field{
-}    
+}   
     
 	/**
 	 * Export view general fields  
 	 */
 .savLibraryPlus .exportView .field DIV.label{
 	width:100px;
-	border:0px #ddeeee solid;
 	background-color:#d7e8e8;
 	color:#000099;
 	font-weight:bold;
@@ -791,38 +794,74 @@
 }
 .savLibraryPlus .exportView .field DIV.value{
 	min-width:150px;
+	padding-left:3px;
 	background-color:#ffffff;
 }
-.savLibraryPlus .exportView .field INPUT{
-}  
-.savLibraryPlus DIV.exportView INPUT.exportExecute{
-	margin:0 2px 0 0;
-}      
-.savLibraryPlus .exportView .field SELECT.multiple{
-	min-width:50px;
-	margin-right:5px;
-}
-.savLibraryPlus .exportView .field DIV.checkbox{
-} 
-.savLibraryPlus DIV.exportView DIV.field DIV.checkbox INPUT{
-}
-.savLibraryPlus DIV.exportView DIV.field DIV.checkbox SPAN{
-	padding:0px 5px 0px 5px;
-}
-.savLibraryPlus DIV.exportView DIV.field TEXTAREA{
-}
-    
+
 	/** 
-	 *Export view special fields 
+	 * Export view special fields 
 	 */
-.savLibraryPlus .exportView .fields DIV.checkbox{
-	width:380px;
-}   
 .savLibraryPlus .exportView .generatedFileLink A{
 	float:left;
 	padding:5px;
 	margin:0px;
+} 	 
+.savLibraryPlus .exportView .field INPUT.xmlFile{
+	width:500px;
+}
+.savLibraryPlus .exportView .field INPUT.xsltFile{
+	width:500px;
+}
+.savLibraryPlus .exportView .field INPUT.exec{
+	width:500px;
+}
+.savLibraryPlus .exportView DIV.fields {
+	width:100%;
+}  	     
+.savLibraryPlus .exportView .fields DIV.value{
+	width:84%;
+	width:calc(86% - 8px);	
+}  	 
+.savLibraryPlus .exportView .fields DIV.checkbox{
+	width:50%;
+}
+.savLibraryPlus .exportView .fields .checkbox INPUT{
+	margin-top:4px;
+}
+.savLibraryPlus .exportView .fields .checkbox SPAN{
+	width:85%;
+	padding:0 5px 0 5px;
+  -webkit-hyphens:auto;
+  -moz-hyphens:auto;
+  -ms-hyphens:auto;
+  -o-hyphens:auto;
+  hyphens:auto;
+  word-wrap: break-word;	
+}
+.savLibraryPlus .exportView .field TEXTAREA.whereClause{
+	width:500px;
+	height:90px;
+}
+.savLibraryPlus .exportView .field INPUT.orderByClause{
+	width:500px;
+}
+.savLibraryPlus .exportView .field INPUT.additionalTables{
+	width:500px;
+}
+.savLibraryPlus .exportView .field INPUT.additionalFields{
+	width:500px;
+}
+.savLibraryPlus .exportView .field INPUT.groupByClause{
+	width:259px;
+}
+.savLibraryPlus .exportView .field TEXTAREA.orderedFieldList{
+	width:500px;
+	height:90px;
 }    
+.savLibraryPlus .exportView .field TEXTAREA.fieldsConfiguration{
+	width:500px;
+	height:90px;
+}   
 
 	/** 
 	 * Keeps htmlarea properties 
@@ -848,27 +887,3 @@
   margin:inherit !important;
 }
 
-	/**
-	 * Media print 
-	 */
-@media print {
-
-	.break {
-		float:left;
-		clear:left;
-		width:1px;
-		page-break-after:always;
-		border: 1px solid white;
-	}
-
-	.savLibraryPlus DIV.listView, .savLibraryPlus DIV.printView {;border:none;overflow:visible;color:black;background-color:inherit;}
-	.savLibraryPlus .listView DIV.title, .savLibraryPlus .printView DIV.title {font-size:12px;font-weight:bold;color:black;background-color:inherit;}
-	.savLibraryPlus .listView DIV.block, .savLibraryPlus .printView DIV.block {float:none;border:none;}
-	.savLibraryPlus .listView DIV.blockTitle, .savLibraryPlus .printView DIV.blockTitle {border-top:solid 1px #004898;margin-top:10px;}
-	.savLibraryPlus .listView DIV.items, .savLibraryPlus .printView DIV.items {float:none;border:none;}
-	.savLibraryPlus .listView .items DIV.item, .savLibraryPlus .printView .items DIV.item {;border:none;}
-
-	* html .savLibraryPlus .listView .items .item DIV.value {
-		border:none;
-	}
-}

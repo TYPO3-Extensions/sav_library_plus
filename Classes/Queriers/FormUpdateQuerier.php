@@ -92,7 +92,11 @@ class Tx_SavLibraryPlus_Queriers_FormUpdateQuerier extends Tx_SavLibraryPlus_Que
         // Makes pre-processings.
         self::$doNotAddValueToUpdateOrInsert = false;
         $value = $this->preProcessor($value);
-        
+
+        // Sets the processed Post variables to retrieve for error processing if any
+        $fullFieldName = $tableName . '.' . $fieldName;
+        $this->processedPostVariables[$fullFieldName][$uid] = array('value' => $value, 'errorCode' => self::$errorCode);
+            
         // Adds the variables
         if (self::$doNotAddValueToUpdateOrInsert === false) {
 		      $variablesToUpdateOrInsert[$tableName][$uid][$tableName . '.' . $fieldName] = $value;

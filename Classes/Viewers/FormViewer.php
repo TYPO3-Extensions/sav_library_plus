@@ -53,6 +53,13 @@ class Tx_SavLibraryPlus_Viewers_FormViewer extends Tx_SavLibraryPlus_Viewers_Abs
   protected $templateFile = 'Form.html';
   
   /**
+   * The view type
+   *
+   * @var string
+   */
+	protected $viewType = 'FormView';  
+  
+  /**
    * The query configuration manager
    *
    * @var Tx_SavLibraryPlus_Managers_QueryConfigurationManager
@@ -76,7 +83,7 @@ class Tx_SavLibraryPlus_Viewers_FormViewer extends Tx_SavLibraryPlus_Viewers_Abs
   public function render() {
 
     // Sets the library view configuration
-    $this->setLibraryViewConfiguration('FormView');
+    $this->setLibraryViewConfiguration();
 
     // Sets the active folder Key
     $this->setActiveFolderKey();

@@ -121,7 +121,7 @@ class Tx_SavLibraryPlus_ItemViewers_Default_RelationManyToManyAsDoubleSelectorbo
     	
       $htmlArray[] = Tx_SavLibraryPlus_Utility_HtmlElements::htmlDivElement(
         array(
-          Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('class', 'item' . $row['uid']),
+          Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('class', 'doubleSelectorbox item' . $row['uid']),
         ),
         $content
       );

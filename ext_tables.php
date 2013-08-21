@@ -9,7 +9,7 @@ if (!function_exists('user_savlibraryPlusHelp')) {
 		$cshTag = $PA['fieldConf']['config']['userFuncParameters']['cshTag'];
 		$skinnedIcon = t3lib_iconWorks::skinImg($GLOBALS['BACK_PATH'], 'gfx/helpbubble.gif', '');
 		$icon = '<img'.$skinnedIcon.' class="typo3-csh-icon" alt="' . t3lib_div::lcfirst($cshTag) . '" />';
-  	if (t3lib_utility_VersionNumber::convertVersionNumberToInteger(TYPO3_version)	< 6000000) {
+  	if (version_compare(TYPO3_version, '6.0', '<')) {
 			$helpUrl = 'view_help.php?';
 		}	else {
 			$helpUrl = 'mod.php?M=help_cshmanual&';			

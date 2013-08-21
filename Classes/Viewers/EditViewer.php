@@ -44,7 +44,14 @@ class Tx_SavLibraryPlus_Viewers_EditViewer extends Tx_SavLibraryPlus_Viewers_Abs
    * @var string
    */
   protected $templateFile = 'Edit.html';
- 
+  
+  /**
+   * The view type
+   *
+   * @var string
+   */
+	protected $viewType = 'EditView';
+  
   /**
    * Renders the view
    *
@@ -58,7 +65,7 @@ class Tx_SavLibraryPlus_Viewers_EditViewer extends Tx_SavLibraryPlus_Viewers_Abs
   	$this->addJavaScript();
    
     // Sets the library view configuration
-    $this->setLibraryViewConfiguration('EditView');
+    $this->setLibraryViewConfiguration();
 
     // Sets the active folder Key
     $this->setActiveFolderKey();

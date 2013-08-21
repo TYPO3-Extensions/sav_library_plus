@@ -53,6 +53,13 @@ class Tx_SavLibraryPlus_Viewers_ListViewer extends Tx_SavLibraryPlus_Viewers_Abs
   protected $templateFile = 'List.html';
   
   /**
+   * The view type
+   *
+   * @var string
+   */
+	protected $viewType = 'ListView';  
+  
+  /**
    * The previous folder fields configuration
    *
    * @var array
@@ -69,24 +76,20 @@ class Tx_SavLibraryPlus_Viewers_ListViewer extends Tx_SavLibraryPlus_Viewers_Abs
   public function render() {
   
     // Sets the library view configuration
-    $this->setLibraryViewConfiguration('ListView');
+    $this->setLibraryViewConfiguration();
 
     // Sets the active folder Key
     $this->setActiveFolderKey();
 
-    // Creates the template configuration manager
-    $templateConfigurationManager = t3lib_div::makeInstance('Tx_SavLibraryPlus_Managers_TemplateConfigurationManager');
-    $templateConfigurationManager->injectTemplateConfiguration($this->getLibraryConfigurationManager()->getListViewTemplateConfiguration());
-
+    // Gets the item template
+    $itemTemplate = $this->getItemTemplate();    
+    
     // Creates the field configuration manager
     $this->createFieldConfigurationManager();
         
-    // Gets the item template
-    $itemTemplate = $templateConfigurationManager->getItemTemplate();
-
     // Processes the rows
     $rows = $this->getController()->getQuerier()->getRows();
-
+   
     $fields = array();
     foreach ($rows as $rowKey => $row) {
 
@@ -94,7 +97,7 @@ class Tx_SavLibraryPlus_Viewers_ListViewer extends Tx_SavLibraryPlus_Viewers_Abs
       
     	// Gets the fields configuration for the folder
     	$this->folderFieldsConfiguration = $this->getFieldConfigurationManager()->getFolderFieldsConfiguration($this->getActiveFolder(), true, true);
-  	
+  	   	
       $listItemConfiguration = array_merge( $this->parseItemTemplate($itemTemplate),
         array(
           'uid' => $row['uid'],
@@ -110,15 +113,6 @@ class Tx_SavLibraryPlus_Viewers_ListViewer extends Tx_SavLibraryPlus_Viewers_Abs
     // Adds the fields configuration
     $this->addToViewConfiguration('fields', $fields);
     
-    // Page information for the page browser
-    $page = Tx_SavLibraryPlus_Managers_UriManager::getPage();
-    $lastPage = floor(($this->getController()->getQuerier()->getTotalRowsCount() - 1) / $this->getController()->getExtensionConfigurationManager()->getMaxItems());
-    $maxPages = $this->getController()->getExtensionConfigurationManager()->getMaxPages();
-    $pages = array();
-    for($i = min($page, max(0, $lastPage - $maxPages)); $i <= min($lastPage, $page + $maxPages - 1); $i++) {
-      $pages[$i] = $i + 1;
-    }
-
     // Adds information to the view configuration
     $this->addToViewConfiguration('general',
       array(
@@ -127,9 +121,9 @@ class Tx_SavLibraryPlus_Viewers_ListViewer extends Tx_SavLibraryPlus_Viewers_Abs
         'userIsAllowedToExportData' => $this->getController()->getUserManager()->userIsAllowedToExportData(),
         'helpPage' => $this->getController()->getExtensionConfigurationManager()->getHelpPageForListView(),
         'addPrintIcon' => $this->getActiveFolderField('addPrintIcon'),
-        'page' => $page,
-        'lastPage' => $lastPage,
-        'pages' => $pages,
+        'page' => $this->getCurrentPage(),
+        'lastPage' => $this->getLastPage(),
+        'pages' => $this->getPages(),
         'title' => $this->processTitle($this->parseTitle($this->getActiveFolderTitle())),
       )
     );
@@ -144,11 +138,69 @@ class Tx_SavLibraryPlus_Viewers_ListViewer extends Tx_SavLibraryPlus_Viewers_Abs
   }
 
   /**
+   * Gets the item template
+   *
+   * @param none
+   *
+   * @return array
+   */
+  protected function getItemTemplate() {
+    // Creates the template configuration manager
+    $templateConfigurationManager = t3lib_div::makeInstance('Tx_SavLibraryPlus_Managers_TemplateConfigurationManager');
+    $templateConfigurationManager->injectTemplateConfiguration($this->getLibraryConfigurationManager()->getListViewTemplateConfiguration());
+    $itemTemplate = $templateConfigurationManager->getItemTemplate(); 
+    
+    return $itemTemplate;    
+  }  
+  
+  /**
+   * Gets the current page 
+   *
+   * @param none
+   *
+   * @return integer
+   */
+  protected function getCurrentPage() {
+    $currentPage = Tx_SavLibraryPlus_Managers_UriManager::getPage();  	
+    return $currentPage;    
+  }    
+
+  /**
+   * Gets the last page 
+   *
+   * @param none
+   *
+   * @return integer
+   */
+  protected function getLastPage() {
+    $lastPage = floor(($this->getController()->getQuerier()->getTotalRowsCount() - 1) / $this->getController()->getExtensionConfigurationManager()->getMaxItems());  	 	
+    return $lastPage;    
+  }   
+  
+  /**
+   * Gets the pages 
+   *
+   * @param none
+   *
+   * @return array
+   */
+  protected function getPages() {
+    $currentPage = $this->getCurrentPage();
+    $lastPage = $this->getLastPage();
+    $maxPages = $this->getController()->getExtensionConfigurationManager()->getMaxPages();
+    $pages = array();    
+    for($i = min($currentPage, max(0, $lastPage - $maxPages)); $i <= min($lastPage, $currentPage + $maxPages - 1); $i++) {
+      $pages[$i] = $i + 1;
+    }       
+    return $pages;    
+  }     
+  
+  /**
    * Adds elements to the item list configuration
    *
    * @param none
    *
-   * @return none
+   * @return array
    */
   protected function additionalListItemConfiguration() {
     return array();
@@ -172,6 +224,11 @@ class Tx_SavLibraryPlus_Viewers_ListViewer extends Tx_SavLibraryPlus_Viewers_Abs
    * @return string The item configuration
    */
   protected function parseItemTemplate($itemTemplate) {
+  	
+  	// Pre-processes the item template
+  	if (method_exists($this, 'itemTemplatePreprocessor')) {
+  		$itemTemplate = $this->itemTemplatePreprocessor($itemTemplate);
+  	}
 
     $itemConfiguration = array();
     $fields = array();
@@ -185,7 +242,7 @@ class Tx_SavLibraryPlus_Viewers_ListViewer extends Tx_SavLibraryPlus_Viewers_Abs
     // Sets the default class item
     $classItem = 'item';
     foreach($matches[0] as $matchKey => $match) {
-    	
+	
       // Gets the crypted full field name
       $fullFieldName =  $this->getController()->getQuerier()->buildFullFieldName($matches['fullFieldName'][$matchKey]);  
       $cryptedFullFieldName = Tx_SavLibraryPlus_Controller_AbstractController::cryptTag($fullFieldName);
@@ -194,7 +251,7 @@ class Tx_SavLibraryPlus_Viewers_ListViewer extends Tx_SavLibraryPlus_Viewers_Abs
 			if (is_null($this->folderFieldsConfiguration[$cryptedFullFieldName])) {
 				Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.unknownFieldName', array($fullFieldName));
 			}
-      
+   
       // Checks if the value must be cut 
       if ($this->folderFieldsConfiguration[$cryptedFullFieldName]['cutDivItemInner']) {
       	$value = '';
@@ -244,7 +301,7 @@ class Tx_SavLibraryPlus_Viewers_ListViewer extends Tx_SavLibraryPlus_Viewers_Abs
       'classItem' => $classItem,
       'template' => $itemTemplate,
     );
- 
+
     return $itemConfiguration;
   }
 

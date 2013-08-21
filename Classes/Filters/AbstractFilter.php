@@ -27,8 +27,6 @@
  *
  * @author	Laurent Foulloy <yolf.typo3@orange.fr>
  *
- *
- *
  */   
 
 abstract class Tx_SavLibraryPlus_Filters_AbstractFilter extends tslib_pibase {
@@ -397,7 +395,6 @@ abstract class Tx_SavLibraryPlus_Filters_AbstractFilter extends tslib_pibase {
 	 * @return  string
 	 */
   protected function arrayToHTML($htmlArray, $space='') {
-  
 		return  implode($this->EOL . $space, $htmlArray);
   }  	
 
@@ -409,8 +406,6 @@ abstract class Tx_SavLibraryPlus_Filters_AbstractFilter extends tslib_pibase {
 	 * @return  string
 	 */
   public function pi_getPageLink($pageId, $target = '', $additionalParameters = array()) {
-
-
  		if (is_array($this->conf['link.'])) {
  			if (!empty($this->conf['link.']['target'])) {
  				$target = $this->conf['link.']['target'];
@@ -422,6 +417,6 @@ abstract class Tx_SavLibraryPlus_Filters_AbstractFilter extends tslib_pibase {
 
     return parent::pi_getPageLink($pageId, $target, $additionalParameters);
   }  
-  
+   
 }
 ?>

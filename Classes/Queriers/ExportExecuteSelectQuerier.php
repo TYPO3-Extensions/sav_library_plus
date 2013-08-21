@@ -57,8 +57,8 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
    *
    * @var array
    */	  
-  protected $previousMarkerArray = array();
-  		
+  protected $previousMarkers = array();
+  
   /**
    * Executes the query
    *
@@ -77,7 +77,12 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
 			/* ORDER BY */  $this->buildOrderByClause(),
 			/* LIMIT    */  $this->buildLimitClause()
 		);
-		 
+
+		// Checks if the query returns rows
+		if ($GLOBALS['TYPO3_DB']->sql_num_rows($this->resource) == 0) {
+			Tx_SavLibraryPlus_Controller_FlashMessages::addError('warning.noRecord');
+		}
+		
     // Exports the data in CSV
     if (count($this->getController()->getUriManager()->getPostVariablesItem('fields')) > 0) {
     	$exportStatus = $this->exportDataInCsv();
@@ -103,6 +108,7 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
   	
   }
 
+  
   /**
    * Builds the WHERE BY Clause.
    *
@@ -202,7 +208,7 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
     		return false;
     	}
     }
-    
+   
     // Sets the output file
     $outputFileName = Tx_SavLibraryPlus_Controller_AbstractController::getFormName() . date('_Y_m_d_H_i') . '.csv';
     t3lib_div::unlink_tempfile($outputFileName);
@@ -230,22 +236,32 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
    
   	// Processes the rows
     $counter = 0;
-    while ($this->rows[0] = $this->getRowWithFullFieldNames($counter++)) {
-      // Processes the row
-      $markers = $this->processRow();   
+    $this->rows[0] = $this->getRowWithFullFieldNames($counter++);
+    $markers = $this->processRow(); 
+    
+    while ($this->rows[0]) {
 
-      // Checks if a XML file is set
-      if (empty($xmlFile)) {
-         // Writes the content to the output file
-        fwrite($this->outputFileHandle, $this->csvValues($markers, ';') . chr(10));
-      } else {	
-         if ($this->processXmlReferenceArray($this->rows[0], $markers) === false) {
-            return false;
-         }
-      } 
-       
       // The current row is kept for post processing
-      $previousRow = $this->rows[0];     
+      $previousRow = $this->rows[0]; 
+      
+      // Gets the next row
+      $this->rows[0] = $this->getRowWithFullFieldNames($counter++);
+      if ($this->rows[0]) {
+	      $this->nextMarkers = $this->processRow();
+	      
+	      // Checks if a XML file is set
+	      if (empty($xmlFile)) {
+	         // Writes the content to the output file
+	        fwrite($this->outputFileHandle, $this->csvValues($markers, ';') . chr(10));
+	      } else {
+	         if ($this->processXmlReferenceArray($previousRow, $markers) === false) {
+	            return false;
+	         }
+	      } 
+	      
+	      // Sets the current markers
+	      $markers = $this->nextMarkers;
+      }        
     } 
 
     // Post-processes the XML file if any
@@ -441,7 +457,7 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
     		} else {
     			// Renders the field based on the TCA configuration as it would be rendered in a single view 			
     			$basicFieldConfiguration = $this->getController()->getLibraryConfigurationManager()->searchBasicFieldConfiguration(Tx_SavLibraryPlus_Controller_Controller::cryptTag($fieldName));    		 
-    		
+   		
     			// Adds the basic configuration, if found, to the TCA 
     			if (is_array($basicFieldConfiguration)) {
     				$fieldConfiguration = array_merge(Tx_SavLibraryPlus_Managers_TcaConfigurationManager::getTcaConfigFieldFromFullFieldName($fieldName), $basicFieldConfiguration);
@@ -459,6 +475,11 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
 						// Adds the value to the field configuration
 						$fieldConfiguration['value'] = $this->getFieldValueFromCurrentRow($fieldName);
 						
+						// Adds the uid to the field configuration in case of MM relation	
+						if ($fieldConfiguration['MM']) {				
+							$fieldConfiguration['uid'] = $this->getFieldValueFromCurrentRow($fieldConfiguration['tableName'] . '.uid');
+						}
+						
 						// Calls the item viewer
 	      		$className = 'Tx_SavLibraryPlus_ItemViewers_Default_' . $fieldConfiguration['fieldType'] . 'ItemViewer';
 	      		$itemViewer = t3lib_div::makeInstance($className);
@@ -468,7 +489,7 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
 					} else {
 						// Raw rendering
     				$markers['###' . $fieldName . '###'] = $this->getFieldValueFromCurrentRow($fieldName);		
-					}   			    			
+					}  			    			
     		}
     	}
     }
@@ -480,25 +501,25 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
  	/**
 	 * Processes the XML file
 	 *
-	 * @param	$row array		row of data
-	 * @param $markerArray  array of markers
+	 * @param	array $row 	Row of data
+	 * @param array$ markers  Array of marker
 	 *
-	 * @return	boolean		true if OK
+	 * @return boolean	true if OK
 	 */
-	protected function processXmlReferenceArray($row, $markerArray) {
+	protected function processXmlReferenceArray($row, $markers) {
 		// Gets the content object
 		$contentObject = $this->getController()->getExtensionConfigurationManager()->getExtensionContentObject();
 
     // Special processing
-    foreach ($markerArray as $key => $value) {
+    foreach ($markers as $key => $value) {
       // Replaces &nbsp; by a space
-      $markerArray[$key] = str_replace('&nbsp;', ' ', $markerArray[$key]);
+      $markers[$key] = str_replace('&nbsp;', ' ', $markers[$key]);
     
       // Replaces & by &amp;
-      $markerArray[$key] = str_replace('& ', '&amp; ', $markerArray[$key]);
+      $markers[$key] = str_replace('& ', '&amp; ', $markers[$key]);
 
       // Suppresses empty tags
-      $markerArray[$key] = preg_replace('/<[^\/>][^>]*><\/[^>]+>/', '', $markerArray[$key]);
+      $markers[$key] = preg_replace('/<[^\/>][^>]*><\/[^>]+>/', '', $markers[$key]);
     }
 
     // Sets the file Path
@@ -514,39 +535,95 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
               $this->recursiveChangeField($key, 'changed', true);
             }
             $this->xmlReferenceArray[$key]['fieldValue'] = $row[$value['id']];
-          } 
+          }
+          
+          // Checks if the parent will change at next row.
+      		if ($row[$value['id']] != $this->rows[0][$value['id']]) {
+            $this->xmlReferenceArray[$key]['willChangeNext'] = true;					
+					} else{
+						$this->xmlReferenceArray[$key]['willChangeNext'] = false;
+					}          
           break;
       }
     }
-
+    
     // Processes the replaceDistinct and cutter parts
     foreach ($this->xmlReferenceArray as $key => $value) {
-
+    
       switch ($value['type']) {
-        case 'emptyifsameasprevious':
+        case 'emptyifsameasprevious':        	
           // Parses the template with the known markers
-          $buffer = ($this->isInUtf8() ? $value['template'] : utf8_decode($value['template']));
-          $buffer = $contentObject->substituteMarkerArrayCached(
-            $buffer,
-            $markerArray,
+          $template = ($this->isInUtf8() ? $value['template'] : utf8_decode($value['template']));
+          $currentBuffer = $contentObject->substituteMarkerArrayCached(
+            $template,
+            $markers,
             array(),
-            array()
+            array()         
           );
-          // Keeps the value in the XML reference array
-          $this->xmlReferenceArray[$key]['fieldValue'] = $buffer;
 
+          // Processes the template with the next marker
+          $nextBuffer = $contentObject->substituteMarkerArrayCached(
+            $template,
+            $this->nextMarkers,
+            array(),
+            array()         
+          );
+
+          // Processes the template with the previous marker
+          $previousBuffer = $contentObject->substituteMarkerArrayCached(
+            $template,
+            $this->previousMarkers,
+            array(),
+            array()         
+          );
+                              
+          // Processes the buffer
+          if ($this->isChildOfReplaceAlways($key)) {
+          	// EmptyIfSameAsPrevious is a child of replaceAlways
+          	
+	          // Keeps the values in the XML reference array
+	          $this->xmlReferenceArray[$key]['fieldValue'] = $currentBuffer;          
+	          $this->xmlReferenceArray[$key]['nextFieldValue'] = $nextBuffer;             	
+
+	          // Processes the template
+	          $buffer = $this->processEmptyifsameaspreviousTemplate($key, $template);										
+          } else {
+          	// EmptyIfSameAsPrevious is a child of replaceDistinct
+          		
+          		// Gets the parent
+          		$parent = $this->xmlReferenceArray[$key]['parent']; 
+
+          		// Processes the template if the parent changed
+              if ($this->xmlReferenceArray[$parent]['changed']) {      
+	          		$buffer = $this->processEmptyifsameaspreviousTemplate($key, $template);		
+          		}          		
+
+	          	// Keeps the values in the XML reference array if the parent will change at new row         		
+          		if ($this->xmlReferenceArray[$parent]['willChangeNext']) {
+	          		$this->xmlReferenceArray[$key]['fieldValue'] = $currentBuffer;          
+	          		$this->xmlReferenceArray[$key]['nextFieldValue'] = $nextBuffer; 
+          		}
+          }
+     
+          $fileName = $key . '.xml';
+          if(!$this->replaceReferenceMarkers($filePath, $fileName, $buffer)) {
+              return false;
+          }      
+                
           break;
+          
         case 'replacedistinct':
+       	   	
           if ($value['changed']) {
             // Parses the template with the previous known markers
             $buffer = ($this->isInUtf8() ? $value['template'] : utf8_decode($value['template']));
             $buffer = $contentObject->substituteMarkerArrayCached(
               $buffer,
-              $this->previousMarkerArray,
+              $this->previousMarkers,
               array(),
               array()
             );
-
+	                                     
             $fileName = $key . '.xml';
             if(!$this->replaceReferenceMarkers($filePath, $fileName, $buffer)) {
               return false;
@@ -578,10 +655,10 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
           if ($isChildOfReplaceAlways) {
             $value['changed'] = true;
             $fieldValue = $value['fieldValue'];
-            $marker = $markerArray;
+            $currentMarkers = $markers;
           } else {
             $fieldValue = $value['previousFieldValue'];
-            $marker = $this->previousMarkerArray;
+            $currentMarkers = $this->previousMarkers;
           }
           
           // Sets the condition
@@ -616,12 +693,12 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
 
           // Checks if the field must be replaced
           if ($value['changed'] && !$condition) {
-
+          	
             // Replaces markers in the template
             $buffer = ($this->isInUtf8() ? $value['template'] : utf8_decode($value['template']));
             $buffer = $contentObject->substituteMarkerArrayCached(
                 $buffer,
-                $marker,
+                $currentMarkers,
                 array(),
                 array()
             );
@@ -646,7 +723,7 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
           $this->xmlReferenceArray[$key]['previousFieldValue'] = $value['fieldValue'];
 
           break;
-      }
+      }   
     }
     
     // Processes the replaceAlways part
@@ -660,10 +737,10 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
           $buffer = ($this->isInUtf8() ? $value['template'] : utf8_decode($value['template']));
           $buffer = $contentObject->substituteMarkerArrayCached(
             $buffer,
-            $markerArray,
+            $markers,
             array(),
             array()
-          );
+          );        
 
           if(!$this->replaceReferenceMarkers($filePath, $fileName, $buffer)) {
             return false;
@@ -673,20 +750,48 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
     }
 
     // Keeps the marker array
-    $this->previousMarkerArray = $markerArray;
+    $this->previousMarkers = $markers;
 
     return true;
-  }
+  }  
 
  	/**
-	 * Process the last markers in the XML file
+	 * Processes the template for Emptyifsameasprevious attribute
 	 *
-	 * @param	$row array		row of data
-	 * @param $markerArray  array of markers
+	 * @param	string $key 	The key
+	 * @param	string $template 	The template
+	 *
+	 * @return	string		The processed template
+	 */  
+  protected function processEmptyifsameaspreviousTemplate($key, $template) {
+		// Cuts the value if the previous field is the same as the current one              	
+    if ($this->xmlReferenceArray[$key]['previousFieldValue'] == $this->xmlReferenceArray[$key]['fieldValue']) {	          		           			
+       $buffer = preg_replace('/^(<[^>]+>)([^<]*)(<\/[^>]+>)$/', '$1$3', $template);               		          				
+    } else {
+       $buffer = $this->xmlReferenceArray[$key]['fieldValue'];
+    } 
+          			
+		// Processes the rowsep if any (rowsep is set if the next field is different from the current one
+		if ($this->xmlReferenceArray[$key]['nextFieldValue'] != $this->xmlReferenceArray[$key]['fieldValue']) {
+			$buffer = str_replace('rowsep="zeroIfSameAsPrevious"', 'rowsep="1"', $buffer);
+		} else {
+			$buffer = str_replace('rowsep="zeroIfSameAsPrevious"', 'rowsep="0"', $buffer);
+		}          			
+   // Keeps the value in the XML reference array             			
+   $this->xmlReferenceArray[$key]['previousFieldValue'] = $this->xmlReferenceArray[$key]['fieldValue'];
+
+   return $buffer;
+  }  
+  	
+ 	/**
+	 * Processes the last markers in the XML file
+	 *
+	 * @param	array $row 		row of data
+	 * @param array $markers  array of markers
 	 *
 	 * @return	boolean		true if OK
 	 */
-	protected function postprocessXmlReferenceArray($row, $markerArray) {
+	protected function postprocessXmlReferenceArray($row, $markers) {
 		// Gets the content object
 		$contentObject = $this->getController()->getExtensionConfigurationManager()->getExtensionContentObject();
 		
@@ -700,10 +805,10 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
           break;
       }
     }
-    
+   
     // Processes all the references one more time
     if ($replaceDistinct) {
-      if (!$this->processXmlReferenceArray($row, $markerArray)) {
+      if (!$this->processXmlReferenceArray($row, $markers)) {
         return false;
       }
     }
@@ -727,7 +832,7 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
           $buffer = ($this->isInUtf8() ? $value['template'] : utf8_decode($value['template']));
           $buffer = $contentObject->substituteMarkerArrayCached(
             $buffer,
-            $this->previousMarkerArray,
+            $this->previousMarkers,
             array(),
             array()
           );
@@ -748,9 +853,9 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
  	/**
 	 * Changes a given field value for all the child of a node
 	 *
-	 * @param	$keySearch string key
-	 * @param	$setField string field to change
-	 * @param	$setvalue mixed value for the field
+	 * @param string	$keySearch key
+	 * @param string	$setField field to change
+	 * @param mixed	$setvalue value for the field
 	 *
 	 * @return	none
 	 */
@@ -766,8 +871,8 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
  	/**
 	 * Unlinks the file associated with a replaceAlways item
 	 *
-	 * @param	$filePath string	file path
-	 * @param	$keySearch string key
+	 * @param string	$filePath	file path
+	 * @param string	$keySearch key
 	 *
 	 * @return	none
 	 */
@@ -786,17 +891,17 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
  	/**
 	 * Checks if the key is a child of a replaceAlways item
 	 *
-	 * @param	$keySearch string key
+	 * @param string	$keySearch key
 	 *
 	 * @return	boolean		true if OK
 	 */
   protected function isChildOfReplaceAlways($keySearch) {
-    $parent = $this->xmlReferenceArray[$keySearch]['parent'];
+    $parent = $this->xmlReferenceArray[$keySearch]['parent'];   
     while ($parent != NULL) {
-      if($this->xmlReferenceArray[$parent]['type'] == 'replacealways') {
+      if ($this->xmlReferenceArray[$parent]['type'] == 'replacealways') {
         return true;
       } else {
-        $parent = $this->xmlReferenceArray[$parent]['parent'];
+        $parent = $this->xmlReferenceArray[$parent]['parent'];        
       }
     }
     return false;
@@ -805,10 +910,10 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
  	/**
 	 * Replaces the reference markers
 	 *
-	 * @param	$filePath string	file path
-	 * @param $fileName string file name
-	 * @param $template string template containing the markers
-	 * @param $mode string mode for the file writing
+	 * @param string	$filePath	file path
+	 * @param string $fileName file name
+	 * @param string $template template containing the markers
+	 * @param string $mode mode for the file writing
 	 *
 	 * @return	boolean		true if OK
 	 */
@@ -867,48 +972,16 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
         return Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.fileOpenError', array($fileName));
       }
     } else {
-      // No REF_ marker, creates the reference file with the template  
-  		if ($fileHandle = fopen($filePath . $fileName, 'a')) {
+    	if ($fileHandle = fopen($filePath . $fileName, 'w')) {    	
+        $template = ($utf8Encode ? utf8_encode($template): $template);
+        $template = $querier->parseConstantTags($template);
+        $template = $querier->parseLocalizationTags($template);        
 
-        // Replaces the localization markers
-        $buffer = $template;
-
-        // Checks if there exists SPECIAL_REF markers
-        if (preg_match_all('/(<[^>]+>)###SPECIAL_(REF_[^#]+)###(<\/[^>]+>)/', $buffer, $matches)) {
-          foreach($matches[0] as $matchKey => $match) {
-
-            // First item, replaces the marker by the field value and sets xmlFusion to true
-            if (is_null($this->xmlReferenceArray[$matches[2][$matchKey]]['previousFieldValue'])) {
-              $buffer = str_replace($match, $this->xmlReferenceArray[$matches[2][$matchKey]]['fieldValue'], $buffer);
-              $this->xmlFusion = true;
-            } else {
-              // Next items
-              if ($this->xmlFusion == true) {
-                // Fusion with the previous item is set, just removes the marker
-                $buffer = preg_replace('/(<[^>]+>)###SPECIAL_(REF_[^#]+)###(<\/[^>]+>)/', '$1$3', $buffer);
-              } else {
-                // Fusion is not set, uses the previous field value to replace the marker
-                $buffer = str_replace($match, $this->xmlReferenceArray[$matches[2][$matchKey]]['previousFieldValue'], $buffer);
-                $this->xmlFusion = true;
-              }
-              // Checks if current and previous fields are the different to clear the fusion
-              if ($this->xmlReferenceArray[$matches[2][$matchKey]]['fieldValue'] != $this->xmlReferenceArray[$matches[2][$matchKey]]['previousFieldValue']) {
-                $this->xmlFusion = false;
-              }
-            }
-            $this->xmlReferenceArray[$matches[2][$matchKey]]['previousFieldValue']  = $this->xmlReferenceArray[$matches[2][$matchKey]]['fieldValue'];
-          }
-        }
-
-        $buffer = ($utf8Encode ? utf8_encode($buffer): $buffer);
-        $buffer = $querier->parseConstantTags($buffer);
-        $buffer = $querier->parseLocalizationTags($buffer);        
-
-        fwrite($fileHandle, $buffer);
+        fwrite($fileHandle, $template);
         fclose($fileHandle);
       } else {
         return Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.fileOpenError', array($fileName));
-      }
+      }    	 	
     }
     return true;
   }
@@ -928,12 +1001,11 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
     }	
     
     // Loads and processes the xml file
-    $xml = @simplexml_load_file($fileName);
+    $xml = simplexml_load_file($fileName);
     if ($xml === false) {
-      return Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.incorrectXmlFile', array($postVariables['xmlFile']));
+      return Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.incorrectXmlFile', array($fileName));
     }
     
-
     if (!$this->processXmlTree($xml)) {
       return false;
     }
@@ -961,7 +1033,7 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
 	/**
 	 * Processes the XML tree
 	 *
-	 * @param	$element object		XML element object
+	 * @param	object $element XML element object
 	 *
 	 * @return	array		Merged arrays
 	 */
@@ -1038,9 +1110,6 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
 
       // Replaces the node by the reference or a special reference
       switch ($this->xmlReferenceArray[$reference]['type']) {
-        case 'emptyifsameasprevious':
-          $element[0] = '###SPECIAL_' . $reference . '###';
-          break;
         default:
           $element[0] = '###' . $reference . '###';
           break;

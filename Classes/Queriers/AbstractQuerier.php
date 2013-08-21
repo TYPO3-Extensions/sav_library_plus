@@ -53,6 +53,13 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
   protected $resource;
 
   /**
+   * The array of field object
+   *
+   * @var array
+   */
+  protected $fieldObjects = array();  
+  
+  /**
    * The rows
    *
    * @var array
@@ -864,13 +871,10 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
   
 	/**
 	 * Builds the table references (from part) of the query
-	 *
-   * @param $query array (query array)
-	 * @param $addTables string (additional tables)
  	 *
 	 * @return string (the tables with their left join fields )
 	 */
-  public function buildTableReferences(&$query, $addTables = '') {
+  public function buildTableReferences() {
 
   	// Initializes the table aliases
     $this->tableAliases = array();
@@ -917,9 +921,6 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
 		} else {
 			throw new Tx_SavLibraryPlus_Exception(Tx_SavLibraryPlus_Controller_FlashMessages::translate('fatal.incorrectTCA'));
     }		
-
-    // Loads the fe_users table
-		t3lib_div::loadTCA('fe_users');		
 
     // Adds the columns for existing tables.
     $externalTcaConfiguration = $this->getController()->getLibraryConfigurationManager()->getExternalTcaConfiguration();   
@@ -987,17 +988,6 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
       }     
     }
 
-// TOD0
-    // Checks for duplicate table names with addTables
-    $addTablesArray = array();
-    $temp = explode(',', $addTables);
-    foreach ($temp as $key => $table) {
-      if($table && !in_array($table, $addTablesArray) && !array_key_exists($table, $this->refTable)) {
-        $addTablesArray[] = $table;
-      }
-    }
-    $addTables = implode(',', $addTablesArray);
-
     // Adds the foreign table
     // Checks that the 'tableForeign' start either by LEFT JOIN, INNER JOIN or RIGHT JOIN or a comma
     $foreignTables = $this->getQueryConfigurationManager()-> getForeignTables();
@@ -1005,13 +995,11 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
       if (!preg_match('/^[\s]*(?i)(,|inner join|left join|right join)\s?([^ ]*)/', $foreignTables, $match)) {
 				Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.incorrectQueryForeignTable');
       } else {
-        if (!in_array(trim($match[2]), $addTablesArray) && !array_key_exists(trim($match[2]), $this->refTable)) {
-          $tableForeign .= ' ' . $foreignTables;
-        }
+        $tableReferences = $tableReferences . $foreignTables;
       }
     }
-// End of TODO
-    return $tableReferences . ($addTables ? ', ' . $addTables : '') . $tableForeign;
+
+    return $tableReferences;
   }
   
   
@@ -1032,7 +1020,7 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
   
   protected function getTableAliasDefinition($tableName) {
     if (isset($tableName) === false) {
-die('pb');
+			throw new Tx_SavLibraryPlus_Exception(Tx_SavLibraryPlus_Controller_FlashMessages::translate('fatal.incorrectConfiguration') . ' Tx_SavLibraryPlus_Queriers_AbstractQuerier->getTableAliasDefinition(' . $tableName . ')');
     } elseif ($this->tableAliases[$tableName] == 1) {
       return $tableName;
     } else {
@@ -1042,7 +1030,7 @@ die('pb');
   
   protected function getTableAlias($tableName) {
     if (isset($tableName) === false) {
-die('pb');
+			throw new Tx_SavLibraryPlus_Exception(Tx_SavLibraryPlus_Controller_FlashMessages::translate('fatal.incorrectConfiguration') . ' Tx_SavLibraryPlus_Queriers_AbstractQuerier->getTableAlias(' . $tableName . ')');
     } elseif ($this->tableAliases[$tableName] == 1) {
       return $tableName;
     } else {
@@ -1179,7 +1167,7 @@ die('pb');
 	 * @return string 
 	 */
   public function parseFieldTags($value, $reportError = true) {
-	
+
   	// Checks if the value must be parsed
   	if (strpos($value,'#') === false) {
   		return $value;
@@ -1229,7 +1217,7 @@ die('pb');
           continue;
       	} 
       }
-      
+     
       // Special Processing when the full field name is not found
       if ($fullFieldName === NULL) {
       	if ($this->getController()->getViewer() instanceof Tx_SavLibraryPlus_Viewers_NewViewer) {
@@ -1490,13 +1478,13 @@ die('pb');
 	 */
   protected function getRowWithFullFieldNames($rowCounter = 0) {
 
-    $rows = array();
 		$row = $GLOBALS['TYPO3_DB']->sql_fetch_row($this->resource);
+
     if ($row) {
     	
   		foreach($row as $fieldKey => $field) {
   	    if ($rowCounter == 0) {
-    		  $this->fieldObjects[$fieldKey] = mysql_fetch_field($this->resource, $fieldKey);
+    		  $this->fieldObjects[$fieldKey] = Tx_SavLibraryPlus_Compatibility_Database_DatabaseConnection::fetchField($this->resource, $fieldKey);
         }
 
         $fieldObject = $this->fieldObjects[$fieldKey];
@@ -1510,7 +1498,7 @@ die('pb');
     	$mainTable = $this->queryConfigurationManager->getMainTable(); 
 		  $result['uid'] = $result[$mainTable . '.uid'];
 		  $result['cruser_id'] = $result[$mainTable . '.cruser_id'];  
-		    	     
+	    	     
     return $result;
     } else {
       return false;

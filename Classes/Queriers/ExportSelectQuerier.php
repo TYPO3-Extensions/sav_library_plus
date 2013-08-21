@@ -118,7 +118,7 @@ class Tx_SavLibraryPlus_Queriers_ExportSelectQuerier extends Tx_SavLibraryPlus_Q
   		}
   	}
     return $this->exportConfiguration;  	
-  }  
+  } 
   
    /**
    * Builds the WHERE BY Clause.
