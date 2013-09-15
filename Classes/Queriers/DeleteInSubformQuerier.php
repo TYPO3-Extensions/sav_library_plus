@@ -41,7 +41,7 @@ class Tx_SavLibraryPlus_Queriers_DeleteInSubformQuerier extends Tx_SavLibraryPlu
   protected function executeQuery() {
   
     // Checks if the user is authenticated
-    if($this->getController()->getUserManager()->userIsAuthenticated() === false) {
+    if($this->getController()->getUserManager()->userIsAuthenticated() === FALSE) {
       Tx_SavLibraryPlus_Controller_FlashMessages::addError('fatal.notAuthenticated');
       return;
     }

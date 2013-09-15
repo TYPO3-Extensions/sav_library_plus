@@ -29,7 +29,6 @@
  */
 class Tx_SavLibraryPlus_Compatibility_Database_DatabaseConnection {
 
-  
 	/**
 	 * 
 	 * Returns the field as an object

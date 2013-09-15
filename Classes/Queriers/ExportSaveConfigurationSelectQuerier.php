@@ -55,7 +55,7 @@ class Tx_SavLibraryPlus_Queriers_ExportSaveConfigurationSelectQuerier extends Tx
 			$fieldsToUpdate = array();
 			
   		// Checks if the name of the configuration has to be changed
-  		if (empty($postVariables['configurationName']) === false) {
+  		if (empty($postVariables['configurationName']) === FALSE) {
   			$fieldsToUpdate = array_merge($fieldsToUpdate, array('name' => $postVariables['configurationName']));
   			unset($postVariables['configurationName']);
   		}
@@ -70,11 +70,11 @@ class Tx_SavLibraryPlus_Queriers_ExportSaveConfigurationSelectQuerier extends Tx
   		);
   		
   		// Checks if the name of the configuration is set otherwise provides a default name
-  		if (empty($postVariables['configurationName']) === false) {
+  		if (empty($postVariables['configurationName']) === FALSE) {
   			$name = $postVariables['configurationName'];
   			unset($postVariables['configurationName']);
   		} else {
-  			$name = Tx_Extbase_Utility_Localization::translate('general.new', Tx_SavLibraryPlus_Controller_AbstractController::LIBRARY_NAME);
+  			$name = Tx_SavLibraryPlus_Controller_FlashMessages::translate('general.new');
   		}
   		$fieldsToInsert = array_merge($fieldsToInsert, array('name' => $name));
   		

@@ -81,21 +81,21 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_RelationManyToManyAsSubformItemViewer e
    
     // Checks if the maximum number of relations is reached
     if ($totalRowsCount < $this->getItemConfiguration('maxitems')) {
-    	$newButtonIsAllowed = true;
+    	$newButtonIsAllowed = TRUE;
     } else {
-    	$newButtonIsAllowed = false;
+    	$newButtonIsAllowed = FALSE;
     }
 
     // Processes the query
     if (Tx_SavLibraryPlus_Managers_UriManager::getFormAction() == 'newInSubform' && Tx_SavLibraryPlus_Managers_UriManager::getSubformFieldKey() == $cryptedFullFieldName) {
 			if (Tx_SavLibraryPlus_Managers_UriManager::getSubformUidLocal() == $this->itemConfiguration['uidLocal']) {
-	      $isNewInSubform = true;
+	      $isNewInSubform = TRUE;
 	      $querier->addEmptyRow();
       } else {
       	return '';
       }      
     } else {
-      $isNewInSubform = false;
+      $isNewInSubform = FALSE;
       $querier->processQuery();
     }
 
@@ -136,9 +136,9 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_RelationManyToManyAsSubformItemViewer e
     $viewer->addToViewConfiguration('general',
       array (
       	'newButtonIsAllowed' => $newButtonIsAllowed,
-        'deleteButtonIsAllowed' => ($isNewInSubform === false) && $deleteButtonIsAllowed,
-        'upDownButtonIsAllowed' => ($isNewInSubform === false) && $upDownButtonIsAllowed,
-        'saveButtonIsAllowed' => ($isNewInSubform === false) && $saveButtonIsAllowed,
+        'deleteButtonIsAllowed' => ($isNewInSubform === FALSE) && $deleteButtonIsAllowed,
+        'upDownButtonIsAllowed' => ($isNewInSubform === FALSE) && $upDownButtonIsAllowed,
+        'saveButtonIsAllowed' => ($isNewInSubform === FALSE) && $saveButtonIsAllowed,
         'subformFieldKey' => $cryptedFullFieldName,
         'subformUidLocal' => $this->getItemConfiguration('uid'),
         'pageInSubform' => $pageInSubform,
@@ -164,13 +164,13 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_RelationManyToManyAsSubformItemViewer e
   protected function getMaximumItemsInSubform() {  
   	// Checks if the deprecated "maxsubitems" attribute is used
   	$maxSubItems = $this->getItemConfiguration('maxsubitems');
-  	if (empty($maxSubItems) === false) {
+  	if (empty($maxSubItems) === FALSE) {
   		// Replaces it by the "maxsubformitems" attribute
   		$this->itemConfiguration['maxsubformitems'] = $maxSubItems;
   		unset($this->itemConfiguration['maxsubitems']);
   	}
   	$maxSubformItems = $this->getItemConfiguration('maxsubformitems');
- 		if (empty($maxSubformItems) === false) {
+ 		if (empty($maxSubformItems) === FALSE) {
  			return $maxSubformItems;
  		} else {
 	 		return 0;

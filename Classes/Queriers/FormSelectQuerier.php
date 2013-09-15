@@ -89,9 +89,9 @@ class Tx_SavLibraryPlus_Queriers_FormSelectQuerier extends Tx_SavLibraryPlus_Que
     // Gets the temporary data associated with the form if any
     $shortFormName = Tx_SavLibraryPlus_Controller_AbstractController::getShortFormName();
     
-    if (empty($unserializedData[$shortFormName]) === false) {
+    if (empty($unserializedData[$shortFormName]) === FALSE) {
     	$this->formUnserializedData = $unserializedData[$shortFormName];
-    	if(empty($this->formUnserializedData['temporary']) === false) {
+    	if(empty($this->formUnserializedData['temporary']) === FALSE) {
     		if (!empty($this->formUnserializedData['temporary']['validation'])) {
     			$this->validation = $this->formUnserializedData['temporary']['validation'];
     			unset($this->formUnserializedData['temporary']['validation']);
@@ -148,7 +148,7 @@ class Tx_SavLibraryPlus_Queriers_FormSelectQuerier extends Tx_SavLibraryPlus_Que
     
     // Adds the WHERE clause coming from the selected filter if any
 		$selectedFilterKey = Tx_SavLibraryPlus_Managers_SessionManager::getSelectedFilterKey();
-		if (empty($selectedFilterKey) === false) {
+		if (empty($selectedFilterKey) === FALSE) {
 			// Gets the addWhere
 		  $additionalWhereClause = Tx_SavLibraryPlus_Managers_SessionManager::getFilterField($selectedFilterKey, 'addWhere');
 			$whereClause .= ' AND ' . (empty($additionalWhereClause) ? '0' : $additionalWhereClause);  

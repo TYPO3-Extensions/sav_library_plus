@@ -46,7 +46,7 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
       )?
       (?P<expression>
         (?:
-        	false | true |     
+        	FALSE | TRUE |     
 	        (?:\#{3})?
 		        (?P<lhs>(?:(?:\w+\.)+)?\w+)
 		        \s*(?P<operator>=|!=|>=|<=|>|<)\s*
@@ -236,7 +236,7 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
 	 *
 	 * @return array
 	 */
-  public function getFolderFieldsConfiguration($folder, $flatten = false, $flattenAll = false) {
+  public function getFolderFieldsConfiguration($folder, $flatten = FALSE, $flattenAll = FALSE) {
   	
     $folderFieldsConfiguration = array();
     
@@ -252,13 +252,13 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
       $fieldConfiguration = $this->getFieldConfiguration();
 
       // If it is a subform, gets the configuration for each subform field
-      if (isset($fieldConfiguration['subform']) && $flatten === true) {
+      if (isset($fieldConfiguration['subform']) && $flatten === TRUE) {
         foreach ($fieldConfiguration['subform'] as $subformFolderKey => $subformFolder) {
           $subfromFolderFieldsConfiguration = $this->getFolderFieldsConfiguration($subformFolder, $flatten);
           foreach ($subfromFolderFieldsConfiguration as $subfromFolderFieldConfigurationKey => $subfromFolderFieldConfiguration) {
-            $subfromFolderFieldsConfiguration[$subfromFolderFieldConfigurationKey ]['parentTableName'] = $fieldConfiguration['tableName'];
-            $subfromFolderFieldsConfiguration[$subfromFolderFieldConfigurationKey ]['parentFieldName'] = $fieldConfiguration['fieldName'];
-            if ($flattenAll === true) {
+            $subfromFolderFieldsConfiguration[$subfromFolderFieldConfigurationKey]['parentTableName'] = $fieldConfiguration['tableName'];
+            $subfromFolderFieldsConfiguration[$subfromFolderFieldConfigurationKey]['parentFieldName'] = $fieldConfiguration['fieldName'];
+            if ($flattenAll === TRUE) {
           		$folderFieldsConfiguration = array_merge($folderFieldsConfiguration, array(
         				$subfromFolderFieldConfigurationKey => $subfromFolderFieldConfiguration
         				)
@@ -330,16 +330,16 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
    
     // Adds special attributes 
     $querier = $this->getQuerier();
-    if (empty($querier) === false) {
+    if (empty($querier) === FALSE) {
     	// Adds the uid
       $fieldConfiguration['uid'] = $querier->getFieldValueFromCurrentRow('uid');
       // Adds field-based attributes
       $fieldBasedAttribute = $fieldConfiguration['fieldlink'];
-      if (empty($fieldBasedAttribute) === false) {
+      if (empty($fieldBasedAttribute) === FALSE) {
       	$fieldConfiguration['link'] = $querier->getFieldValueFromCurrentRow($querier->buildFullFieldName($fieldBasedAttribute));
       }
       $fieldBasedAttribute = $fieldConfiguration['fieldmessage'];
-      if (empty($fieldBasedAttribute) === false) {
+      if (empty($fieldBasedAttribute) === FALSE) {
       	$fieldConfiguration['message'] = $querier->getFieldValueFromCurrentRow($querier->buildFullFieldName($fieldBasedAttribute));
       } 
     }
@@ -388,7 +388,7 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
         
     // Adds the item wrapper if the viewer exists
     $viewer = $this->getController()->getViewer();
-    if (empty($viewer) === false) {
+    if (empty($viewer) === FALSE) {
     	if ($this->kickstarterFieldConfiguration['wrapitemifnotcut'] && !$fieldConfiguration['cutDivItemInner']) {
     		$this->kickstarterFieldConfiguration['wrapitem'] = $this->kickstarterFieldConfiguration['wrapitemifnotcut'];
     	}
@@ -435,9 +435,9 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
     $querier = $this->getQuerier();		
    
 	  // Gets the value directly from the kickstarter (specific and rare case)
-	  if (empty($this->kickstarterFieldConfiguration['value']) === false) {
+	  if (empty($this->kickstarterFieldConfiguration['value']) === FALSE) {
 	  	$value = $this->kickstarterFieldConfiguration['value'];
-	    if (empty($querier) === false) {
+	    if (empty($querier) === FALSE) {
       	$value = $querier->parseLocalizationTags($value);
       	$value = $querier->parseFieldTags($value);
 	    }
@@ -445,9 +445,9 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
 	  }
 	  
 	  // Gets the value from the fieldname
-    if (empty($querier) === false) {
+    if (empty($querier) === FALSE) {
     	// Checks if an alias attribute is set
-    	if (empty($this->kickstarterFieldConfiguration['alias']) === false) {
+    	if (empty($this->kickstarterFieldConfiguration['alias']) === FALSE) {
     		$fieldName = $this->buildFullFieldName($this->kickstarterFieldConfiguration['alias']);
     	} elseif ($querier->fieldExistsInCurrentRow($this->kickstarterFieldConfiguration['fieldName'])) { 
     		$fieldName = $this->kickstarterFieldConfiguration['fieldName'];
@@ -456,7 +456,7 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
     	}
   	
  			// Gets the value   	
-    	if ($querier->errorDuringUpdate() === true) {		
+    	if ($querier->errorDuringUpdate() === TRUE) {		
 				$value = $querier->getFieldValueFromProcessedPostVariables($fieldName);
 			} else {
       	$value = $querier->getFieldValueFromCurrentRow($fieldName);					
@@ -464,8 +464,8 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
 			
  			// Special processing if reqValue attribute is set
  			if ($this->kickstarterFieldConfiguration['reqvalue']) {
-    		$viewerCondition = $this->getController()->getviewer() !== NULL && $this->getController()->getViewer()->isNewView() === false;
- 				if ($viewerCondition === true) {
+    		$viewerCondition = $this->getController()->getviewer() !== NULL && $this->getController()->getViewer()->isNewView() === FALSE;
+ 				if ($viewerCondition === TRUE) {
 					$value = $this->getValueFromRequest();
  				} else {
  					// Processes the reqValue only for additional markers
@@ -488,7 +488,7 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
 
     // The value is wrapped using the stdWrap TypoScript	  
     $querier = $this->getQuerier();      	
-    if (empty($querier) === false) {
+    if (empty($querier) === FALSE) {
       $configuration = $querier->parseLocalizationTags($this->kickstarterFieldConfiguration['stdwrapvalue']);
       $configuration = $querier->parseFieldTags($configuration);
     } else {
@@ -520,7 +520,7 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
 
     // The value is generated from TypoScript
     $querier = $this->getQuerier();    
-		if (empty($querier) === false) {
+		if (empty($querier) === FALSE) {
       $configuration = $querier->parseLocalizationTags($this->kickstarterFieldConfiguration['tsproperties']);
       $configuration = $querier->parseFieldTags($configuration);
     } else {
@@ -561,7 +561,7 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
     }
 		// Executes the query
 		$resource = $GLOBALS['TYPO3_DB']->sql_query($query);
-		if ($resource === false) {
+		if ($resource === FALSE) {
     	Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.incorrectQueryInReqValue', array($this->kickstarterFieldConfiguration['fieldName']));
 		}
 
@@ -684,19 +684,19 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
 	protected function getErrorFlag() {	
 	  $querier = $this->getQuerier();
     if (empty($querier)) {	
-			return false;
-    } elseif ($querier->errorDuringUpdate() === true) {
+			return FALSE;
+    } elseif ($querier->errorDuringUpdate() === TRUE) {
     	$fieldName = $this->getFullFieldName();		
 			$errorCode = $querier->getFieldErrorCodeFromProcessedPostVariables($fieldName);
     	return $errorCode != Tx_SavLibraryPlus_Queriers_UpdateQuerier::ERROR_NONE;
     } else {
-    	return false;
+    	return FALSE;
     }
 	}
 	
 	/**
 	 * <DIV class="label"> cutter: checks if the label must be cut
-	 * Returns true if the <DIV> must be cut.
+	 * Returns TRUE if the <DIV> must be cut.
 	 *
 	 * @param none
 	 *
@@ -705,11 +705,11 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
 	protected function getCutLabel() {
     // Cuts the label if the type is a RelationManyToManyAsSubform an cutLabel is not equal to zero
     if ($this->kickstarterFieldConfiguration['fieldType'] == 'RelationManyToManyAsSubform') {
-      $cut = true;
+      $cut = TRUE;
     } elseif ($this->kickstarterFieldConfiguration['cutlabel']) {
-      $cut = true;
+      $cut = TRUE;
     } else {
-      $cut = false;
+      $cut = FALSE;
     }
 
     return $cut;
@@ -717,14 +717,14 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
 
 	/**
 	 * <DIV class="item"> cutter: checks if the beginning of the <DIV> must be cut
-	 * Returns true if the <DIV> must be cut.
+	 * Returns TRUE if the <DIV> must be cut.
 	 *
 	 * @param none
 	 *
 	 * @return boolean
 	 */
 	protected function getCutDivItemBegin() {
-    $fusionBegin = ($this->kickstarterFieldConfiguration['fusion'] == 'begin') ;
+    $fusionBegin = ($this->kickstarterFieldConfiguration['fusion'] == 'begin');
     
     if ($fusionBegin) {
         $this->fusionBeginPending = TRUE;
@@ -745,7 +745,7 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
 
 	/**
 	 * <DIV class="item"> cutter: checks if the endt of the <DIV> must be cut
-	 * Returns true if the <DIV> must be cut.
+	 * Returns TRUE if the <DIV> must be cut.
 	 *
 	 * @param none
 	 *
@@ -767,7 +767,7 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
 
 	/**
 	 * <DIV class="item"> cutter: checks if the inner content of the <DIV> must be cut
-	 * Returns true if the <DIV> must be cut.
+	 * Returns TRUE if the <DIV> must be cut.
 	 *
 	 * @param none
 	 *
@@ -781,7 +781,7 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
 	}
 
 	/**
-	 * Gets the cut flag. If true the content must be cut.
+	 * Gets the cut flag. If TRUE the content must be cut.
 	 *
 	 * @return boolean
 	 */
@@ -802,7 +802,7 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
 
 	/**
 	 * Content cutter: checks if the content is empty
-	 * Returns true if the content must be cut.
+	 * Returns TRUE if the content must be cut.
 	 *
 	 * @param none
 	 *
@@ -820,7 +820,7 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
 
 	/**
 	 * Content cutter: checks if the content is empty
-	 * Returns true if the content must be cut.
+	 * Returns TRUE if the content must be cut.
 	 *
 	 * @param none
 	 *
@@ -862,35 +862,35 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
 
       switch ($lhs) {
 				case 'group':
-					$isGroupCondition = true;
-          if (empty($querier) === false && $querier->rowsNotEmpty()) {
+					$isGroupCondition = TRUE;
+          if (empty($querier) === FALSE && $querier->rowsNotEmpty()) {
           	$fullFieldName = $querier->buildFullFieldName('usergroup');
-          	if ($querier->fieldExistsInCurrentRow($fullFieldName) === true) {
+          	if ($querier->fieldExistsInCurrentRow($fullFieldName) === TRUE) {
       				$lhsValue = $querier->getFieldValueFromCurrentRow($fullFieldName);
           	} else {
           		return Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.unknownFieldName', array($fullFieldName));
           	}
     			} else {
-    				return false;
+    				return FALSE;
     			}
           break;
         case 'usergroup':
-          $isGroupCondition = true;
+          $isGroupCondition = TRUE;
   		    $lhsValue = $GLOBALS['TSFE']->fe_user->user['usergroup'];
           break;
         case '':        	
         	break;
         default:
 					// Gets the value        	
-          if (empty($querier) === false && $querier->rowsNotEmpty()) {
+          if (empty($querier) === FALSE && $querier->rowsNotEmpty()) {
             $fullFieldName = $querier->buildFullFieldName($lhs);         
-          	if ($querier->fieldExistsInCurrentRow($fullFieldName) === true) {
+          	if ($querier->fieldExistsInCurrentRow($fullFieldName) === TRUE) {
       				$lhsValue = $querier->getFieldValueFromCurrentRow($fullFieldName);
           	} else {
           		return Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.unknownFieldName', array($fullFieldName));
           	}          	
     			} else {
-    				return false;
+    				return FALSE;
     			}
       }
       
@@ -906,7 +906,7 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
         case '###cruser###':
         	$viewer = $this->getController()->getViewer();
         	// Skips the condition if it is a new view since cruser_id will be set when saved
-         	if (empty($viewer) === false && $viewer->isNewView() === true) {
+         	if (empty($viewer) === FALSE && $viewer->isNewView() === TRUE) {
       			continue;
     			} else {
     				$condition = ($lhsValue == $GLOBALS['TSFE']->fe_user->user['uid']);
@@ -919,10 +919,12 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
         case '':
 						// Processes directly the expression
 						switch($matches['expression'][$matchKey]) {
+							case 'FALSE':
 							case 'false':
 								$condition = 0;
 								break;
-							case 'true':
+							case 'TRUE':
+							case 'true':								
 								$condition = 1;
 								break;
 							default:
@@ -930,7 +932,7 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
 						}
         	break;
         default:
-        	if ($isGroupCondition !== true) {
+        	if ($isGroupCondition !== TRUE) {
          		$rhsValue = $rhs;       			
         	} else {     		
             $rows = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows(
@@ -947,42 +949,42 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
       $operator = $matches['operator'][$matchKey];
       switch ($operator) {
         case '=':
-          if ($isGroupCondition !== true) {
+          if ($isGroupCondition !== TRUE) {
             $condition = ($lhsValue == $rhsValue);
           } else {
-          	$condition = (in_array($rhsValue, explode(',', $lhsValue)) === true);
+          	$condition = (in_array($rhsValue, explode(',', $lhsValue)) === TRUE);
           }
           break;
         case '!=':
-          if ($isGroupCondition !== true) {
+          if ($isGroupCondition !== TRUE) {
             $condition = ($lhsValue != $rhsValue);
           } else {
-          	$condition = (in_array($rhsValue, explode(',', $lhsValue)) === false);
+          	$condition = (in_array($rhsValue, explode(',', $lhsValue)) === FALSE);
           }          	
           break;
         case '>=':
-          if ($isGroupCondition !== true) {
+          if ($isGroupCondition !== TRUE) {
             $condition = $lhsValue >= $rhsValue;
           } else {
           	return Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.operatorNotAllowed', array($operator));
           }          	
           break;          	
         case '<=':
-          if ($isGroupCondition !== true) {
+          if ($isGroupCondition !== TRUE) {
             $condition = $lhsValue <= $rhsValue;
           } else {
           	return Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.operatorNotAllowed', array($operator));
           }          	
           break;          	
         case '>':
-          if ($isGroupCondition !== true) {
+          if ($isGroupCondition !== TRUE) {
             $condition = $lhsValue > $rhsValue;
           } else {
           	return Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.operatorNotAllowed', array($operator));
           }          	
           break;          	
         case '<':
-          if ($isGroupCondition !== true) {
+          if ($isGroupCondition !== TRUE) {
             $condition = $lhsValue < $rhsValue;
           } else {
           	return Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.operatorNotAllowed', array($operator));

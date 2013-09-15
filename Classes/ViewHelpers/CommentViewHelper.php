@@ -35,7 +35,7 @@ class Tx_SavLibraryPlus_ViewHelpers_CommentViewHelper extends Tx_Fluid_Core_View
 
 	/**
 	 *
-	 * @param boolean If true the comment should be displayed
+	 * @param boolean If TRUE the comment should be displayed
    * @return string Either the comment or a null string
 	 * @author Laurent Foulloy <yolf.typo3@orange.fr>
 	 * @api

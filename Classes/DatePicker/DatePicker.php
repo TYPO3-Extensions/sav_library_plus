@@ -68,7 +68,7 @@ class Tx_SavLibraryPlus_DatePicker_DatePicker {
   public function __construct() {
     self::$datePickerLanguageFile = 'calendar-' . $GLOBALS['TSFE']->config['config']['language'] . '.js';
     $datePickerLanguagePath = t3lib_extMgm::siteRelPath(Tx_SavLibraryPlus_Controller_AbstractController::LIBRARY_NAME) . self::$datePickerPath . 'lang/';
-    if (file_exists($datePickerLanguagePath . self::$datePickerLanguageFile) === false) {
+    if (file_exists($datePickerLanguagePath . self::$datePickerLanguageFile) === FALSE) {
       self::$datePickerLanguageFile = 'calendar-en.js';
     }
     self::compatibility();
@@ -105,7 +105,7 @@ class Tx_SavLibraryPlus_DatePicker_DatePicker {
   	$key = self::KEY . '.';
   	$extensionTypoScriptConfiguration = Tx_SavLibraryPlus_Managers_ExtensionConfigurationManager::getTypoScriptConfiguration();
   	$datePickerTypoScriptConfiguration = $extensionTypoScriptConfiguration[$key];
-  	if (empty($datePickerTypoScriptConfiguration['stylesheet']) === false) {
+  	if (empty($datePickerTypoScriptConfiguration['stylesheet']) === FALSE) {
   		// The style sheet is given by the extension TypoScript
   		$cascadingStyleSheetAbsoluteFileName = t3lib_div::getFileAbsFileName($datePickerTypoScriptConfiguration['stylesheet']);
   		if (is_file($cascadingStyleSheetAbsoluteFileName)) {
@@ -117,7 +117,7 @@ class Tx_SavLibraryPlus_DatePicker_DatePicker {
   	} else {
 			$libraryTypoScriptConfiguration = Tx_SavLibraryPlus_Managers_LibraryConfigurationManager::getTypoScriptConfiguration();
   	  $datePickerTypoScriptConfiguration = $libraryTypoScriptConfiguration[$key];
-  		if (empty($datePickerTypoScriptConfiguration['stylesheet']) === false) {
+  		if (empty($datePickerTypoScriptConfiguration['stylesheet']) === FALSE) {
   			// The style sheet is given by the library TypoScript		
   			$cascadingStyleSheetAbsoluteFileName = t3lib_div::getFileAbsFileName($datePickerTypoScriptConfiguration['stylesheet']);
   			if (is_file($cascadingStyleSheetAbsoluteFileName)) {
@@ -191,15 +191,15 @@ class Tx_SavLibraryPlus_DatePicker_DatePicker {
     
     // Gets the date picker format
     $datePickerFormat = self::getDatePickerFormat();
-    if (empty($datePickerFormat['toolTipDate']) === false) {
+    if (empty($datePickerFormat['toolTipDate']) === FALSE) {
     	$datePickerSetup[] = '    ttFormat       :    "' . $datePickerFormat['toolTipDate'] . '",';
     }
-      if (empty($datePickerFormat['titleBarDate']) === false) {
+      if (empty($datePickerFormat['titleBarDate']) === FALSE) {
     	$datePickerSetup[] = '    tbFormat       :    "' . $datePickerFormat['titleBarDate'] . '",';
     }    
     $datePickerSetup[] = '    button         :    "button_' . $datePickerConfiguration['id'] . '",';
-    $datePickerSetup[] = '    showsTime      :    ' . ($datePickerConfiguration['showsTime'] ? 'true' : 'false') . ',';
-    $datePickerSetup[] = '    singleClick    :    true';
+    $datePickerSetup[] = '    showsTime      :    ' . ($datePickerConfiguration['showsTime'] ? 'TRUE' : 'FALSE') . ',';
+    $datePickerSetup[] = '    singleClick    :    TRUE';
     $datePickerSetup[] = '  });';
     $datePickerSetup[] = '/*]]>*/';
     $datePickerSetup[] = '</script>';

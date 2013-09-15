@@ -42,7 +42,7 @@ class Tx_SavLibraryPlus_ItemViewers_Default_RelationOneToManyAsSelectorboxItemVi
 
     // Gets the label
     $labelSelect = $this->getItemConfiguration('labelselect');
-    if (empty($labelSelect) === false) {
+    if (empty($labelSelect) === FALSE) {
     	// Checks if this label comes from an aliasSelect attribute
     	$aliasSelect = $this->getItemConfiguration('aliasselect');    	
     	if (preg_match('/(?:AS|as) ' . $labelSelect . '/', $aliasSelect)) {
@@ -72,23 +72,25 @@ class Tx_SavLibraryPlus_ItemViewers_Default_RelationOneToManyAsSelectorboxItemVi
     // Gets the rows
     $rows = $querier->getRows();
 
-    // Injects the special markers
+		// Processes the row
     $row = $rows[0];
     $specialFields = str_replace(' ', '', $this->getItemConfiguration('specialfields'));
-    if (!empty($specialFields)) {
+    if (!empty($row)) {
+    	// Injects the special markers
     	$specialFieldsArray = explode(',', $specialFields);   	
     	foreach($row as $fieldKey => $field) {
     		if (in_array($fieldKey, $specialFieldsArray)) {
     			$this->getController()->getQuerier()->injectAdditionalMarkers(array('###special[' . $fieldKey . ']###' => $field));
     		}
     	}
-    }    
+	    // Gets the selected element
+			$content = stripslashes($row[$label]);    	
+			$content = $querier->parseLocalizationTags($content);
+			$content = $querier->parseFieldTags($content);     	
+    } else {
+    	$content = '';
+    }   
     
-    // Gets the selected element
-		$content = stripslashes($row[$label]);
-		$content = $querier->parseLocalizationTags($content);
-		$content = $querier->parseFieldTags($content);       
-
     return $content;
   }
   

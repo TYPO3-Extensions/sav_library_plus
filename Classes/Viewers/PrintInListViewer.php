@@ -80,14 +80,14 @@ class Tx_SavLibraryPlus_Viewers_PrintInListViewer extends Tx_SavLibraryPlus_View
   	$itemsBeforeFirstPageBreak = $this->templateConfigurationManager->getItemsBeforeFirstPageBreak();
   	$itemsBeforePageBreak = $this->templateConfigurationManager->getItemsBeforePageBreak();
   	
-  	$pageBreak = false;
+  	$pageBreak = FALSE;
   	
   	if (!empty($itemsBeforeFirstPageBreak) && $this->itemCount == $itemsBeforeFirstPageBreak) {
   		$this->itemCount = $itemsBeforePageBreak;
   	}
 
     if (!empty($itemsBeforePageBreak) && ($this->itemCount % $itemsBeforePageBreak) == 0) {
-  		$pageBreak = true;
+  		$pageBreak = TRUE;
   	}  	
   		
     $this->itemCount++;
@@ -99,7 +99,6 @@ class Tx_SavLibraryPlus_Viewers_PrintInListViewer extends Tx_SavLibraryPlus_View
     return $additionalListItemConfiguration;
   } 
 
-  
   /**
    * Gets the last page 
    *
@@ -111,8 +110,6 @@ class Tx_SavLibraryPlus_Viewers_PrintInListViewer extends Tx_SavLibraryPlus_View
     $lastPage = 0;  	 	
     return $lastPage;    
   }  
-   
-
-  
+    
 }
 ?>

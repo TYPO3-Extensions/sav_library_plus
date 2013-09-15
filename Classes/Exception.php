@@ -18,5 +18,4 @@ class Tx_SavLibraryPlus_Exception extends Exception {
 
 }
 
-
 ?>

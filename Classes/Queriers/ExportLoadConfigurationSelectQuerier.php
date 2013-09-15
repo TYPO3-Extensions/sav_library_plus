@@ -57,7 +57,7 @@ class Tx_SavLibraryPlus_Queriers_ExportLoadConfigurationSelectQuerier extends Tx
     $serializedExportConfiguration = $this->getFieldValueFromCurrentRow(self::$exportTableName . '.configuration');
    
     // Unserializes the export configuration, if not empty
-    if (empty($serializedExportConfiguration) === false) {
+    if (empty($serializedExportConfiguration) === FALSE) {
     	$loadedExportConfiguration = unserialize($serializedExportConfiguration);
     } else {
     	$loadedExportConfiguration = $this->getController()->getUriManager()->getPostVariables();
@@ -75,7 +75,7 @@ class Tx_SavLibraryPlus_Queriers_ExportLoadConfigurationSelectQuerier extends Tx
 
     // Removes the fields which are no more in the table
     foreach ($loadedExportConfiguration['fields'] as $fieldKey => $field) {
-    	if (array_key_exists($fieldKey, $this->rows[0]) === false) {
+    	if (array_key_exists($fieldKey, $this->rows[0]) === FALSE) {
     		unset($loadedExportConfiguration['fields'][$fieldKey]);
     	}
     }  
@@ -84,7 +84,7 @@ class Tx_SavLibraryPlus_Queriers_ExportLoadConfigurationSelectQuerier extends Tx
     foreach ($this->rows[0] as $rowKey => $row) {
     	
     	// Checks if the field is in the loaded configuration
-			if (array_key_exists($rowKey, $loadedExportConfiguration['fields']) === false && empty($loadedExportConfiguration['includeAllFields'])) {
+			if (array_key_exists($rowKey, $loadedExportConfiguration['fields']) === FALSE && empty($loadedExportConfiguration['includeAllFields'])) {
 				continue;
 			}
 			

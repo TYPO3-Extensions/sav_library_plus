@@ -45,7 +45,7 @@ class Tx_SavLibraryPlus_ItemViewers_Default_LinkItemViewer extends Tx_SavLibrary
    
     // Checks if the link is related to a RTF file
     if ($this->getItemConfiguration('generatertf')) {
-		  if (empty($value) === false) {  	
+		  if (empty($value) === FALSE) {  	
         $path_parts = pathinfo($this->getItemConfiguration('savefilertf')); 
         $folder = $path_parts['dirname'];    
         $this->setItemConfiguration('folder', $folder);	

@@ -70,7 +70,7 @@ class Tx_SavLibraryPlus_Viewers_SubformEditViewer extends Tx_SavLibraryPlus_View
       // Gets the fields configuration for the folder
       $this->folderFieldsConfiguration = $this->getFieldConfigurationManager()->getFolderFieldsConfiguration($this->getActiveFolder());
 
-      $isFirstField = true;
+      $isFirstField = TRUE;
       // Processes the fields
       foreach ($this->folderFieldsConfiguration as $fieldConfigurationKey => $fieldConfiguration) {
         // Adds the item name
@@ -81,9 +81,9 @@ class Tx_SavLibraryPlus_Viewers_SubformEditViewer extends Tx_SavLibraryPlus_View
         // Processes the field
       	$this->processField($fieldConfigurationKey);
         // Set the isFirstField flag
-        if ($isFirstField === true) {
-          $this->folderFieldsConfiguration[$fieldConfigurationKey]['isFirstField'] = true;
-          $isFirstField = false;
+        if ($isFirstField === TRUE) {
+          $this->folderFieldsConfiguration[$fieldConfigurationKey]['isFirstField'] = TRUE;
+          $isFirstField = FALSE;
         }
       }
       $configurationRows[] = $this->folderFieldsConfiguration;
@@ -95,7 +95,7 @@ class Tx_SavLibraryPlus_Viewers_SubformEditViewer extends Tx_SavLibraryPlus_View
     // Page information for the page browser
     $pageInSubform = $this->getFieldFromGeneralViewConfiguration('pageInSubform');
     $maximumItemsInSubform = $this->getFieldFromGeneralViewConfiguration('maximumItemsInSubform');
-    $lastPageInSubform = floor(($this->getController()->getQuerier()->getTotalRowsCount() - 1) / $maximumItemsInSubform);
+    $lastPageInSubform = (empty($maximumItemsInSubform) ? 0 : floor(($this->getController()->getQuerier()->getTotalRowsCount() - 1) / $maximumItemsInSubform));
     $maxPagesInSubform = $this->getController()->getExtensionConfigurationManager()->getMaxPages();
     $pagesInSubform = array();
     for($i = min($pageInSubform, max(0, $lastPageInSubform - $maxPagesInSubform)); $i <= min($lastPageInSubform, $pageInSubform + $maxPagesInSubform - 1); $i++) {

@@ -49,7 +49,10 @@ class Tx_SavLibraryPlus_Queriers_ExportToggleDisplaySelectQuerier extends Tx_Sav
   	// Toggles the display
   	$postVariables['displaySelectedFields'] = (empty($postVariables['displaySelectedFields']) ? 1 : 0);
 
-  	// Calls the parent Query to get the field names
+    // Injects the additional tables
+    $this->queryConfigurationManager->setQueryConfigurationParameter('foreignTables', $postVariables['additionalTables']);
+    
+  	// Calls the parent Query to get the field names  	
     parent::executeQuery();
 
     // Sets the export configuration and cleans the fields   
@@ -58,8 +61,8 @@ class Tx_SavLibraryPlus_Queriers_ExportToggleDisplaySelectQuerier extends Tx_Sav
     
     // Adds the fields according to displaySelectedFields
     foreach ($this->rows[0] as $rowKey => $row) {
-    	if (empty($postVariables['displaySelectedFields']) === false) {
-    		if(empty($postVariables['fields'][$rowKey]['selected']) === false ) {
+    	if (empty($postVariables['displaySelectedFields']) === FALSE) {
+    		if(empty($postVariables['fields'][$rowKey]['selected']) === FALSE ) {
     			$this->exportConfiguration['fields'][$rowKey] = $postVariables['fields'][$rowKey];
     		}
     	} else {

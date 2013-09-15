@@ -31,6 +31,5 @@
 
 class Tx_SavLibraryPlus_Queriers_NewInSubformSelectQuerier extends Tx_SavLibraryPlus_Queriers_EditSelectQuerier {
 
-
 }
 ?>

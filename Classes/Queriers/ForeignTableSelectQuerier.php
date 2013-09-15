@@ -32,12 +32,12 @@
 class Tx_SavLibraryPlus_Queriers_ForeignTableSelectQuerier extends Tx_SavLibraryPlus_Queriers_AbstractQuerier {
 	
 	/**
-   * If true the query is not processed
+   * If TRUE the query is not processed
    * 
    * @var boolean
    * 
    */
-	protected $doNotProcessQuery = false;
+	protected $doNotProcessQuery = FALSE;
 
 	/**
    * Executes the query
@@ -99,8 +99,13 @@ class Tx_SavLibraryPlus_Queriers_ForeignTableSelectQuerier extends Tx_SavLibrary
 	 * @return string
 	 */
 	public function buildFromClause() {
-    $fromClause = $this->getQueryConfigurationManager()->getMainTable() .
-      $this->getQueryConfigurationManager()->getForeignTables();
+		
+		$foreignTables = $this->getQueryConfigurationManager()->getForeignTables();
+    if (empty($foreignTables) === FALSE) {	
+    	$foreignTables = $this->parseFieldTags($foreignTables); 
+    }	
+    $fromClause = $this->getQueryConfigurationManager()->getMainTable() . $foreignTables;
+
     return $fromClause;
 	}
 
@@ -148,7 +153,7 @@ class Tx_SavLibraryPlus_Queriers_ForeignTableSelectQuerier extends Tx_SavLibrary
    */ 
 	public function buildQueryConfigurationForOneToManyRelation(&$fieldConfiguration) {
 		
-		$this->doNotProcessQuery = false;
+		$this->doNotProcessQuery = FALSE;
 
     // Builds the where clause
     $whereClause = $this->buildDefautWhereClause($fieldConfiguration);
@@ -204,7 +209,7 @@ class Tx_SavLibraryPlus_Queriers_ForeignTableSelectQuerier extends Tx_SavLibrary
     $whereClause = $this->processWhereClauseTags($whereClause);      
     
     if (empty($fieldConfiguration['uidLocal'])) {
-    	$this->doNotProcessQuery = true;
+    	$this->doNotProcessQuery = TRUE;
     }
     
     // Prepares the query configuration
@@ -221,11 +226,12 @@ class Tx_SavLibraryPlus_Queriers_ForeignTableSelectQuerier extends Tx_SavLibrary
           ''),
       'whereClause' => $whereClause
         . ' AND ' . $fieldConfiguration['MM'] . '.uid_foreign = ' . $fieldConfiguration['foreign_table'] . '.uid'
-        . ' AND ' . $fieldConfiguration['MM'] . '.uid_local = ' . $fieldConfiguration['uidLocal'],
+        . ' AND ' . $fieldConfiguration['MM'] . '.uid_local = ' . $fieldConfiguration['uidLocal']
+        . (empty($fieldConfiguration['uidForeign']) ? '' : ' AND ' . $fieldConfiguration['MM'] . '.uid_foreign = ' . $fieldConfiguration['uidForeign']),
       'groupByClause' => $fieldConfiguration['groupbyselect'],
       'orderByClause' => $fieldConfiguration['orderselect'] ? $fieldConfiguration['orderselect'] : $fieldConfiguration['MM'] . '.sorting',
       'limitClause' => ($fieldConfiguration['maxsubformitems'] ?	($fieldConfiguration['maxsubformitems'] *	$fieldConfiguration['pageInSubform']) . ',' . ($fieldConfiguration['maxsubformitems']) : ''),
-    );  
+    ); 
   }
 
   /**
@@ -237,7 +243,7 @@ class Tx_SavLibraryPlus_Queriers_ForeignTableSelectQuerier extends Tx_SavLibrary
    */  
 	public function buildQueryConfigurationForSubformWithNoRelation(&$fieldConfiguration) {
 
-		$this->doNotProcessQuery = false;
+		$this->doNotProcessQuery = FALSE;
 		
     // Builds the where clause
     $whereClause = $this->buildDefautWhereClause($fieldConfiguration);
@@ -272,7 +278,7 @@ class Tx_SavLibraryPlus_Queriers_ForeignTableSelectQuerier extends Tx_SavLibrary
    */  
   public function buildQueryConfigurationForCommaListManyToManyRelation(&$fieldConfiguration) {
 
-		$this->doNotProcessQuery = false;
+		$this->doNotProcessQuery = FALSE;
   	
     // Builds the where clause
     $whereClause = $this->buildDefautWhereClause($fieldConfiguration);
@@ -314,7 +320,7 @@ class Tx_SavLibraryPlus_Queriers_ForeignTableSelectQuerier extends Tx_SavLibrary
    */ 
   public function buildQueryConfigurationForForeignTable(&$fieldConfiguration) {
 	
-		$this->doNotProcessQuery = false;  	
+		$this->doNotProcessQuery = FALSE;  	
 
     // Builds the where clause
     $whereClause = $this->buildDefautWhereClause($fieldConfiguration);

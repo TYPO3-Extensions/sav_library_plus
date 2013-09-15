@@ -43,7 +43,7 @@ class Tx_SavLibraryPlus_Queriers_DeleteQuerier extends Tx_SavLibraryPlus_Querier
     // Checks if the user is authenticated
  		if (is_null($GLOBALS['TSFE']->fe_user->user['uid'])) {
       Tx_SavLibraryPlus_Controller_FlashMessages::addError('fatal.notAuthenticated');
-      return false;
+      return FALSE;
 		}
 
 		// Gets the uid

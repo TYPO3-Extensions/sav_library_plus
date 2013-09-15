@@ -73,7 +73,7 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_CheckboxesItemViewer extends Tx_SavLibr
       $htmlItem .= Tx_SavLibraryPlus_Utility_HtmlElements::htmlSpanElement(
         array(
         ),
-        stripslashes(Tx_Extbase_Utility_Localization::translate($item[0]))
+        stripslashes(Tx_SavLibraryPlus_Controller_FlashMessages::translate($item[0]))
       );
 
       // Sets the class for the item

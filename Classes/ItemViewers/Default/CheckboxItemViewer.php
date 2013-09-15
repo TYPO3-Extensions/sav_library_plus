@@ -54,11 +54,11 @@ class Tx_SavLibraryPlus_ItemViewers_Default_CheckboxItemViewer extends Tx_SavLib
         $this->renderNotCheckedAsImage()
       );
     } else {
-      $renderIfChecked = Tx_Extbase_Utility_Localization::translate('itemviewer.yes', 'sav_library_plus');
+      $renderIfChecked = Tx_SavLibraryPlus_Controller_FlashMessages::translate('itemviewer.yes');
       $renderIfNotChecked = (
         $this->getItemConfiguration('donotdisplayifnotchecked') ?
         '' :
-        Tx_Extbase_Utility_Localization::translate('itemviewer.no', 'sav_library_plus')
+        Tx_SavLibraryPlus_Controller_FlashMessages::translate('itemviewer.no')
       );
     }
 
@@ -91,8 +91,8 @@ class Tx_SavLibraryPlus_ItemViewers_Default_CheckboxItemViewer extends Tx_SavLib
       array(
         Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('class', 'checkboxSelected'),
         Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('src', Tx_SavLibraryPlus_Managers_LibraryConfigurationManager::getIconPath($imageFileName)),
-        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('title', Tx_Extbase_Utility_Localization::translate('itemviewer.checkboxSelected', 'sav_library_plus')),
-        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('alt', Tx_Extbase_Utility_Localization::translate('itemviewer.checkboxSelected', 'sav_library_plus')),
+        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('title', Tx_SavLibraryPlus_Controller_FlashMessages::translate('itemviewer.checkboxSelected')),
+        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('alt', Tx_SavLibraryPlus_Controller_FlashMessages::translate('itemviewer.checkboxSelected')),
       )
     );
 
@@ -122,8 +122,8 @@ class Tx_SavLibraryPlus_ItemViewers_Default_CheckboxItemViewer extends Tx_SavLib
       array(
         Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('class', 'checkboxNotSelected'),
         Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('src', Tx_SavLibraryPlus_Managers_LibraryConfigurationManager::getIconPath($imageFileName)),
-        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('title', Tx_Extbase_Utility_Localization::translate('itemviewer.checkboxNotSelected', 'sav_library_plus')),
-        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('alt', Tx_Extbase_Utility_Localization::translate('itemviewer.checkboxNotSelected', 'sav_library_plus')),
+        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('title', Tx_SavLibraryPlus_Controller_FlashMessages::translate('itemviewer.checkboxNotSelected')),
+        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('alt', Tx_SavLibraryPlus_Controller_FlashMessages::translate('itemviewer.checkboxNotSelected')),
       )
     );
 

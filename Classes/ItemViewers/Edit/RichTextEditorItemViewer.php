@@ -40,7 +40,6 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_RichTextEditorItemViewer extends Tx_Sav
 	public $additionalJS_post = array();	  // Additional JavaScript to be printed after the form
 	public $additionalJS_submit = array();	// Additional JavaScript to be executed on submit
 
-
   /**
    * Renders the item.
    *
@@ -130,7 +129,7 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_RichTextEditorItemViewer extends Tx_Sav
 		$htmlArray[] = '</script>';
 
     // Adds the prepend javaScript to additional header
-    if ($this->getController()->getViewer()->isRichTextEditorInitialized() === false) {
+    if ($this->getController()->getViewer()->isRichTextEditorInitialized() === FALSE) {
       // Adds the initial javascript
       if (!method_exists($richTextEditor, 'getRteInitJsCode')) {
       	$this->addRteInitJsCode();

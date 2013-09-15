@@ -213,12 +213,12 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
    */  	
   public function processQuery() {
   	
-  	if ($this->executeQuery() === false) {
-  		return false;
+  	if ($this->executeQuery() === FALSE) {
+  		return FALSE;
   	}
   	// Clear pages cache if needed
   	$this->clearPagesCache();
-  	return true;
+  	return TRUE;
   }
   
   /**
@@ -240,7 +240,7 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
    */  
   protected function clearPagesCache() {
   	// if the plugin type is not USER, the cache has not to be cleared
-		if (Tx_SavLibraryPlus_Managers_ExtensionConfigurationManager::isUserPlugin() === false) {
+		if (Tx_SavLibraryPlus_Managers_ExtensionConfigurationManager::isUserPlugin() === FALSE) {
 			return;
 		}	
 		
@@ -392,7 +392,11 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
 	 * @return boolean
 	 */
   public function fieldExistsInCurrentRow($fieldName) {
-    return array_key_exists($fieldName, $this->rows[$this->currentRowId]);
+  	if (is_array($this->rows[$this->currentRowId])) {
+    	return array_key_exists($fieldName, $this->rows[$this->currentRowId]);
+  	} else {
+  		return FALSE;
+  	}
   }
 
 	/**
@@ -472,7 +476,7 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
 		if ($updateQuerier !== NULL) {
 			return $updateQuerier->errorDuringUpdate();
 		}	else {
-			return false;
+			return FALSE;
 		}
 	}	 
 	
@@ -842,7 +846,7 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
 	protected function addToPageIdentifiersToClearInCache($tableName, $uid) {
 		
 		// if the plugin type is not USER, the cache has not to be clerared
-		if(Tx_SavLibraryPlus_Managers_ExtensionConfigurationManager::isUserPlugin() === false) {
+		if(Tx_SavLibraryPlus_Managers_ExtensionConfigurationManager::isUserPlugin() === FALSE) {
 			return;
 		}
 		
@@ -864,7 +868,7 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
 		
 		// Gets the storage page
 		$storagePage = $this->getController()->getExtensionConfigurationManager()->getStoragePage();
-		if (empty($storagePage) === false) {
+		if (empty($storagePage) === FALSE) {
 			$this->pageIdentifiersToClearInCache[] = intval($storagePage);			
 		}
 	} 
@@ -990,9 +994,10 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
 
     // Adds the foreign table
     // Checks that the 'tableForeign' start either by LEFT JOIN, INNER JOIN or RIGHT JOIN or a comma
-    $foreignTables = $this->getQueryConfigurationManager()-> getForeignTables();
-    if (empty($foreignTables) === false) {
-      if (!preg_match('/^[\s]*(?i)(,|inner join|left join|right join)\s?([^ ]*)/', $foreignTables, $match)) {
+    $foreignTables = $this->getQueryConfigurationManager()->getForeignTables();
+    if (empty($foreignTables) === FALSE) {
+    	$foreignTables = $this->parseFieldTags($foreignTables);    	
+      if (!preg_match('/^[\s]*(?i)(,|inner join|left join|right join)\s?([^\s]*)/', $foreignTables, $match)) {
 				Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.incorrectQueryForeignTable');
       } else {
         $tableReferences = $tableReferences . $foreignTables;
@@ -1019,7 +1024,7 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
   }
   
   protected function getTableAliasDefinition($tableName) {
-    if (isset($tableName) === false) {
+    if (isset($tableName) === FALSE) {
 			throw new Tx_SavLibraryPlus_Exception(Tx_SavLibraryPlus_Controller_FlashMessages::translate('fatal.incorrectConfiguration') . ' Tx_SavLibraryPlus_Queriers_AbstractQuerier->getTableAliasDefinition(' . $tableName . ')');
     } elseif ($this->tableAliases[$tableName] == 1) {
       return $tableName;
@@ -1029,7 +1034,7 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
   }
   
   protected function getTableAlias($tableName) {
-    if (isset($tableName) === false) {
+    if (isset($tableName) === FALSE) {
 			throw new Tx_SavLibraryPlus_Exception(Tx_SavLibraryPlus_Controller_FlashMessages::translate('fatal.incorrectConfiguration') . ' Tx_SavLibraryPlus_Queriers_AbstractQuerier->getTableAlias(' . $tableName . ')');
     } elseif ($this->tableAliases[$tableName] == 1) {
       return $tableName;
@@ -1042,7 +1047,6 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
     *   Utils
     *
    ***************************************************************/
-
 
 	/**
 	 * Gets allowed Pages from the starting point and the storage page
@@ -1065,7 +1069,7 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
       }
       // Adds the storage page
       $storagePage = $extensionConfigurationManager->getStoragePage();
-      if (empty($storagePage) === false) {
+      if (empty($storagePage) === FALSE) {
         $pageListArray[] = $storagePage;
       }
 
@@ -1098,14 +1102,14 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
 	 * Parses localization tags
 	 *
 	 * @param $value string The string to process
-	 * @param boolean $reportError If true report the error associated when the marker is not found
+	 * @param boolean $reportError If TRUE report the error associated when the marker is not found
 	 *
 	 * @return string
 	 */
-  public function parseLocalizationTags($value, $reportError = true) {
+  public function parseLocalizationTags($value, $reportError = TRUE) {
 
     // Checks if the value must be parsed
-  	if (strpos($value,'$') === false) {
+  	if (strpos($value,'$') === FALSE) {
   		return $value;
   	}
   	  	
@@ -1122,17 +1126,17 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
         // In that case the full name must be used, i.e. tableName.fieldName
         $label = $GLOBALS['TSFE']->sL($localizationPrefix . 'locallang_db.xml:' . $match);
 
-        if (empty($label) === false) {
+        if (empty($label) === FALSE) {
           $value = str_replace($matches[0][$matchKey], $label, $value);
         } else {
           // Checks if the label is in locallang_db.xml, the main table is assumed
           $mainTable = $this->getQueryConfigurationManager()->getMainTable();
           $label = $GLOBALS['TSFE']->sL($localizationPrefix . 'locallang_db.xml:' . $mainTable . '.' . $match);
 
-          if (empty($label) === false) {
+          if (empty($label) === FALSE) {
             // Found in locallang_db.xml file, replaces it
             $value = str_replace($matches[0][$matchKey], $label, $value);
-          } elseif ($reportError === true) {
+          } elseif ($reportError === TRUE) {
             Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.missingLabel', array($match));
           } else {
       			$value = str_replace($matches[0][$matchKey], $matches[1][$matchKey], $value);
@@ -1148,7 +1152,7 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
       if (!empty($label)) {
         // Found in locallang.xml file, replaces it
         $value = str_replace($matches[0][$matchKey], $label, $value);
-      } elseif ($reportError === true) {
+      } elseif ($reportError === TRUE) {
         Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.missingLabel', array($match));
       } else {
       	$value = str_replace($matches[0][$matchKey], $matches[1][$matchKey], $value);
@@ -1162,14 +1166,14 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
 	 * Parses ###field### tags.
 	 *
 	 * @param string $value The string to process
-	 * @param boolean $reportError If true report the error associated when the marker is not found
+	 * @param boolean $reportError If TRUE report the error associated when the marker is not found
  	 *
 	 * @return string 
 	 */
-  public function parseFieldTags($value, $reportError = true) {
+  public function parseFieldTags($value, $reportError = TRUE) {
 
   	// Checks if the value must be parsed
-  	if (strpos($value,'#') === false) {
+  	if (strpos($value,'#') === FALSE) {
   		return $value;
   	}
 
@@ -1236,7 +1240,7 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
         		$markers[$matches[0][$matchKey]] = '0';       			
       		}
       		continue;
-      	} elseif ($reportError === true) { 
+      	} elseif ($reportError === TRUE) { 
           // Unknown marker
           Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.unknownMarker', array($matches[0][$matchKey]));
          continue;
@@ -1299,7 +1303,7 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
   public function processWhereClauseTags($whereClause) {
 	
 		// Checks if the value must be parsed
-  	if (strpos($whereClause,'#') === false) {
+  	if (strpos($whereClause,'#') === FALSE) {
   		return $whereClause;
   	}  
   		
@@ -1313,7 +1317,7 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
   	$whereClause = $contentObject->substituteMarkerArrayCached($whereClause, $markers, array(), array());
     
 		// Processes the ###group_list### tag
-    if (preg_match_all('/###group_list[ ]*([!]?)=([^#]*)###/', $whereClause, $matches)) {
+    if (preg_match_all('/###group_list\s*([!]?)=([^#]*)###/', $whereClause, $matches)) {
       foreach ($matches[2] as $matchKey => $match) {
         $groups = explode (',', str_replace(' ', '', $match)); 
         $clause = '';    
@@ -1343,13 +1347,13 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
         // Replaces the tag
         if ($matches[1][$matchKey] == '!') {
           $whereClause = preg_replace(
-            '/###group_list[ ]*!=([^#]*)###/',
+            '/###group_list\s*!=([^#]*)###/',
             '(1' . $clause . ')',
             $whereClause
           );
         } else {
           $whereClause = preg_replace(
-            '/###group_list[ ]*=([^#]*)###/',
+            '/###group_list\s*=([^#]*)###/',
             '(0' . $clause . ')',
             $whereClause
           );
@@ -1422,7 +1426,7 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
 	 *
 	 */
 	public function isSelectQuery($query) {
-    return preg_match('/^[ \r\t\n]*(?i)select[ ]*/', $query);
+    return preg_match('/^[ \r\t\n]*(?i)select\s*/', $query);
   }  
   
 	/**
@@ -1501,7 +1505,7 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
 	    	     
     return $result;
     } else {
-      return false;
+      return FALSE;
     }
   }
 

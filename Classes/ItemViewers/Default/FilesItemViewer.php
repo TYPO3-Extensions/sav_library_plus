@@ -57,9 +57,9 @@ class Tx_SavLibraryPlus_ItemViewers_Default_FilesItemViewer extends Tx_SavLibrar
       // Renders the item
       if (empty($this->fileName)) {
         $content = '';
-      } elseif ($this->isImage() === true) {
+      } elseif ($this->isImage() === TRUE) {
         $content = $this->renderImage();
-      } elseif ($this->isIframe() === true) {
+      } elseif ($this->isIframe() === TRUE) {
         $content = $this->renderIframe();
       } else {
         $content = $this->renderLink();
@@ -87,8 +87,8 @@ class Tx_SavLibraryPlus_ItemViewers_Default_FilesItemViewer extends Tx_SavLibrar
   protected function isImage() {
   	// The attribute disallowed is empty for images
   	$disallowed = $this->getItemConfiguration('disallowed');
-  	if (empty($disallowed) === false) {
-  		return false;
+  	if (empty($disallowed) === FALSE) {
+  		return FALSE;
   	}
 
     // Gets the allowed extensions for images
@@ -113,7 +113,7 @@ class Tx_SavLibraryPlus_ItemViewers_Default_FilesItemViewer extends Tx_SavLibrar
 	 * @return boolean
 	 */
   protected function isIframe() {
-    return ($this->getItemConfiguration('iframe') ? true : false);
+    return ($this->getItemConfiguration('iframe') ? TRUE : FALSE);
   }
 
  	/**
@@ -159,7 +159,7 @@ class Tx_SavLibraryPlus_ItemViewers_Default_FilesItemViewer extends Tx_SavLibrar
     $uploadFolder = $this->getUploadFolder();
     
     // Sets the typoScript configurations
-    if (empty($this->fileName) === false && file_exists($uploadFolder . '/' . $this->fileName)) {
+    if (empty($this->fileName) === FALSE && file_exists($uploadFolder . '/' . $this->fileName)) {
       // The file exists
       $typoScriptConfiguration = array(
         'params' => 'class="fileImage"',

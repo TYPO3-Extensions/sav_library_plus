@@ -77,7 +77,7 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_FilesItemViewer extends Tx_SavLibraryPl
       );
       
       // Adds the hyperlink if required
-      if ($this->getItemConfiguration('addlinkineditmode') && empty($fileName) === false) {
+      if ($this->getItemConfiguration('addlinkineditmode') && empty($fileName) === FALSE) {
 		    // Gets the upload folder
 		    $uploadFolder = $this->getUploadFolder();   
 		       	

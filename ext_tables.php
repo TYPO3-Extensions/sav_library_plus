@@ -17,7 +17,7 @@ if (!function_exists('user_savlibraryPlusHelp')) {
 		
     return '<a href="#" onclick="vHWin=window.open(\'' . $helpUrl . 'tfID=xEXT_sav_library_plus_' .
     	 t3lib_div::lcfirst($cshTag) .
-    	 '.*\',\'viewFieldHelp\',\'height=400,width=600,status=0,menubar=0,scrollbars=1\');vHWin.focus();return false;">' . 
+    	 '.*\',\'viewFieldHelp\',\'height=400,width=600,status=0,menubar=0,scrollbars=1\');vHWin.focus();return FALSE;">' . 
     	 $icon . ' '. $message . '</a>';     
   }
 }

@@ -61,7 +61,6 @@
  */
 class Tx_SavLibraryPlus_ViewHelpers_FormViewHelper extends Tx_Fluid_ViewHelpers_FormViewHelper {
 
-
 	/**
 	 * Render the form.
 	 *
@@ -103,7 +102,7 @@ class Tx_SavLibraryPlus_ViewHelpers_FormViewHelper extends Tx_Fluid_ViewHelpers_
 				->reset()
 				->setTargetPageUid($this->arguments['pageUid'])
 				->setTargetPageType($this->arguments['pageType'])
-			  ->setNoCache(false)
+			  ->setNoCache(FALSE)
 			  ->setUseCacheHash(!$noCacheHash)
 			  ->setArguments($additionalParams)
 				->build();

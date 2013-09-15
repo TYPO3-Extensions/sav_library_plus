@@ -36,7 +36,7 @@ class Tx_SavLibraryPlus_Viewers_NewViewer extends Tx_SavLibraryPlus_Viewers_Edit
    *
    * @var boolean
    */
-	protected $isNewView = true;
+	protected $isNewView = TRUE;
 	
 	
 }

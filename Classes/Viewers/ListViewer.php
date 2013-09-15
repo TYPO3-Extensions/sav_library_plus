@@ -43,7 +43,7 @@ class Tx_SavLibraryPlus_Viewers_ListViewer extends Tx_SavLibraryPlus_Viewers_Abs
    *
    * @var boolean
    */
-  protected $inEditMode = false;
+  protected $inEditMode = FALSE;
   
   /**
    * The template file
@@ -96,7 +96,7 @@ class Tx_SavLibraryPlus_Viewers_ListViewer extends Tx_SavLibraryPlus_Viewers_Abs
       $this->getController()->getQuerier()->setCurrentRowId($rowKey);
       
     	// Gets the fields configuration for the folder
-    	$this->folderFieldsConfiguration = $this->getFieldConfigurationManager()->getFolderFieldsConfiguration($this->getActiveFolder(), true, true);
+    	$this->folderFieldsConfiguration = $this->getFieldConfigurationManager()->getFolderFieldsConfiguration($this->getActiveFolder(), TRUE, TRUE);
   	   	
       $listItemConfiguration = array_merge( $this->parseItemTemplate($itemTemplate),
         array(
@@ -173,8 +173,13 @@ class Tx_SavLibraryPlus_Viewers_ListViewer extends Tx_SavLibraryPlus_Viewers_Abs
    * @return integer
    */
   protected function getLastPage() {
-    $lastPage = floor(($this->getController()->getQuerier()->getTotalRowsCount() - 1) / $this->getController()->getExtensionConfigurationManager()->getMaxItems());  	 	
-    return $lastPage;    
+  	$maxItems = $this->getController()->getExtensionConfigurationManager()->getMaxItems();
+  	if (empty($maxItems)) {
+  		$lastPage = 0;
+  	} else {
+    	$lastPage = floor(($this->getController()->getQuerier()->getTotalRowsCount() - 1) / $maxItems);  	 	
+  	}
+    	return $lastPage;    
   }   
   
   /**
@@ -237,8 +242,8 @@ class Tx_SavLibraryPlus_Viewers_ListViewer extends Tx_SavLibraryPlus_Viewers_Abs
   	$querier = $this->getController()->getQuerier();
 
     // Gets the tags
-    preg_match_all('/###(?P<render>render\[)?(?P<fullFieldName>(?<TableNameOrAlias>[^\.#\]]+)\.?(?<fieldName>[^#\]]*))\]?###/', $itemTemplate, $matches);
-   
+    preg_match_all('/###(?<render>render\[)?(?<fullFieldName>(?<TableNameOrAlias>[^\.#\]]+)\.?(?<fieldName>[^#\]]*))\]?###/', $itemTemplate, $matches);
+  
     // Sets the default class item
     $classItem = 'item';
     foreach($matches[0] as $matchKey => $match) {
@@ -315,51 +320,47 @@ class Tx_SavLibraryPlus_Viewers_ListViewer extends Tx_SavLibraryPlus_Viewers_Abs
   protected function parseTitle($title) { 	
   	
     // Replaces the tags in the title by $$$label[tag]$$$
-    preg_match_all('/###(linkDefault|link)?(?:\[)?(([^\.#\]]+)[\.]?([^#\]]*))(?:\])?###/', $title, $matches);
- 
+    preg_match_all('/###(?<link>linkDefault|link)?(?:\[)?(?<fullFieldName>(?<TableNameOrAlias>[^\.#\]]+)[\.]?(?<fieldName>[^#\]]*))(?:\])?###/', $title, $matches);
+
     // Processes the matched information
     foreach($matches[0] as $matchKey => $match) {
     
       // Gets the field configuration 
-      if  ($matches[1][$matchKey]) {
+      if  ($matches['link'][$matchKey]) {
       	// It is tag for a simple link with no ordering
       	
       	// Gets the extension key
     		$extensionKey = $this->getController()->getExtensionConfigurationManager()->getExtensionKey();
       	
     		// Gets the label
-				$label = Tx_Extbase_Utility_Localization::translate($matches[2][$matchKey], $extensionKey);
+				$label = Tx_Extbase_Utility_Localization::translate($matches['fullFieldName'][$matchKey], $extensionKey);
       	if (empty($label)) {
-      		$label = $matches[2][$matchKey];
+      		$label = $matches['fullFieldName'][$matchKey];
       	}  
 
       	// Sets the field configuration
       	$fieldConfiguration = array (
       		'orderlinkintitle' => 1,
       	  'linkwithnoordering' => 1,
-      		'orderlinkintitlesetup' => ':' . $matches[1][$matchKey] . ':',
+      		'orderlinkintitlesetup' => ':' . $matches['link'][$matchKey] . ':',
       		'labelAsc' => $label,
       		'labelDesc' => $label,      	
-      		'fieldName' => $matches[2][$matchKey],
+      		'fieldName' => $matches['fullFieldName'][$matchKey],
       	); 
-      } elseif ($matches[3][$matchKey]) {
-      	// It is a tag with a full field name
-        $fullFieldName = $matches[2][$matchKey];
-      	$cryptedFullFieldName = Tx_SavLibraryPlus_Controller_AbstractController::cryptTag($fullFieldName);
-      	$fieldConfiguration = $this->folderFieldsConfiguration[$cryptedFullFieldName];        
       } else {
-      	// It is a tag with a short field name, the main table is assumed      	
-        $mainTable = $queryConfigurationManager->getMainTable();
-        $fullFieldName = $mainTable . '.' . $matches[2][$matchKey];
-      	$cryptedFullFieldName = Tx_SavLibraryPlus_Controller_AbstractController::cryptTag($fullFieldName);
-      	$fieldConfiguration = $this->folderFieldsConfiguration[$cryptedFullFieldName];  
+	      // Gets the crypted full field name
+	      $fullFieldName =  $this->getController()->getQuerier()->buildFullFieldName($matches['fullFieldName'][$matchKey]);  
+	      $cryptedFullFieldName = Tx_SavLibraryPlus_Controller_AbstractController::cryptTag($fullFieldName);      	
+      	
+	      // Gets the field configuration
+      	$fieldConfiguration = $this->folderFieldsConfiguration[$cryptedFullFieldName];         
       }
-
+      
       // Checks if an order link in title is set
       if ($fieldConfiguration['orderlinkintitle']) {
       	$replacementString = $this->processLink($fieldConfiguration);
       }	else {
-        $replacementString = '$$$label[' . $matches[2][$matchKey] . ']$$$';
+        $replacementString = '$$$label[' . $matches['fullFieldName'][$matchKey] . ']$$$';
       }
     
       $title = str_replace($matches[0][$matchKey], $replacementString , $title);
@@ -466,13 +467,13 @@ class Tx_SavLibraryPlus_Viewers_ListViewer extends Tx_SavLibraryPlus_Viewers_Abs
   		switch($this->getController()->getExtensionConfigurationManager()->getShowNoAvailableInformation()) {
   			case Tx_SavLibraryPlus_Managers_ExtensionConfigurationManager::SHOW_MESSAGE:
   				$this->addToViewConfiguration('general', array(
-  					'message' => Tx_Extbase_Utility_Localization::translate('general.noAvailableInformation', Tx_SavLibraryPlus_Controller_AbstractController::LIBRARY_NAME),
+  					'message' => Tx_SavLibraryPlus_Controller_FlashMessages::translate('general.noAvailableInformation'),
   					)
   				);
   				break;
   			case Tx_SavLibraryPlus_Managers_ExtensionConfigurationManager::DO_NOT_SHOW_EXTENSION:
   				$this->addToViewConfiguration('general', array(
-  					'hideExtension' => true,
+  					'hideExtension' => TRUE,
   					)
   				); 
   				break; 					

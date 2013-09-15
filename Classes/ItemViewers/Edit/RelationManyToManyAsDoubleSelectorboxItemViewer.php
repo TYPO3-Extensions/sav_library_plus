@@ -56,7 +56,7 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_RelationManyToManyAsDoubleSelectorboxIt
 
     if ($this->getItemConfiguration('MM')) {
       $this->setForeignTableSelectQuerier('buildQueryConfigurationForTrueManyToManyRelation');
-      if ($this->getController()->getQuerier()->errorDuringUpdate() === true) {
+      if ($this->getController()->getQuerier()->errorDuringUpdate() === TRUE) {
       	$this->setSelectedItemsFromProcessedPostVariable();
       } else {
       	$this->setSelectedItems(); 
@@ -104,9 +104,11 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_RelationManyToManyAsDoubleSelectorboxIt
 
 		// Builds the selected items
     $this->selectedItems = array();
-    foreach ($rows as $rowKey => $row) {
-      $this->selectedItems[] = $row['uid'];
-    }			
+    if (is_array($rows)) {
+	    foreach ($rows as $rowKey => $row) {
+	      $this->selectedItems[] = $row['uid'];
+	    }	
+    }		
 	} 
   
   /**
@@ -201,7 +203,7 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_RelationManyToManyAsDoubleSelectorboxIt
 
     // Adds the option elements
     foreach ($rows as $rowKey => $row) {   
-      $selected = (in_array($row['uid'], $this->selectedItems) === true ? 'selected ' : '');
+      $selected = (in_array($row['uid'], $this->selectedItems) === TRUE ? 'selected ' : '');
 			// Adds the Option element
 			$htmlOptionArray[] = Tx_SavLibraryPlus_Utility_HtmlElements::htmlOptionElement(
 	       array(
@@ -258,7 +260,7 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_RelationManyToManyAsDoubleSelectorboxIt
 
     // Adds the option elements
     foreach ($rows as $rowKey => $row) {    
-      if (in_array($row['uid'], $this->selectedItems) === true) {
+      if (in_array($row['uid'], $this->selectedItems) === TRUE) {
 				// Adds the Option element
 				$htmlOptionArray[] = Tx_SavLibraryPlus_Utility_HtmlElements::htmlOptionElement(
 	        array(
@@ -319,7 +321,7 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_RelationManyToManyAsDoubleSelectorboxIt
     // Adds the option elements
     foreach ($rows as $rowKey => $row) {
 
-      if (in_array($row['uid'], $this->selectedItems) === false) {
+      if (in_array($row['uid'], $this->selectedItems) === FALSE) {
 			// Adds the Option element
 			$htmlOptionArray[] = Tx_SavLibraryPlus_Utility_HtmlElements::htmlOptionElement(
         array(

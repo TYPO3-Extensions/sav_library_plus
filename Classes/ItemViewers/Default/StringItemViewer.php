@@ -49,7 +49,7 @@ class Tx_SavLibraryPlus_ItemViewers_Default_StringItemViewer extends Tx_SavLibra
     $keepzero = $this->getItemConfiguration('keepzero');
     if (empty($value) && empty($keepzero)) {
       $content = '';
-    } elseif (in_array('password', $evalAttributes) === true) {
+    } elseif (in_array('password', $evalAttributes) === TRUE) {
       $content = str_repeat('*', 7);
     } elseif ($this->getItemConfiguration('tsobject')) {
       $content = $value; 

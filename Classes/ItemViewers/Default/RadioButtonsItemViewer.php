@@ -64,13 +64,12 @@ class Tx_SavLibraryPlus_ItemViewers_Default_RadioButtonsItemViewer extends Tx_Sa
       }
       $counter++;
 
-
       // Builds the message
       $message = Tx_SavLibraryPlus_Utility_HtmlElements::htmlSpanElement(
         array(
           Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('class', 'radioButtonMessage'),
         ),
-        stripslashes(Tx_Extbase_Utility_Localization::translate($item[0]))
+        stripslashes(Tx_SavLibraryPlus_Controller_FlashMessages::translate($item[0]))
       );
         
       // Adds the Div element
@@ -121,8 +120,8 @@ class Tx_SavLibraryPlus_ItemViewers_Default_RadioButtonsItemViewer extends Tx_Sa
       array(
         Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('class', 'radioButtonSelected'),
         Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('src', Tx_SavLibraryPlus_Managers_LibraryConfigurationManager::getIconPath($imageFileName)),
-        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('title', Tx_Extbase_Utility_Localization::translate('itemviewer.radioButtonSelected', 'sav_library_plus')),
-        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('alt', Tx_Extbase_Utility_Localization::translate('itemviewer.radioButtonSelected', 'sav_library_plus')),
+        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('title', Tx_SavLibraryPlus_Controller_FlashMessages::translate('itemviewer.radioButtonSelected')),
+        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('alt', Tx_SavLibraryPlus_Controller_FlashMessages::translate('itemviewer.radioButtonSelected')),
       )
     );
 
@@ -147,14 +146,13 @@ class Tx_SavLibraryPlus_ItemViewers_Default_RadioButtonsItemViewer extends Tx_Sa
       array(
         Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('class', 'radioButtonNotSelected'),
         Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('src', Tx_SavLibraryPlus_Managers_LibraryConfigurationManager::getIconPath($imageFileName)),
-        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('title', Tx_Extbase_Utility_Localization::translate('itemviewer.radioButtonNotSelected', 'sav_library_plus')),
-        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('alt', Tx_Extbase_Utility_Localization::translate('itemviewer.radioButtonNotSelected', 'sav_library_plus')),
+        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('title', Tx_SavLibraryPlus_Controller_FlashMessages::translate('itemviewer.radioButtonNotSelected')),
+        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('alt', Tx_SavLibraryPlus_Controller_FlashMessages::translate('itemviewer.radioButtonNotSelected')),
       )
     );
 
     return $content;
   }
-
 
 }
 ?>

@@ -43,7 +43,7 @@ class Tx_SavLibraryPlus_Viewers_FormViewer extends Tx_SavLibraryPlus_Viewers_Abs
    *
    * @var boolean
    */
-  protected $inEditMode = false;
+  protected $inEditMode = FALSE;
   
   /**
    * The template file
@@ -157,8 +157,8 @@ class Tx_SavLibraryPlus_Viewers_FormViewer extends Tx_SavLibraryPlus_Viewers_Abs
 		$itemTemplate = $this->parseRenderTags($itemTemplate);
    
     // Parses localization tags
-    $itemTemplate = $this->getController()->getQuerier()->parseLocalizationTags($itemTemplate, false);  	
-    $itemTemplate = $this->getController()->getQuerier()->parseFieldTags($itemTemplate, false);  	
+    $itemTemplate = $this->getController()->getQuerier()->parseLocalizationTags($itemTemplate, FALSE);  	
+    $itemTemplate = $this->getController()->getQuerier()->parseFieldTags($itemTemplate, FALSE);  	
     
   	return $itemTemplate;
   }
@@ -173,7 +173,7 @@ class Tx_SavLibraryPlus_Viewers_FormViewer extends Tx_SavLibraryPlus_Viewers_Abs
 	protected function parseFieldSpecialTags($template) {  
 		
 	  // Checks if the value must be parsed
-  	if (strpos($template,'#') === false) {
+  	if (strpos($template,'#') === FALSE) {
   		return $template;
   	}
   			
@@ -366,24 +366,23 @@ class Tx_SavLibraryPlus_Viewers_FormViewer extends Tx_SavLibraryPlus_Viewers_Abs
            Tx_SavLibraryPlus_Controller_FlashMessages::translate('formView.required')
 				), $template);    		
     	}	else {
-      // Builds the crypted full field name
-      $fullFieldName =  $this->getController()->getQuerier()->buildFullFieldName($matches[2][$matchKey]);
-      $cryptedFullFieldName = Tx_SavLibraryPlus_Controller_AbstractController::cryptTag($fullFieldName);
-     
-      if ($this->folderFieldsConfiguration[$cryptedFullFieldName]['required']) {
-      	$template = str_replace($matches[0][$matchKey], $matches[0][$matchKey] . Tx_SavLibraryPlus_Utility_HtmlElements::htmlSpanElement(
-            array(
-              Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('class', 'required'),
-            ),
-            Tx_SavLibraryPlus_Controller_FlashMessages::translate('formView.required')
-          ), $template);
-      } 
+	      // Builds the crypted full field name
+	      $fullFieldName =  $this->getController()->getQuerier()->buildFullFieldName($matches[2][$matchKey]);
+	      $cryptedFullFieldName = Tx_SavLibraryPlus_Controller_AbstractController::cryptTag($fullFieldName);
+	     
+	      if ($this->folderFieldsConfiguration[$cryptedFullFieldName]['required']) {
+	      	$template = str_replace($matches[0][$matchKey], $matches[0][$matchKey] . Tx_SavLibraryPlus_Utility_HtmlElements::htmlSpanElement(
+	            array(
+	              Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('class', 'required'),
+	            ),
+	            Tx_SavLibraryPlus_Controller_FlashMessages::translate('formView.required')
+	          ), $template);
+	      } 
     	}
     }
     return $template;
 	} 	
     	
-	
   /**
    * Parses the item template
    *

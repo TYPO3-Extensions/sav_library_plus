@@ -55,5 +55,4 @@ class Tx_SavLibraryPlus_ViewHelpers_GetIconViewHelper extends Tx_Fluid_Core_View
 	}
 }
 
-
 ?>

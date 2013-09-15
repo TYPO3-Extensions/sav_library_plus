@@ -76,11 +76,11 @@ class Tx_SavLibraryPlus_ItemViewers_Default_RelationManyToManyAsDoubleSelectorbo
   /**
    * Renders the double selector box content.
    *
-   * @param string $buildQueryConfigurationMethod The method to build the query configuration
+   * @param none
    *
    * @return string
    */
-  protected function renderDoubleSelectorbox($buildQueryConfigurationMethod) {
+  protected function renderDoubleSelectorbox() {
 
     $htmlArray = array();
     

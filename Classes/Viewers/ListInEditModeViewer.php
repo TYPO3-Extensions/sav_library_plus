@@ -43,7 +43,7 @@ class Tx_SavLibraryPlus_Viewers_ListInEditModeViewer extends Tx_SavLibraryPlus_V
    *
    * @var boolean
    */
-  protected $inEditMode = true;
+  protected $inEditMode = TRUE;
 
   /**
    * Adds elements to the item list configuration

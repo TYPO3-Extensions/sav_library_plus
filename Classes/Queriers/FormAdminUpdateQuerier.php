@@ -70,7 +70,7 @@ class Tx_SavLibraryPlus_Queriers_FormAdminUpdateQuerier extends Tx_SavLibraryPlu
     $fieldConfigurationManager->injectController($this->getController());
     
     // Gets the fields configuration for the folder
-    $folderFieldsConfiguration = $fieldConfigurationManager->getFolderFieldsConfiguration($activeFolder, true);
+    $folderFieldsConfiguration = $fieldConfigurationManager->getFolderFieldsConfiguration($activeFolder, TRUE);
 
     // Gets the POST variables
     $postVariables = $this->getController()->getUriManager()->getPostVariables();
@@ -110,7 +110,7 @@ class Tx_SavLibraryPlus_Queriers_FormAdminUpdateQuerier extends Tx_SavLibraryPlu
         $this->fieldConfiguration['uid'] = $uid;  
              
         // Makes pre-processings.
-        self::$doNotAddValueToUpdateOrInsert = false;
+        self::$doNotAddValueToUpdateOrInsert = FALSE;
         $value = $this->preProcessor($value);  
 
 				// Gets the rendered value 
@@ -133,11 +133,11 @@ class Tx_SavLibraryPlus_Queriers_FormAdminUpdateQuerier extends Tx_SavLibraryPlu
 				} elseif ($uid > 0) {
 					$markerItemsAuto = array_merge($markerItemsAuto, array($fullFieldName => $markerValue));					
 				} else {
-					self::$doNotAddValueToUpdateOrInsert = true;
+					self::$doNotAddValueToUpdateOrInsert = TRUE;
 				}    
         
         // Adds the variables
-        if (self::$doNotAddValueToUpdateOrInsert === false) {
+        if (self::$doNotAddValueToUpdateOrInsert === FALSE) {
 		      $variablesToUpdateOrInsert[$tableName][$uid][$fullFieldName] = $value;
         }       		
 			}
@@ -157,11 +157,11 @@ class Tx_SavLibraryPlus_Queriers_FormAdminUpdateQuerier extends Tx_SavLibraryPlu
 		$this->getController()->getQuerier()->injectAdditionalMarkers(array('###ITEMS_MANUAL###' => $markerContent));	
 		
 		// Updates the fields if any
-		if (empty($variablesToUpdateOrInsert) === false) {
+		if (empty($variablesToUpdateOrInsert) === FALSE) {
     	$variableToSerialize = array();		
 	
   		foreach ($variablesToUpdateOrInsert as $tableName => $variableToUpdateOrInsert) {
-        if (empty($tableName) === false) {
+        if (empty($tableName) === FALSE) {
         	$variableToSerialize = $variableToSerialize + $variableToUpdateOrInsert; 	
       	
     			// Updates the data
@@ -182,7 +182,7 @@ class Tx_SavLibraryPlus_Queriers_FormAdminUpdateQuerier extends Tx_SavLibraryPlu
 			Tx_SavLibraryPlus_Controller_FlashMessages::addMessage('message.dataSaved'); 			    	      
     }
 
-    if (empty($this->postProcessingList) === false) {
+    if (empty($this->postProcessingList) === FALSE) {
       foreach($this->postProcessingList as $postProcessingItem) {
         $this->fieldConfiguration = $postProcessingItem['fieldConfiguration'];
         $method = $postProcessingItem['method'];
@@ -212,9 +212,9 @@ class Tx_SavLibraryPlus_Queriers_FormAdminUpdateQuerier extends Tx_SavLibraryPlu
 
     // Calls the verification method for the type if it exists
     $verifierMethod = 'verifierFor' . $fieldType;
-    if (method_exists($this,$verifierMethod) && $this->$verifierMethod($value) !== true) {
-     	self::$doNotAddValueToUpdateOrInsert = true;
-    	self::$doNotUpdateOrInsert = true;
+    if (method_exists($this,$verifierMethod) && $this->$verifierMethod($value) !== TRUE) {
+     	self::$doNotAddValueToUpdateOrInsert = TRUE;
+    	self::$doNotUpdateOrInsert = TRUE;
       return $value;
     }
   	
@@ -225,7 +225,7 @@ class Tx_SavLibraryPlus_Queriers_FormAdminUpdateQuerier extends Tx_SavLibraryPlu
     $cryptedFullFieldName = $this->fieldConfiguration['cryptedFullFieldName'];
 
     if (empty($this->validation[$cryptedFullFieldName])) {
-    	self::$doNotAddValueToUpdateOrInsert = true;
+    	self::$doNotAddValueToUpdateOrInsert = TRUE;
     }
  
     // Calls the methods if it exists
@@ -237,7 +237,7 @@ class Tx_SavLibraryPlus_Queriers_FormAdminUpdateQuerier extends Tx_SavLibraryPlu
  
 		// Checks if a required field is not empty
 		if ($this->isRequired() && empty($newValue)) {
-			self::$doNotUpdateOrInsert = true;
+			self::$doNotUpdateOrInsert = TRUE;
 			Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.fieldRequired', array($this->fieldConfiguration['label']));		
 		}    
 		
@@ -258,12 +258,12 @@ class Tx_SavLibraryPlus_Queriers_FormAdminUpdateQuerier extends Tx_SavLibraryPlu
     $verifierMethod = $this->getFieldConfigurationAttribute('verifier');
     if (!empty($verifierMethod)) {
     	if(!method_exists($this,$verifierMethod)) {
-    		self::$doNotAddValueToUpdateOrInsert = true;
-    		self::$doNotUpdateOrInsert = true;
+    		self::$doNotAddValueToUpdateOrInsert = TRUE;
+    		self::$doNotUpdateOrInsert = TRUE;
     		Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.verifierUnknown');
-    	} elseif ($this->$verifierMethod($newValue) !== true) {
-    		self::$doNotAddValueToUpdateOrInsert = true;
-    		self::$doNotUpdateOrInsert = true;    		
+    	} elseif ($this->$verifierMethod($newValue) !== TRUE) {
+    		self::$doNotAddValueToUpdateOrInsert = TRUE;
+    		self::$doNotUpdateOrInsert = TRUE;    		
     	}
     }
     

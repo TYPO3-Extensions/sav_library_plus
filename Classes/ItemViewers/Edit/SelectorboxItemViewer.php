@@ -69,7 +69,7 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_SelectorboxItemViewer extends Tx_SavLib
           Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttributeIfNotNull('selected', $selected),
           Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('value', $item[1]),
         ),
-        stripslashes(Tx_Extbase_Utility_Localization::translate($item[0]))
+        stripslashes(Tx_SavLibraryPlus_Controller_FlashMessages::translate($item[0]))
       );
     }
 

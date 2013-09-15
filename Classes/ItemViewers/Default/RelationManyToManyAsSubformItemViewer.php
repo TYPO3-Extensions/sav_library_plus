@@ -59,6 +59,9 @@ class Tx_SavLibraryPlus_ItemViewers_Default_RelationManyToManyAsSubformItemViewe
     $controller->injectQuerier($querier);
     $querier->injectController($controller);
     $this->itemConfiguration['uidLocal'] = $this->itemConfiguration['uid'];
+		// Checks if and uidForeign value was sent by the uri (for example by makeExtLink
+    $this->itemConfiguration['uidForeign'] = Tx_SavLibraryPlus_Managers_UriManager::getSubformUidForeign();
+		// Sets the page in the subform
     $pageInSubform = Tx_SavLibraryPlus_Managers_SessionManager::getSubformFieldFromSession($cryptedFullFieldName, 'pageInSubform');
     $pageInSubform = ($pageInSubform ? $pageInSubform : 0);
     $this->itemConfiguration['pageInSubform'] = $pageInSubform;

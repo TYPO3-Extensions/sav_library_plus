@@ -92,7 +92,7 @@ abstract class Tx_SavLibraryPlus_Viewers_AbstractViewer {
    *
    * @var boolean
    */
-	protected $isNewView = false;
+	protected $isNewView = FALSE;
 
   /**
    * The library configuration manager
@@ -162,7 +162,7 @@ abstract class Tx_SavLibraryPlus_Viewers_AbstractViewer {
    *
    * @var boolean
    */
-  protected $richTextEditorIsInitialized = false;
+  protected $richTextEditorIsInitialized = FALSE;
   
 	/**
 	 * Injects the controller
@@ -209,7 +209,7 @@ abstract class Tx_SavLibraryPlus_Viewers_AbstractViewer {
   }  
   
   /**
-	 * Returns true if the view is a new view
+	 * Returns TRUE if the view is a new view
 	 *
 	 * @param none
 	 *
@@ -338,13 +338,13 @@ abstract class Tx_SavLibraryPlus_Viewers_AbstractViewer {
 
   	// Returns the template file in the template root path if it exists
   	$templateFile = $templateRootPath . '/' . $this->templateFile;
-  	if (@is_file(PATH_site . $templateFile) === true) {
+  	if (@is_file(PATH_site . $templateFile) === TRUE) {
   		return $templateFile;
   	} else {
   		// Returns the file in the default template root path
   		$defaultTemplateRootPath = $this->getDefaultTemplateRootPath();
   		$templateFile = $defaultTemplateRootPath . '/' . $this->templateFile;  
-  		if (@is_file(PATH_site . $templateFile) === true) {
+  		if (@is_file(PATH_site . $templateFile) === TRUE) {
   			return $templateFile;
   		} else {  
 				throw new Tx_SavLibraryPlus_Exception('The file "' . htmlspecialchars(PATH_site . $templateFile) . '" does not exist');  			
@@ -495,7 +495,7 @@ abstract class Tx_SavLibraryPlus_Viewers_AbstractViewer {
       if ($folderKey != Tx_SavLibraryPlus_Controller_AbstractController::cryptTag('0')) {
       	$fieldConfigurationManager = $this->getFieldConfigurationManager();
       	$fieldConfigurationManager->injectKickstarterFieldConfiguration($folder['config']);
-      	if ($fieldConfigurationManager->cutIf() === false) {
+      	if ($fieldConfigurationManager->cutIf() === FALSE) {
         	$foldersConfiguration[$folderKey]['label'] = $folder['config']['label'];
       	}
       }
@@ -637,7 +637,7 @@ abstract class Tx_SavLibraryPlus_Viewers_AbstractViewer {
 	 */
   public function renderItem($fieldKey) {
 
-    if (array_key_exists ($fieldKey, $this->folderFieldsConfiguration) === true) {
+    if (array_key_exists ($fieldKey, $this->folderFieldsConfiguration) === TRUE) {
       $itemConfiguration = $this->folderFieldsConfiguration[$fieldKey];
 
       // The item configuration should not be empty.
@@ -737,12 +737,12 @@ abstract class Tx_SavLibraryPlus_Viewers_AbstractViewer {
    *
    * @return none
    */
-  public function initializeRichTextEditor($richTextEditorIsInitialized = true) {
+  public function initializeRichTextEditor($richTextEditorIsInitialized = TRUE) {
     $this->richTextEditorIsInitialized = $richTextEditorIsInitialized;
   }
 
   /**
-   * Returns true if the each tech editor is initialized
+   * Returns TRUE if the each tech editor is initialized
    *
    * @param none
    *

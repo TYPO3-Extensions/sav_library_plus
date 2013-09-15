@@ -89,7 +89,7 @@ class Tx_SavLibraryPlus_Viewers_SubformSingleViewer extends Tx_SavLibraryPlus_Vi
     // Page information for the page browser
     $pageInSubform = $this->getFieldFromGeneralViewConfiguration('pageInSubform');
     $maximumItemsInSubform = $this->getFieldFromGeneralViewConfiguration('maximumItemsInSubform');
-    $lastPageInSubform = floor(($this->getController()->getQuerier()->getTotalRowsCount() - 1) / $maximumItemsInSubform);
+    $lastPageInSubform = (empty($maximumItemsInSubform) ? 0 : floor(($this->getController()->getQuerier()->getTotalRowsCount() - 1) / $maximumItemsInSubform));
     $maxPagesInSubform = $this->getController()->getExtensionConfigurationManager()->getMaxPages();
     $pagesInSubform = array();
     for($i = min($pageInSubform, max(0, $lastPageInSubform - $maxPagesInSubform)); $i <= min($lastPageInSubform, $pageInSubform + $maxPagesInSubform - 1); $i++) {

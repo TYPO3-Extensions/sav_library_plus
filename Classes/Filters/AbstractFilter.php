@@ -45,10 +45,10 @@ abstract class Tx_SavLibraryPlus_Filters_AbstractFilter extends tslib_pibase {
   protected $extKeyWithId;                             // The extension key with content Id 
   protected $errors;                                   // Errors list
   protected $messages;                                 // Messages list
-  protected $piVarsReloaded = false;                   // True if piVars are reloaded from the session 
-  protected $debugQuery = false;                       // Debug the query if set to true. FOR DEVELLOPMENT ONLY !!!
-  protected $forceSetSessionFields = false;            // Force the execution of setSessionFields
-  protected $setFilterSelected = true;                 // If false the filter is not selected
+  protected $piVarsReloaded = FALSE;                   // True if piVars are reloaded from the session 
+  protected $debugQuery = FALSE;                       // Debug the query if set to TRUE. FOR DEVELLOPMENT ONLY !!!
+  protected $forceSetSessionFields = FALSE;            // Force the execution of setSessionFields
+  protected $setFilterSelected = TRUE;                 // If FALSE the filter is not selected
   protected $iconRootPath;														 // The iconRootPath if any.
 
   // Session variables
@@ -72,7 +72,7 @@ abstract class Tx_SavLibraryPlus_Filters_AbstractFilter extends tslib_pibase {
 	/**
 	 * Initializes the filter
 	 *
-   * @return  boolean (false if a problem occured)
+   * @return  boolean (FALSE if a problem occured)
 	 */
   protected function init() {
 
@@ -81,7 +81,7 @@ abstract class Tx_SavLibraryPlus_Filters_AbstractFilter extends tslib_pibase {
     $maintenanceAllowedUsers = explode(',', $temp['maintenanceAllowedUsers']);
     if ($temp['maintenance']) {
       if (!in_array($GLOBALS['TSFE']->fe_user->user['uid'], $maintenanceAllowedUsers)) {
-        return false;         
+        return FALSE;         
       }
     }
 
@@ -92,7 +92,7 @@ abstract class Tx_SavLibraryPlus_Filters_AbstractFilter extends tslib_pibase {
  
     // Sets debug
     if ($this->debugQuery) {
-      $GLOBALS['TYPO3_DB']->debugOutput=true;
+      $GLOBALS['TYPO3_DB']->debugOutput=TRUE;
     }
       
     // Sets the pageID
@@ -108,7 +108,7 @@ abstract class Tx_SavLibraryPlus_Filters_AbstractFilter extends tslib_pibase {
     if (!count($this->piVars) && (t3lib_div::_GP('sav_library') || t3lib_div::_GP('sav_library_plus')) && isset($this->sessionFilter[$this->extKeyWithId]['piVars'])) {    
       $this->piVars = $this->sessionFilter[$this->extKeyWithId]['piVars'];   
 		  $this->sessionFilterSelected = $this->extKeyWithId;  
-      $this->piVarsReloaded = true;  
+      $this->piVarsReloaded = TRUE;  
     } elseif ($this->piVars['logout']) {
       unset($this->sessionFilter[$this->extKeyWithId]['piVars']);
       unset($this->sessionAuth[$this->extKeyWithId]);
@@ -150,7 +150,7 @@ abstract class Tx_SavLibraryPlus_Filters_AbstractFilter extends tslib_pibase {
 		    $cascadingStyleSheet = t3lib_extMgm::siteRelPath($this->extKey) . 'Resources/Private/Styles/' . $this->extKey . '.css';        	
       } else {
         $this->addError('error.incorrectCSS');
-        return false;        	
+        return FALSE;        	
        }
 		} elseif  (file_exists($this->conf['fileCSS'])) {
 			$cascadingStyleSheet = $this->conf['fileCSS'];		  	
@@ -159,15 +159,15 @@ abstract class Tx_SavLibraryPlus_Filters_AbstractFilter extends tslib_pibase {
        $css = '<link rel="stylesheet" type="text/css" href="' . $this->conf['stylesheet'] . '" />';
 		} else {
       $this->addError('error.incorrectCSS');
-      return false;
+      return FALSE;
     } 
 		Tx_SavLibraryPlus_Managers_AdditionalHeaderManager::addCascadingStyleSheet($cascadingStyleSheet);
 			
 		// Sets the icon root path if any
-		if (empty($this->conf['iconRootPath']) === false) {
+		if (empty($this->conf['iconRootPath']) === FALSE) {
 			$this->iconRootPath = $this->conf['iconRootPath'];
 		}     
-    return true;		
+    return TRUE;		
   }
   
   /**
@@ -238,7 +238,7 @@ abstract class Tx_SavLibraryPlus_Filters_AbstractFilter extends tslib_pibase {
    * @return void
    */
   protected function SetSessionField_search() {
-    $this->sessionFilter[$this->extKeyWithId]['search'] = false;          
+    $this->sessionFilter[$this->extKeyWithId]['search'] = FALSE;          
   }
 
   /**

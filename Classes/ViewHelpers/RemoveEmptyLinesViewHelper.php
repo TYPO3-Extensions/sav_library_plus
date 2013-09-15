@@ -19,7 +19,6 @@
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-
 class Tx_SavLibraryPlus_ViewHelpers_RemoveEmptyLinesViewHelper extends Tx_Fluid_Core_ViewHelper_AbstractViewHelper {
 
 	/**
@@ -30,7 +29,7 @@ class Tx_SavLibraryPlus_ViewHelpers_RemoveEmptyLinesViewHelper extends Tx_Fluid_
 	 */
 	public function render() {
 		$content = $this->renderChildren();
-    $content = preg_replace('/([\t ]+[\r]?[\n])+/', '', $content);
+    $content = preg_replace('/([\t ]+[\r\n])+/', '', $content);
 		$content = preg_replace('/\n\n+/', chr(10), $content);
 
 		return $content;

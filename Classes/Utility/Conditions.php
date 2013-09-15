@@ -22,7 +22,6 @@
 *  This copyright notice MUST APPEAR in all copies of the script!
 ***************************************************************/
 
-
 /**
  * Conditions methods
  *
@@ -38,7 +37,7 @@ class Tx_SavLibraryPlus_Utility_Conditions {
 	 * @param $x (first parameter)
 	 * @param $y (second parameter)
 	 *
-	 * @return boolean (true if $x == $y)
+	 * @return boolean (TRUE if $x == $y)
 	*/  
   public static function isEqual($x, $y) {
     return ($x == $y);
@@ -50,10 +49,10 @@ class Tx_SavLibraryPlus_Utility_Conditions {
 	 * @param $x (first parameter)
 	 * @param $y (second parameter)
 	 *
-	 * @return boolean (true if $x is in $y)
+	 * @return boolean (TRUE if $x is in $y)
 	*/  
   public static function isInString($x, $y) {
-    return (!(strpos($x, $y) === false));
+    return (!(strpos($x, $y) === FALSE));
   }
 
 	/**
@@ -62,19 +61,18 @@ class Tx_SavLibraryPlus_Utility_Conditions {
 	 * @param $x (first parameter)
 	 * @param $y (second parameter)
 	 *
-	 * @return boolean (true if $x is not in $y)
+	 * @return boolean (TRUE if $x is not in $y)
 	*/  
   public static function isNotInString($x, $y) {
-    return ((strpos($x, $y) === false));
+    return ((strpos($x, $y) === FALSE));
   }
 
-  
 	/**
 	 * Checks if the parameter is an array
 	 *
 	 * @param $x (parameter to check)
 	 *
-	 * @return boolean (true if $x is an array)
+	 * @return boolean (TRUE if $x is an array)
 	*/    
   public static function isArray($x) {
     return (is_array($x));
@@ -85,7 +83,7 @@ class Tx_SavLibraryPlus_Utility_Conditions {
 	 *
 	 * @param $x (parameter to check)
 	 *
-	 * @return boolean (true if $x is not an array)
+	 * @return boolean (TRUE if $x is not an array)
 	*/     
   public static function isNotArray($x) {
     return (!is_array($x));
@@ -97,13 +95,13 @@ class Tx_SavLibraryPlus_Utility_Conditions {
 	 * @param $x (an array)
 	 * @param $y (the key to check)
    *
-	 * @return boolean (true if $y is a key in $x)
+	 * @return boolean (TRUE if $y is a key in $x)
 	*/    
   public static function arrayKeyExists($x, $y) {
     if (is_array($x)) {
       return(array_key_exists($y, $x));    
     }
-    return (false);
+    return (FALSE);
   }
 
 	/**
@@ -111,7 +109,7 @@ class Tx_SavLibraryPlus_Utility_Conditions {
 	 *
 	 * @param $x (parameter to check)
 	 *
-	 * @return boolean (true if $x is null)
+	 * @return boolean (TRUE if $x is null)
 	*/   
   public static function isNull($x) {
     return (is_null($x));
@@ -122,7 +120,7 @@ class Tx_SavLibraryPlus_Utility_Conditions {
 	 *
 	 * @param $x (parameter to check)
 	 *
-	 * @return boolean (true if $x is not null)
+	 * @return boolean (TRUE if $x is not null)
 	*/     	
   public static function isNotNull($x) {
     return (!is_null($x));
@@ -133,12 +131,12 @@ class Tx_SavLibraryPlus_Utility_Conditions {
 	 *
 	 * @param string $groupName
 	 * 
-	 * @return boolean (true if the current user is a member of the group)
+	 * @return boolean (TRUE if the current user is a member of the group)
 	*/   
   public static function isGroupMember($groupName) {
   
     if (empty($groupName)) {
-      return false;
+      return FALSE;
     }
     
     $rows = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows(
@@ -158,12 +156,12 @@ class Tx_SavLibraryPlus_Utility_Conditions {
 	 *
 	 * @param string $groupName
 	 * 
-	 * @return boolean (true if the current user is not a member of the group)
+	 * @return boolean (TRUE if the current user is not a member of the group)
 	*/   
   public static function isNotGroupMember($groupName) {
   
      if (empty($groupName)) {
-      return true;
+      return TRUE;
     }
     
     $rows = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows(

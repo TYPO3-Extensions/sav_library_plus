@@ -58,7 +58,7 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_StringItemViewer extends Tx_SavLibraryP
 
     // Checks if the string is a password
 		$evalAttributes = explode(',', $this->getItemConfiguration('eval'));
-    if (in_array('password', $evalAttributes) === true) {
+    if (in_array('password', $evalAttributes) === TRUE) {
       // Adds the input password element
       $content = Tx_SavLibraryPlus_Utility_HtmlElements::htmlInputPasswordElement(
         array(

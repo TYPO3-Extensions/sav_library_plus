@@ -62,7 +62,7 @@ class Tx_SavLibraryPlus_Queriers_FormUpdateQuerier extends Tx_SavLibraryPlus_Que
     $fieldConfigurationManager->injectController($this->getController());
     
     // Gets the fields configuration for the folder
-    $folderFieldsConfiguration = $fieldConfigurationManager->getFolderFieldsConfiguration($activeFolder, true);
+    $folderFieldsConfiguration = $fieldConfigurationManager->getFolderFieldsConfiguration($activeFolder, TRUE);
 
     // Gets the POST variables
     $postVariables = $this->getController()->getUriManager()->getPostVariables();
@@ -90,7 +90,7 @@ class Tx_SavLibraryPlus_Queriers_FormUpdateQuerier extends Tx_SavLibraryPlus_Que
         $this->fieldConfiguration['uid'] = $uid;
 
         // Makes pre-processings.
-        self::$doNotAddValueToUpdateOrInsert = false;
+        self::$doNotAddValueToUpdateOrInsert = FALSE;
         $value = $this->preProcessor($value);
 
         // Sets the processed Post variables to retrieve for error processing if any
@@ -98,23 +98,23 @@ class Tx_SavLibraryPlus_Queriers_FormUpdateQuerier extends Tx_SavLibraryPlus_Que
         $this->processedPostVariables[$fullFieldName][$uid] = array('value' => $value, 'errorCode' => self::$errorCode);
             
         // Adds the variables
-        if (self::$doNotAddValueToUpdateOrInsert === false) {
+        if (self::$doNotAddValueToUpdateOrInsert === FALSE) {
 		      $variablesToUpdateOrInsert[$tableName][$uid][$tableName . '.' . $fieldName] = $value;
         } 
       }
 		}
 
 		// Checks if error exists
-		if (self::$doNotUpdateOrInsert === true) {
+		if (self::$doNotUpdateOrInsert === TRUE) {
 			Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.dataNotSaved');
 			return; 			    		
 		}		
 				
 		// Updates the fields if any
-    if (empty($variablesToUpdateOrInsert) === false) {
+    if (empty($variablesToUpdateOrInsert) === FALSE) {
     	$variableToSerialize = array();
   		foreach ($variablesToUpdateOrInsert as $tableName => $variableToUpdateOrInsert) {
-        if (empty($tableName) === false){ 
+        if (empty($tableName) === FALSE){ 
         	$variableToSerialize = $variableToSerialize + $variableToUpdateOrInsert; 	
 				}
       }
@@ -127,7 +127,7 @@ class Tx_SavLibraryPlus_Queriers_FormUpdateQuerier extends Tx_SavLibraryPlus_Que
     }
 
     // Post-processing
-    if (empty($this->postProcessingList) === false) {
+    if (empty($this->postProcessingList) === FALSE) {
       foreach($this->postProcessingList as $postProcessingItem) {
         $this->fieldConfiguration = $postProcessingItem['fieldConfiguration'];
         $method = $postProcessingItem['method'];

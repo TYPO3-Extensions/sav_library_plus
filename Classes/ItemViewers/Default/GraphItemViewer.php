@@ -39,11 +39,11 @@ class Tx_SavLibraryPlus_ItemViewers_Default_GraphItemViewer extends Tx_SavLibrar
   protected $xmlGraph;
   
   /**
-   * If true the template is not processed
+   * If TRUE the template is not processed
    *
    * @var boolean
    */
-  protected $doNotProcessTemplate = false;  
+  protected $doNotProcessTemplate = FALSE;  
   
   /**
    * Renders the item.
@@ -67,7 +67,7 @@ class Tx_SavLibraryPlus_ItemViewers_Default_GraphItemViewer extends Tx_SavLibrar
       $this->processMarkers();
 
       // Defines the file name for the resulting image
-      if ($this->doNotProcessTemplate === false) {
+      if ($this->doNotProcessTemplate === FALSE) {
       	$content = $this->processTemplate();
     	}
 
@@ -126,7 +126,7 @@ class Tx_SavLibraryPlus_ItemViewers_Default_GraphItemViewer extends Tx_SavLibrar
 	 */
   protected function createImage() {
     // Defines the file name for the resulting image
-    if (is_dir('typo3temp/sav_jpgraph') === false) {
+    if (is_dir('typo3temp/sav_jpgraph') === FALSE) {
       mkdir('typo3temp/sav_jpgraph');
     }
     $jpGraphCounter = $this->getController()->getViewer()->getJpGraphCounter();
@@ -182,12 +182,12 @@ class Tx_SavLibraryPlus_ItemViewers_Default_GraphItemViewer extends Tx_SavLibrar
 
           // Processes the value
           $value = $this->getController()->getQuerier()->parseLocalizationTags($value);
-          $value = $this->getController()->getQuerier()->parseFieldTags($value, false);
+          $value = $this->getController()->getQuerier()->parseFieldTags($value, FALSE);
 
 					// Checks if the not empty condition is satisfied
 					if (strtolower($value) == 'notempty[]') {
       			Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.savJpGraphFieldIsEmpty', array($match[3]));	
-      			$this->doNotProcessTemplate = true;
+      			$this->doNotProcessTemplate = TRUE;
       			continue;					
 					} else {
 						$value = preg_replace('/(?i)notempty\[([^\]]+)\]/', '$1', $value);

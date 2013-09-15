@@ -120,17 +120,13 @@ class Tx_SavLibraryPlus_Viewers_EditViewer extends Tx_SavLibraryPlus_Viewers_Abs
    * @return none
    */  
 	protected function addJavaScript() {  
-  	if ($this->getController()->getQuerier()->errorDuringUpdate() === true) {
-  		$javaScript = 'document.changed = true;';
+  	if ($this->getController()->getQuerier()->errorDuringUpdate() === TRUE) {
+  		$javaScript = 'document.changed = TRUE;';
   	} else {
   		$javaScript = '';
   	}
   	Tx_SavLibraryPlus_Managers_AdditionalHeaderManager::addJavaScript('documentChanged', $javaScript);
-  	
-  	// Adds the javascript for submitting the form on changes
-    Tx_SavLibraryPlus_Managers_AdditionalHeaderManager::addJavaScript('submit', 
-    	'if (x == \'' . Tx_SavLibraryPlus_Controller_AbstractController::getFormName() . '\')	document.' . Tx_SavLibraryPlus_Controller_AbstractController::getFormName() . '.submit();');
-  	
+  	  	
 	}
   
 }

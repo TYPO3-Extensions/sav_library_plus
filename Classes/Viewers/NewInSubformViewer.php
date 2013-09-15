@@ -35,7 +35,7 @@ class Tx_SavLibraryPlus_Viewers_NewInSubformViewer extends Tx_SavLibraryPlus_Vie
    *
    * @var boolean
    */
-	protected $isNewView = true;
+	protected $isNewView = TRUE;
 	
 }
 ?>

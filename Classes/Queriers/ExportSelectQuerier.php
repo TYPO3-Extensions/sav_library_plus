@@ -81,7 +81,7 @@ class Tx_SavLibraryPlus_Queriers_ExportSelectQuerier extends Tx_SavLibraryPlus_Q
     // Replaces the field values by the checkbox value 
     $this->exportConfiguration = array();
     foreach ($this->rows[0] as $rowKey => $row) {
-    	if ($this->isFieldToExclude($rowKey) === false) {
+    	if ($this->isFieldToExclude($rowKey) === FALSE) {
     		$this->exportConfiguration['fields'][$rowKey]['selected'] = 0;
     		$this->exportConfiguration['fields'][$rowKey]['render'] = 0;   
     	} 	
@@ -91,7 +91,7 @@ class Tx_SavLibraryPlus_Queriers_ExportSelectQuerier extends Tx_SavLibraryPlus_Q
   }
 
   /**
-   * Returns true if the field must be excluded
+   * Returns TRUE if the field must be excluded
    *
    * @param string $fieldName
    *

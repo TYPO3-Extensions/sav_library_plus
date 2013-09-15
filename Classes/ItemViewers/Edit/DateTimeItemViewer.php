@@ -71,7 +71,7 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_DateTimeItemViewer extends Tx_SavLibrar
       array(
         'id' => strtr($this->getItemConfiguration('itemName'), '[]', '__'),
         'format' => $format,
-        'showsTime' => true,
+        'showsTime' => TRUE,
         'iconPath' => Tx_SavLibraryPlus_Managers_LibraryConfigurationManager::getIconPath('calendar'),
       )
     );

@@ -41,9 +41,9 @@ class Tx_SavLibraryPlus_Queriers_FormAdminSelectQuerier extends Tx_SavLibraryPlu
   public function executeQuery() {
 
     // Checks if the user is authenticated
-    if($this->getController()->getUserManager()->userIsAllowedToInputData() === false) {
+    if($this->getController()->getUserManager()->userIsAllowedToInputData() === FALSE) {
       Tx_SavLibraryPlus_Controller_FlashMessages::addError('fatal.notAllowedToEnterInFormAdministration');
-      return false;
+      return FALSE;
     }
 
     // Processes the parent query

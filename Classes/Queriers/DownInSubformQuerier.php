@@ -41,7 +41,7 @@ class Tx_SavLibraryPlus_Queriers_DownInSubformQuerier extends Tx_SavLibraryPlus_
   protected function executeQuery() {
   
     // Checks if the user is authenticated
-    if ($this->getController()->getUserManager()->userIsAuthenticated() === false) {
+    if ($this->getController()->getUserManager()->userIsAuthenticated() === FALSE) {
       Tx_SavLibraryPlus_Controller_FlashMessages::addError('fatal.notAuthenticated');
       return;
     }

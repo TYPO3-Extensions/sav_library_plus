@@ -83,7 +83,7 @@ class Tx_SavLibraryPlus_Viewers_PrintInSingleViewer extends Tx_SavLibraryPlus_Vi
 	protected function itemTemplatePreprocessor($itemTemplate) {  
 		
 	  // Checks if the value must be parsed
-  	if (strpos($itemTemplate,'#') === false) {
+  	if (strpos($itemTemplate,'#') === FALSE) {
   		return $template;
   	}
   			
@@ -111,7 +111,7 @@ class Tx_SavLibraryPlus_Viewers_PrintInSingleViewer extends Tx_SavLibraryPlus_Vi
 			$itemTemplate = str_replace($matches[0][$matchKey], $replacementString, $itemTemplate);				
     }
     
-    $itemTemplate = $this->getController()->getQuerier()->parseLocalizationTags($itemTemplate, false); 
+    $itemTemplate = $this->getController()->getQuerier()->parseLocalizationTags($itemTemplate, FALSE); 
        
     return $itemTemplate;  	  
 	}

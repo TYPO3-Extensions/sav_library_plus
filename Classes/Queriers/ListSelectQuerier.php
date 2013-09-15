@@ -30,7 +30,6 @@
  */
 class Tx_SavLibraryPlus_Queriers_ListSelectQuerier extends Tx_SavLibraryPlus_Queriers_AbstractQuerier {
 
-
   /**
    * Processes the total rows count query
    *
@@ -94,9 +93,9 @@ class Tx_SavLibraryPlus_Queriers_ListSelectQuerier extends Tx_SavLibraryPlus_Que
 
 		// Checks if a field name alias comes from the filter
 		$selectedFilterKey = Tx_SavLibraryPlus_Managers_SessionManager::getSelectedFilterKey();
-		if (empty($selectedFilterKey) === false) {
+		if (empty($selectedFilterKey) === FALSE) {
 		  $fieldName = Tx_SavLibraryPlus_Managers_SessionManager::getFilterField($selectedFilterKey, 'fieldName');    
-			$selectClause .= (empty($fieldName)=== false ? ', ' . $fieldName . ' as fieldname' : '');
+			$selectClause .= (empty($fieldName)=== FALSE ? ', ' . $fieldName . ' as fieldname' : '');
 		}
 
 		return $selectClause;
@@ -120,10 +119,10 @@ class Tx_SavLibraryPlus_Queriers_ListSelectQuerier extends Tx_SavLibraryPlus_Que
     // Adds the WHERE clause coming from the selected filter if any
 		$selectedFilterKey = Tx_SavLibraryPlus_Managers_SessionManager::getSelectedFilterKey();
 
-		if (empty($selectedFilterKey) === false) {
+		if (empty($selectedFilterKey) === FALSE) {
 		  $additionalWhereClause = Tx_SavLibraryPlus_Managers_SessionManager::getFilterField($selectedFilterKey, 'addWhere');  	  
 		  $searchRequestFromFilter = Tx_SavLibraryPlus_Managers_SessionManager::getFilterField($selectedFilterKey, 'search');	  
-		  if (empty($searchRequestFromFilter) === false) {
+		  if (empty($searchRequestFromFilter) === FALSE) {
 		  	// The WHERE clause coming from the filter replaces the default WHERE Clause
 		  	$whereClause = (empty($additionalWhereClause) ? '0' : $additionalWhereClause);
 		  } else {
@@ -147,7 +146,7 @@ class Tx_SavLibraryPlus_Queriers_ListSelectQuerier extends Tx_SavLibraryPlus_Que
 		
 		// Adds the permanent filter if any
 		$permanentFilter = $extensionConfigurationManager->getPermanentFilter();
-		if (empty($permanentFilter) === false) {
+		if (empty($permanentFilter) === FALSE) {
 			$whereClause .= ' AND '. $permanentFilter; 
 		}
 		

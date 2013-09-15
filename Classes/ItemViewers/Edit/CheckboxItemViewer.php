@@ -122,7 +122,7 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_CheckboxItemViewer extends Tx_SavLibrar
 
   	// Gets the value to check for mail
   	$fieldForCheckMail = $this->getItemConfiguration('fieldforcheckmail');
-  	if (empty($fieldForCheckMail) === true) {
+  	if (empty($fieldForCheckMail) === TRUE) {
   		Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.noAttributeInField', array('fieldForCheckMail', $this->getItemConfiguration('fieldName')));
   		return '';
   	}
@@ -132,15 +132,15 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_CheckboxItemViewer extends Tx_SavLibrar
   	$valueForChecking = $querier->getFieldValue($querier->buildFullFieldName($fieldForCheckMail));
 
   	// Adds the image
-  	if (empty($valueForChecking) === false) {	
+  	if (empty($valueForChecking) === FALSE) {	
   		if ($this->getItemConfiguration('value')) {
   			// Adds an image element
 		    $content = Tx_SavLibraryPlus_Utility_HtmlElements::htmlImgElement(
 		      array(
 		        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('class', 'mailButton'),
 		        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('src', Tx_SavLibraryPlus_Managers_LibraryConfigurationManager::getIconPath('newMailOff')),
-		        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('title', Tx_Extbase_Utility_Localization::translate('button.mail', 'sav_library_plus')),
-		        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('alt', Tx_Extbase_Utility_Localization::translate('button.mail', 'sav_library_plus')),
+		        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('title', Tx_SavLibraryPlus_Controller_FlashMessages::translate('button.mail')),
+		        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('alt', Tx_SavLibraryPlus_Controller_FlashMessages::translate('button.mail')),
 		      )
 		    );  			
   		} else {
@@ -150,8 +150,8 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_CheckboxItemViewer extends Tx_SavLibrar
 		        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('class', 'mailButton'),
 		        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('src', Tx_SavLibraryPlus_Managers_LibraryConfigurationManager::getIconPath('newMail')),
 	        	Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('name', Tx_SavLibraryPlus_Controller_AbstractController::getFormName() . '[formAction][saveAndSendMail][' . $this->getCryptedFullFieldName() . ']'),	        
-		        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('title', Tx_Extbase_Utility_Localization::translate('button.mail', 'sav_library_plus')),
-		        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('alt', Tx_Extbase_Utility_Localization::translate('button.mail', 'sav_library_plus')),
+		        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('title', Tx_SavLibraryPlus_Controller_FlashMessages::translate('button.mail')),
+		        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('alt', Tx_SavLibraryPlus_Controller_FlashMessages::translate('button.mail')),
 		        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('onclick', 'return update(\'' . Tx_SavLibraryPlus_Controller_AbstractController::getFormName() . '\');'),
 		      )
 		    );
@@ -161,8 +161,8 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_CheckboxItemViewer extends Tx_SavLibrar
 	      array(
 	        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('class', 'mailButton'),
 	        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('src', Tx_SavLibraryPlus_Managers_LibraryConfigurationManager::getIconPath('newMailOff')),
-	        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('title', Tx_Extbase_Utility_Localization::translate('button.mail', 'sav_library_plus')),
-	        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('alt', Tx_Extbase_Utility_Localization::translate('button.mail', 'sav_library_plus')),
+	        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('title', Tx_SavLibraryPlus_Controller_FlashMessages::translate('button.mail')),
+	        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('alt', Tx_SavLibraryPlus_Controller_FlashMessages::translate('button.mail')),
 	      )
 	    );            
   	}

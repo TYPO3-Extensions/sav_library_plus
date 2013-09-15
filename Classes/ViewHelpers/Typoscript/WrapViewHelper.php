@@ -22,7 +22,6 @@
  */
 class Tx_SavLibraryPlus_ViewHelpers_Typoscript_WrapViewHelper extends Tx_Fluid_Core_ViewHelper_AbstractViewHelper {
 
-
 	/**
 	 * @param mixed $data the data to be used for rendering the cObject. Can be an object, array or string. If this argument is not set, child nodes will be used
 	 * @param string $configuration

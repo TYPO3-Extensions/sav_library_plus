@@ -60,7 +60,7 @@ class Tx_SavLibraryPlus_ItemViewers_Default_CheckboxesItemViewer extends Tx_SavL
         array(
           Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('class', 'checkboxMessage'),
         ),
-        stripslashes(Tx_Extbase_Utility_Localization::translate($item[0]))
+        stripslashes(Tx_SavLibraryPlus_Controller_FlashMessages::translate($item[0]))
       );
 
       // Checks if donotdisplayifnotchecked is set
@@ -107,7 +107,7 @@ class Tx_SavLibraryPlus_ItemViewers_Default_CheckboxesItemViewer extends Tx_SavL
             array(
               Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('class', 'checkboxSelected'),
             ),
-            Tx_Extbase_Utility_Localization::translate('itemviewer.yesMult', 'sav_library_plus')
+            Tx_SavLibraryPlus_Controller_FlashMessages::translate('itemviewer.yesMult')
           ) . $message
         );
         $renderIfNotChecked = Tx_SavLibraryPlus_Utility_HtmlElements::htmlDivElement(
@@ -118,7 +118,7 @@ class Tx_SavLibraryPlus_ItemViewers_Default_CheckboxesItemViewer extends Tx_SavL
             array(
               Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('class', 'checkboxNotSelected'),
             ),
-            Tx_Extbase_Utility_Localization::translate('itemviewer.noMult', 'sav_library_plus')
+            Tx_SavLibraryPlus_Controller_FlashMessages::translate('itemviewer.noMult')
           ) . $message
         );
         

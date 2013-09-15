@@ -58,7 +58,6 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_RadioButtonsItemViewer extends Tx_SavLi
     foreach ($items as $itemKey => $item) {
       $checked = ($item[1] == $value ? 'checked' : '');
 
-
       // Adds the radio input element
       $htmlItem = Tx_SavLibraryPlus_Utility_HtmlElements::htmlInputRadioElement(
         array(
@@ -73,7 +72,7 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_RadioButtonsItemViewer extends Tx_SavLi
       $htmlItem .= Tx_SavLibraryPlus_Utility_HtmlElements::htmlSpanElement(
         array(
         ),
-        stripslashes(Tx_Extbase_Utility_Localization::translate($item[0]))
+        stripslashes(Tx_SavLibraryPlus_Controller_FlashMessages::translate($item[0]))
       );
 
       // Sets the class for the item
