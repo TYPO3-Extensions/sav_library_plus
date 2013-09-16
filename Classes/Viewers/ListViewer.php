@@ -426,6 +426,7 @@ class Tx_SavLibraryPlus_Viewers_ListViewer extends Tx_SavLibraryPlus_Viewers_Abs
 
 				// Assigns the view configuration
 				$view->assign('field', array(
+					'value' =>  $fieldConfiguration['label'],
 					'valueAsc' => $fieldConfiguration['labelAsc'],
 					'valueDesc' => $fieldConfiguration['labelDesc'],				
 					'whereTagAscendingOrderKey' => $whereTagAscendingOrderKey,
