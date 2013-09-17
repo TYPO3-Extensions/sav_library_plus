@@ -198,8 +198,8 @@ class Tx_SavLibraryPlus_DatePicker_DatePicker {
     	$datePickerSetup[] = '    tbFormat       :    "' . $datePickerFormat['titleBarDate'] . '",';
     }    
     $datePickerSetup[] = '    button         :    "button_' . $datePickerConfiguration['id'] . '",';
-    $datePickerSetup[] = '    showsTime      :    ' . ($datePickerConfiguration['showsTime'] ? 'TRUE' : 'FALSE') . ',';
-    $datePickerSetup[] = '    singleClick    :    TRUE';
+    $datePickerSetup[] = '    showsTime      :    ' . ($datePickerConfiguration['showsTime'] ? 'true' : 'false') . ',';
+    $datePickerSetup[] = '    singleClick    :    true';
     $datePickerSetup[] = '  });';
     $datePickerSetup[] = '/*]]>*/';
     $datePickerSetup[] = '</script>';
