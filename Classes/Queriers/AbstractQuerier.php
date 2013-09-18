@@ -889,71 +889,57 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
     
     // Gets the TCA columns of the main table
 		$tcaColumnsMainTable = Tx_SavLibraryPlus_Managers_TcaConfigurationManager::getTcaColumns($mainTable);
-		
+	
 		// Processes the main table columns
 		if (is_array($tcaColumnsMainTable)) {		
 
-			$tableConfigurationArray = array();			
+			$mainTableConfigurationArray = array();			
 			foreach ($tcaColumnsMainTable as $mainTableFieldKey => $mainTableField) {
-
-				// Builds the full field name
-				$fullFieldName = $mainTable . '.' . $mainTableFieldKey;
-					
-				// Sets the field configuration
-				$tableConfigurationArray[$fullFieldName] = $mainTableField;
-				$tableConfigurationArray[$fullFieldName]['mainTable'] = $mainTable;  
-				$tableConfigurationArray[$fullFieldName]['fieldName'] = $mainTableFieldKey;					      					
+				// Builds the field configuration array
+				$fieldConfigurationArray = $this->buildFieldConfigurationArray($mainTable, $mainTableFieldKey, $mainTableField);
 				
-				// Checks if there is a subform
-        if ($mainTableField['config']['type'] == 'inline' && !$mainTableField['config']['norelation']) {
-        	// Gets the TCA columns of the foreign table
-          $foreignTable = $mainTableField['config']['foreign_table'];
-          $tcaColumnsForeignTable = Tx_SavLibraryPlus_Managers_TcaConfigurationManager::getTcaColumns($foreignTable);
-          
-          // Processes the foreign table columns
-          if (is_array($tcaColumnsForeignTable)) {
-            foreach ($tcaColumnsForeignTable as $foreignTableFieldKey => $foreignTableField) {
-							// Builds the full field name            	
-            	$fullFieldName = $foreignTable . '.' . $foreignTableFieldKey;
-            	
-            	// Sets the field configuration
-            	$tableConfigurationArray[$fullFieldName] = $foreignTableField;
-							$tableConfigurationArray[$fullFieldName]['mainTable'] = $foreignTable;
-							$tableConfigurationArray[$fullFieldName]['fieldName'] = $foreignTableFieldKey;
-            }
-          }
-        }        				
+				// Merges it to the main table configuration array
+				$mainTableConfigurationArray = array_merge($mainTableConfigurationArray, $fieldConfigurationArray);      				
 			}		
 		} else {
 			throw new Tx_SavLibraryPlus_Exception(Tx_SavLibraryPlus_Controller_FlashMessages::translate('fatal.incorrectTCA'));
     }	
 
-    // Intializes the table references
-    $tableReferences = $this->buildTableReferencesFromTca($mainTable, $tableConfigurationArray);    
-
     // Adds the columns for existing tables.
-    $externalTcaConfiguration = $this->getController()->getLibraryConfigurationManager()->getExternalTcaConfiguration();   
+    $externalTcaConfiguration = $this->getController()->getLibraryConfigurationManager()->getExternalTcaConfiguration();  
     if (is_array($externalTcaConfiguration)) {
-
+			$externalTableReferences = '';
     	foreach($externalTcaConfiguration as $tableKey => $table) {
-    		$tableConfigurationArray = array();    		
+
+    		$externalTableConfigurationArray = array();    		
 
     		// Processes the table
     		foreach($table as $fieldKey => $field) {
-					// Builds the full field name            	
-          $fullFieldName = $tableKey . '.' . $fieldKey;
-                      	
-          // Sets the field configuration
-          $tableConfigurationArray[$fullFieldName] = $field;
-					$tableConfigurationArray[$fullFieldName]['mainTable'] = $tableKey;
-					$tableConfigurationArray[$fullFieldName]['fieldName'] = $fieldKey;     			
+    			
+					// Builds the field configuration array
+					$fieldConfigurationArray = $this->buildFieldConfigurationArray($tableKey, $fieldKey, $field);
+    			
+					// Merges it either to the external or the main table configuration array
+    			if ($tableKey != $mainTable){ 
+	          $externalTableConfigurationArray = array_merge($externalTableConfigurationArray, $fieldConfigurationArray);        
+    			} else {
+	          $mainTableConfigurationArray = array_merge($mainTableConfigurationArray, $fieldConfigurationArray);    			
+	    		}
     		}
-
-    		// Builds the references
-    		$this->addNewTableAlias($tableKey);    		
-    		$tableReferences .= ', ' . $this->buildTableReferencesFromTca($this->getTableAliasDefinition($tableKey), $tableConfigurationArray);
+ 		
+	      // builds the external tables references
+    		if ($tableKey != $mainTable){ 	          
+    			$this->addNewTableAlias($tableKey);  				
+    			$externalTableReferences .= ', ' . $this->buildTableReferencesFromTca($this->getTableAliasDefinition($tableKey), $fieldConfigurationArray);        
+    		}
     	}
     }
+
+    // Builds the references for the main table   
+    $mainTableReferences = $this->buildTableReferencesFromTca($mainTable, $mainTableConfigurationArray); 
+
+    // Builds the table references
+    $tableReferences = $mainTableReferences . $externalTableReferences;
       
     // Adds the foreign table
     // Checks that the 'tableForeign' start either by LEFT JOIN, INNER JOIN or RIGHT JOIN or a comma
@@ -969,7 +955,48 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
 
     return $tableReferences;
   }
+  
+  /**
+	 * Builds the field configuration array with subform fields, if any 
+	 *
+   * @param string $tableName Table name
+   * @param string $fieldName Field name
+   * @param array $fieldConfiguration Field configuration
+ 	 *
+	 * @return array 
+	 */
+	protected function buildFieldConfigurationArray($tableName, $fieldName, $fieldConfiguration) {
+		// Builds the full field name
+		$fullFieldName = $tableName . '.' . $fieldName;
+					
+		// Sets the field configuration
+		$fieldConfigurationArray[$fullFieldName] = $fieldConfiguration;
+		$fieldConfigurationArray[$fullFieldName]['mainTable'] = $tableName;  
+		$fieldConfigurationArray[$fullFieldName]['fieldName'] = $fieldName;					      					
+				
+		// Checks if there is a subform
+    if ($fieldConfiguration['config']['type'] == 'inline' && !$fieldConfiguration['config']['norelation']) {
+      // Gets the TCA columns of the foreign table
+      $foreignTable = $fieldConfiguration['config']['foreign_table'];
+      $tcaColumnsForeignTable = Tx_SavLibraryPlus_Managers_TcaConfigurationManager::getTcaColumns($foreignTable);
+          
+      // Processes the foreign table columns
+      if (is_array($tcaColumnsForeignTable)) {
+        foreach ($tcaColumnsForeignTable as $foreignTableFieldKey => $foreignTableField) {
+					// Builds the full field name            	
+          $fullFieldName = $foreignTable . '.' . $foreignTableFieldKey;
+            	
+          // Sets the field configuration
+          $fieldConfigurationArray[$fullFieldName] = $foreignTableField;
+					$fieldConfigurationArray[$fullFieldName]['mainTable'] = $foreignTable;
+					$fieldConfigurationArray[$fullFieldName]['fieldName'] = $foreignTableFieldKey;
+        }
+      } 
+		}
 
+		return $fieldConfigurationArray;
+	}      
+  
 	/**
 	 * Builds references from TCA
 	 *
@@ -991,14 +1018,14 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
         $this->addNewTableAlias($configuration['MM']);
         $this->addNewTableAlias($configuration['foreign_table']);
         $tableReferences .= ' LEFT JOIN ' . $this->getTableAliasDefinition($configuration['MM']) .
-          ' ON (' . $configuration['MM'] . '.uid_local=' . $field['mainTable'] . '.uid) LEFT JOIN ' . $this->getTableAliasDefinition($configuration['foreign_table']) . ' ON (' . $configuration['MM'] . '.uid_foreign=' . $configuration['foreign_table'] . '.uid)';
+          ' ON (' .  $this->getTableAlias($configuration['MM']) . '.uid_local=' . $field['mainTable'] . '.uid) LEFT JOIN ' . $this->getTableAliasDefinition($configuration['foreign_table']) . ' ON (' .  $this->getTableAlias($configuration['MM']) . '.uid_foreign=' .  $this->getTableAlias($configuration['foreign_table']) . '.uid)';
       } elseif ($configuration['type'] == 'select') {
         if ($configuration['MM']) {
           // MM table
           $this->addNewTableAlias($configuration['MM']);
           $this->addNewTableAlias($configuration['foreign_table']);
           $tableReferences .= ' LEFT JOIN ' . $this->getTableAliasDefinition($configuration['MM']) .
-            ' ON (' . $configuration['MM'] . '.uid_local=' . $field['mainTable'] . '.uid) LEFT JOIN ' . $this->getTableAliasDefinition($configuration['foreign_table']) . ' ON (' . $configuration['MM'] . '.uid_foreign=' . $configuration['foreign_table'] . '.uid)';
+            ' ON (' .  $this->getTableAlias($configuration['MM']) . '.uid_local=' . $field['mainTable'] . '.uid) LEFT JOIN ' . $this->getTableAliasDefinition($configuration['foreign_table']) . ' ON (' .  $this->getTableAlias($configuration['MM']) . '.uid_foreign=' .  $this->getTableAlias($configuration['foreign_table']) . '.uid)';
         } elseif ($configuration['foreign_table']) {
           $this->addNewTableAlias($configuration['foreign_table']);
           // Checks if there is a comma-separated MM relation
@@ -1016,11 +1043,11 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
 	}  
 	
 	/**
-	 * Builds the aliases for tables
+	 * Adds a new table alias
 	 *
    * @param $tableName string (table name)
  	 *
-	 * @return array (result)
+	 * @return none
 	 */
   protected function addNewTableAlias($tableName) {
     if (isset($this->tableAliases[$tableName])) {
@@ -1030,6 +1057,13 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
     }
   }
   
+	/**
+	 * Gets an alias definition for a table
+	 *
+   * @param $tableName string (table name)
+ 	 *
+	 * @return string
+	 */  
   protected function getTableAliasDefinition($tableName) {
     if (isset($tableName) === FALSE) {
 			throw new Tx_SavLibraryPlus_Exception(Tx_SavLibraryPlus_Controller_FlashMessages::translate('fatal.incorrectConfiguration') . ' Tx_SavLibraryPlus_Queriers_AbstractQuerier->getTableAliasDefinition(' . $tableName . ')');
@@ -1040,6 +1074,13 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
     }
   }
   
+ 	/**
+	 * Gets an alias for a table
+	 *
+   * @param $tableName string (table name)
+ 	 *
+	 * @return string
+	 */   
   protected function getTableAlias($tableName) {
     if (isset($tableName) === FALSE) {
 			throw new Tx_SavLibraryPlus_Exception(Tx_SavLibraryPlus_Controller_FlashMessages::translate('fatal.incorrectConfiguration') . ' Tx_SavLibraryPlus_Queriers_AbstractQuerier->getTableAlias(' . $tableName . ')');
@@ -1049,11 +1090,6 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
       return $tableName . '_' . $this->tableAliases[$tableName];
     }
   }
-   /***************************************************************
-    *
-    *   Utils
-    *
-   ***************************************************************/
 
 	/**
 	 * Gets allowed Pages from the starting point and the storage page
