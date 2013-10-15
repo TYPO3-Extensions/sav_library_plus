@@ -240,40 +240,41 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
   	
     $folderFieldsConfiguration = array();
     
-    foreach ($folder['fields'] as $fieldId => $kickstarterFieldConfiguration) {
-
-      // Injects the kickstarter configuration
-      $this->injectKickstarterFieldConfiguration($kickstarterFieldConfiguration['config']);
-
-      // Builds full field name
-      $fullFieldName = $this->getFullFieldName();
-
-      // Gets the configuration
-      $fieldConfiguration = $this->getFieldConfiguration();
-
-      // If it is a subform, gets the configuration for each subform field
-      if (isset($fieldConfiguration['subform']) && $flatten === TRUE) {
-        foreach ($fieldConfiguration['subform'] as $subformFolderKey => $subformFolder) {
-          $subfromFolderFieldsConfiguration = $this->getFolderFieldsConfiguration($subformFolder, $flatten);
-          foreach ($subfromFolderFieldsConfiguration as $subfromFolderFieldConfigurationKey => $subfromFolderFieldConfiguration) {
-            $subfromFolderFieldsConfiguration[$subfromFolderFieldConfigurationKey]['parentTableName'] = $fieldConfiguration['tableName'];
-            $subfromFolderFieldsConfiguration[$subfromFolderFieldConfigurationKey]['parentFieldName'] = $fieldConfiguration['fieldName'];
-            if ($flattenAll === TRUE) {
-          		$folderFieldsConfiguration = array_merge($folderFieldsConfiguration, array(
-        				$subfromFolderFieldConfigurationKey => $subfromFolderFieldConfiguration
-        				)
-        			);
-          	}
-          }
-          $fieldConfiguration['subform'] = $subfromFolderFieldsConfiguration;
-        }
-      } 
-
-      $folderFieldsConfiguration = array_merge($folderFieldsConfiguration, array(
-        $fieldId => $fieldConfiguration
-        )
-      );
-
+    if (is_array($folder['fields'])) {
+	    foreach ($folder['fields'] as $fieldId => $kickstarterFieldConfiguration) {
+	
+	      // Injects the kickstarter configuration
+	      $this->injectKickstarterFieldConfiguration($kickstarterFieldConfiguration['config']);
+	
+	      // Builds full field name
+	      $fullFieldName = $this->getFullFieldName();
+	
+	      // Gets the configuration
+	      $fieldConfiguration = $this->getFieldConfiguration();
+	
+	      // If it is a subform, gets the configuration for each subform field
+	      if (isset($fieldConfiguration['subform']) && $flatten === TRUE) {
+	        foreach ($fieldConfiguration['subform'] as $subformFolderKey => $subformFolder) {
+	          $subfromFolderFieldsConfiguration = $this->getFolderFieldsConfiguration($subformFolder, $flatten);
+	          foreach ($subfromFolderFieldsConfiguration as $subfromFolderFieldConfigurationKey => $subfromFolderFieldConfiguration) {
+	            $subfromFolderFieldsConfiguration[$subfromFolderFieldConfigurationKey]['parentTableName'] = $fieldConfiguration['tableName'];
+	            $subfromFolderFieldsConfiguration[$subfromFolderFieldConfigurationKey]['parentFieldName'] = $fieldConfiguration['fieldName'];
+	            if ($flattenAll === TRUE) {
+	          		$folderFieldsConfiguration = array_merge($folderFieldsConfiguration, array(
+	        				$subfromFolderFieldConfigurationKey => $subfromFolderFieldConfiguration
+	        				)
+	        			);
+	          	}
+	          }
+	          $fieldConfiguration['subform'] = $subfromFolderFieldsConfiguration;
+	        }
+	      } 
+	
+	      $folderFieldsConfiguration = array_merge($folderFieldsConfiguration, array(
+	        $fieldId => $fieldConfiguration
+	        )
+	      );
+	    }
     }
     return $folderFieldsConfiguration;
   }

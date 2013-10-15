@@ -11,6 +11,9 @@ Calendar._DN = new Array
 
 Calendar._SDN_len = 2;
 
+// added by Red-Seadog - EW on 14-10-2013
+Calendar._FD = 0;
+
 Calendar._MN = new Array
 ("Januari",
  "Februari",
@@ -24,6 +27,21 @@ Calendar._MN = new Array
  "Oktober",
  "November",
  "December");
+
+// added by Red-Seadog - EW on 14-10-2013
+Calendar._SMN = new Array
+("Jan",
+ "Feb",
+ "Mrt",
+ "Apr",
+ "Mei",
+ "Jun",
+ "Jul",
+ "Aug",
+ "Sep",
+ "Oct",
+ "Nov",
+ "Dec");
 
 // tooltips
 Calendar._TT = {};
