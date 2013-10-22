@@ -243,6 +243,9 @@
 			<trans-unit id="error.isNotValidInteger" xml:space="preserve">
 				<source>The input %s is not a valid integer.</source>
 			</trans-unit>
+			<trans-unit id="error.isNotValidCurrency" xml:space="preserve">
+				<source>The input %s is not a valid currency.</source>
+			</trans-unit>
 			<trans-unit id="error.isValidLength" xml:space="preserve">
 				<source>The input has a length greater than the allowed length.</source>
 			</trans-unit>

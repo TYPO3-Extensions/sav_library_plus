@@ -74,34 +74,36 @@ class Tx_SavLibraryPlus_Queriers_FormUpdateQuerier extends Tx_SavLibraryPlus_Que
 		    
 		// Processes the regular fields. Explode the key to get the table and field names
 		$variablesToUpdate = array();
-		foreach($postVariables as $postVariableKey => $postVariable) {
-		  foreach ($postVariable as $uid => $value) {
-
-        // Sets the field configuration
-        $this->fieldConfiguration = $this->searchConfiguration($folderFieldsConfiguration, $postVariableKey);
-        $tableName = $this->fieldConfiguration['tableName'];
-        $fieldName = $this->fieldConfiguration['fieldName'];
-        $fieldType = $this->fieldConfiguration['fieldType'];
-        
-        // Adds the cryted full field name
-        $this->fieldConfiguration['cryptedFullFieldName'] = $postVariableKey;        
-
-        // Adds the uid to the configuration
-        $this->fieldConfiguration['uid'] = $uid;
-
-        // Makes pre-processings.
-        self::$doNotAddValueToUpdateOrInsert = FALSE;
-        $value = $this->preProcessor($value);
-
-        // Sets the processed Post variables to retrieve for error processing if any
-        $fullFieldName = $tableName . '.' . $fieldName;
-        $this->processedPostVariables[$fullFieldName][$uid] = array('value' => $value, 'errorCode' => self::$errorCode);
-            
-        // Adds the variables
-        if (self::$doNotAddValueToUpdateOrInsert === FALSE) {
-		      $variablesToUpdateOrInsert[$tableName][$uid][$tableName . '.' . $fieldName] = $value;
-        } 
-      }
+		if (is_array($postVariables)) {
+			foreach($postVariables as $postVariableKey => $postVariable) {
+			  foreach ($postVariable as $uid => $value) {
+	
+	        // Sets the field configuration
+	        $this->fieldConfiguration = $this->searchConfiguration($folderFieldsConfiguration, $postVariableKey);
+	        $tableName = $this->fieldConfiguration['tableName'];
+	        $fieldName = $this->fieldConfiguration['fieldName'];
+	        $fieldType = $this->fieldConfiguration['fieldType'];
+	        
+	        // Adds the cryted full field name
+	        $this->fieldConfiguration['cryptedFullFieldName'] = $postVariableKey;        
+	
+	        // Adds the uid to the configuration
+	        $this->fieldConfiguration['uid'] = $uid;
+	
+	        // Makes pre-processings.
+	        self::$doNotAddValueToUpdateOrInsert = FALSE;
+	        $value = $this->preProcessor($value);
+	
+	        // Sets the processed Post variables to retrieve for error processing if any
+	        $fullFieldName = $tableName . '.' . $fieldName;
+	        $this->processedPostVariables[$fullFieldName][$uid] = array('value' => $value, 'errorCode' => self::$errorCode);
+	            
+	        // Adds the variables
+	        if (self::$doNotAddValueToUpdateOrInsert === FALSE) {
+			      $variablesToUpdateOrInsert[$tableName][$uid][$tableName . '.' . $fieldName] = $value;
+	        } 
+	      }
+			}
 		}
 
 		// Checks if error exists

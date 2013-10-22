@@ -89,6 +89,7 @@
 			<label index="error.incorrectXsltFile">The XSL tranformation file contains syntax errors: %s.</label>
 			<label index="error.incorrectXsltProcess">The XSL tranformation failed.</label>
 			<label index="error.isNotValidInteger">The input %s is not a valid integer.</label>
+			<label index="error.isNotValidCurrency">The input %s is not a valid currency.</label>			
 			<label index="error.isValidLength">The input has a length greater than the allowed length.</label>
 			<label index="error.isValidInterval">The input is not in the given interval.</label>
 			<label index="error.isValidPattern">The input does not verify the expected pattern.</label>

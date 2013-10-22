@@ -374,7 +374,7 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
     // Calls the verifier if it exists
     $verifierMethod = $this->getFieldConfigurationAttribute('verifier');
     if (!empty($verifierMethod)) {
-    	if(!method_exists($this,$verifierMethod)) {
+    	if (!method_exists($this,$verifierMethod)) {
     		self::$doNotAddValueToUpdateOrInsert = TRUE;
     		self::$doNotUpdateOrInsert = TRUE;
     		Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.verifierUnknown');
@@ -479,9 +479,14 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
       	$value = count($value);
       }
     } else {
-      // Comma list
-      $value = implode(',', $value);
+    	if (is_array($value)) {
+	      // Comma list
+	      $value = implode(',', $value);
+    	} else {
+    		$value = '';
+    	}
     }
+   
     return $value;
   }
 
@@ -822,7 +827,11 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
     		$path .= '/';
     	}	
 
-    	// Saves the file
+    	// Gets the charset of the back end
+    	$encoding = ($GLOBALS['TYPO3_CONF_VARS']['BE']['forceCharset'] ? $GLOBALS['TYPO3_CONF_VARS']['BE']['forceCharset'] : 'iso-8859-1');
+    	$file = mb_convert_encoding($file, 'iso-8859-1', $encoding);   
+
+    	// Saves the file 	
       file_put_contents($path . $pathParts['basename'], $file);
 
       // Updates the record
@@ -926,7 +935,22 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
       return TRUE;
     }
   }
-
+  
+	/**
+	 * Verifier for Currency
+	 *
+	 * @param mixed $value Value to be pre-processed
+	 *
+	 * @return boolean
+	 */
+  protected function verifierForCurrency($value) {
+    if (!empty($value) && preg_match('/^[-]?[0-9]{1,9}(?:\.[0-9]{1,2})?$/', $value) == 0) {
+      return Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.isNotValidCurrency', array($value));
+    } else {
+      return TRUE;
+    }
+  }
+  
 	/**
 	 * Checks if the input is a valid pattern.
 	 *

@@ -89,57 +89,65 @@ class Tx_SavLibraryPlus_Queriers_FormAdminUpdateQuerier extends Tx_SavLibraryPlu
 		
 		// Processes the regular fields. Explode the key to get the table and field names
 		$variablesToUpdate = array();
-		foreach ($this->validation as $fieldKey => $validated) {
-			if ($validated) {
-        // Sets the field configuration
-        $this->fieldConfiguration = $this->searchConfiguration($folderFieldsConfiguration, $fieldKey);
-
-        $tableName = $this->fieldConfiguration['tableName'];
-        $fieldName = $this->fieldConfiguration['fieldName'];
-        $fieldType = $this->fieldConfiguration['fieldType'];
-        $fullFieldName = $tableName . '.' . $fieldName;
-        
-        // Adds the cryted full field name
-        $this->fieldConfiguration['cryptedFullFieldName'] = $fieldKey;        
-        
-        // Gets the field value and uid
-        $uid = key($postVariables[$fieldKey]);        
-				$value = current($postVariables[$fieldKey]);
-				        
-        // Adds the uid to the configuration
-        $this->fieldConfiguration['uid'] = $uid;  
-             
-        // Makes pre-processings.
-        self::$doNotAddValueToUpdateOrInsert = FALSE;
-        $value = $this->preProcessor($value);  
-
-				// Gets the rendered value 
-				$fieldConfiguration = $this->fieldConfiguration;
-				$fieldConfiguration['value'] = $value;
-      	$className = 'Tx_SavLibraryPlus_ItemViewers_Default_' . $fieldConfiguration['fieldType'] . 'ItemViewer';
-      	$itemViewer = t3lib_div::makeInstance($className);
-      	$itemViewer->injectController($this->getController());
-      	$itemViewer->injectItemConfiguration($fieldConfiguration);
-      	$renderedValue = $itemViewer->render();
-      	if ($renderedValue == $value) {
-      		$markerValue = $renderedValue;
-      	}	else {
-      		$markerValue = $renderedValue . ' (' . $value .')';
-      	}
-      				
-				// Sets the items markers
-				if ($uid === 0) {
-					$markerItemsManual = array_merge($markerItemsManual, array($fullFieldName => $markerValue));
-				} elseif ($uid > 0) {
-					$markerItemsAuto = array_merge($markerItemsAuto, array($fullFieldName => $markerValue));					
-				} else {
-					self::$doNotAddValueToUpdateOrInsert = TRUE;
-				}    
-        
-        // Adds the variables
-        if (self::$doNotAddValueToUpdateOrInsert === FALSE) {
-		      $variablesToUpdateOrInsert[$tableName][$uid][$fullFieldName] = $value;
-        }       		
+		if (is_array($this->validation)) {
+			foreach ($this->validation as $fieldKey => $validated) {
+				if ($validated) {
+	        // Sets the field configuration
+	        $this->fieldConfiguration = $this->searchConfiguration($folderFieldsConfiguration, $fieldKey);
+	
+	        $tableName = $this->fieldConfiguration['tableName'];
+	        $fieldName = $this->fieldConfiguration['fieldName'];
+	        $fieldType = $this->fieldConfiguration['fieldType'];
+	        $fullFieldName = $tableName . '.' . $fieldName;
+	        
+	        // Adds the cryted full field name
+	        $this->fieldConfiguration['cryptedFullFieldName'] = $fieldKey;        
+	        
+	        // Checks if the field was posted. It may occurs that a field is not in the _POST variable.
+	        // A special case is when double selector boxes are displayed with the attribute singleWindow = 1 which generates a select multiple.
+					if (!is_array($postVariables[$fieldKey])) {
+						continue;
+					}
+					
+					// Gets the field value and uid
+	        $uid = key($postVariables[$fieldKey]);        
+					$value = current($postVariables[$fieldKey]);
+					        
+	        // Adds the uid to the configuration
+	        $this->fieldConfiguration['uid'] = $uid;  
+	             
+	        // Makes pre-processings.
+	        self::$doNotAddValueToUpdateOrInsert = FALSE;
+	        $value = $this->preProcessor($value);  
+	
+					// Gets the rendered value 
+					$fieldConfiguration = $this->fieldConfiguration;
+					$fieldConfiguration['value'] = $value;
+	      	$className = 'Tx_SavLibraryPlus_ItemViewers_Default_' . $fieldConfiguration['fieldType'] . 'ItemViewer';
+	      	$itemViewer = t3lib_div::makeInstance($className);
+	      	$itemViewer->injectController($this->getController());
+	      	$itemViewer->injectItemConfiguration($fieldConfiguration);
+	      	$renderedValue = $itemViewer->render();
+	      	if ($renderedValue == $value) {
+	      		$markerValue = $renderedValue;
+	      	}	else {
+	      		$markerValue = $renderedValue . ' (' . $value .')';
+	      	}
+	      				
+					// Sets the items markers
+					if ($uid === 0) {
+						$markerItemsManual = array_merge($markerItemsManual, array($fullFieldName => $markerValue));
+					} elseif ($uid > 0) {
+						$markerItemsAuto = array_merge($markerItemsAuto, array($fullFieldName => $markerValue));					
+					} else {
+						self::$doNotAddValueToUpdateOrInsert = TRUE;
+					}    
+	        
+	        // Adds the variables
+	        if (self::$doNotAddValueToUpdateOrInsert === FALSE) {
+			      $variablesToUpdateOrInsert[$tableName][$uid][$fullFieldName] = $value;
+	        }       		
+				}
 			}
 		}
 		

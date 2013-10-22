@@ -111,6 +111,7 @@
 }
 .savLibraryPlus DIV.message LI.error{
 	background-color:inherit;
+	clear:left;
 	color:red;
 }
 .savLibraryPlus DIV.message LI.message{
