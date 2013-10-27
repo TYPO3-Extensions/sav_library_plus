@@ -1393,7 +1393,6 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
     }
     
 		// Sets the content type
-
 		if (empty($mailAttachments)) {  
     	$headers .= 'Content-type: text/html; charset=iso-8859-1' . LF;
 		} else {

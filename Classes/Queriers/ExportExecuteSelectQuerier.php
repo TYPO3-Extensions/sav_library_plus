@@ -107,11 +107,9 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
     	);
     	$message = Tx_SavLibraryPlus_Controller_FlashMessages::translate('general.clickHereToDowload');
     	$this->exportConfiguration['fileLink'] = $extensionConfigurationManager->getExtensionContentObject()->typoLink($message, $typoScriptConfiguration);
-    }
-  	
+    } 	
   }
 
-  
   /**
    * Builds the WHERE BY Clause.
    *
@@ -517,8 +515,7 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
 
     return $markers;
   }
-
-   
+  
  	/**
 	 * Processes the XML file
 	 *
@@ -979,8 +976,7 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
 
     return TRUE;
   }
-  
-  
+    
  	/**
 	 * Changes a given field value for all the child of a node
 	 *
@@ -1336,10 +1332,14 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
 // Modification to keep multiline information		
 //			list($valPart) = explode(chr(10),$value);
 //			$valPart = trim($valPart);
+			if (mb_detect_encoding($value) == 'UTF-8'){
+				$value = utf8_decode($value);
+			}
       $valPart = $value;
 			$out[]=str_replace($quote, $quote . $quote, $valPart);
 		}
 		$str = $quote . implode($quote . $delim . $quote, $out) . $quote;	
+		
 		return $str;
 	}
   
