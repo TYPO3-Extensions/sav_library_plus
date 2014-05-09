@@ -161,19 +161,20 @@ class Tx_SavLibraryPlus_ItemViewers_Default_FilesItemViewer extends Tx_SavLibrar
     // Sets the typoScript configurations
     if (empty($this->fileName) === FALSE && file_exists($uploadFolder . '/' . $this->fileName)) {
       // The file exists
+      $fileName = $uploadFolder . '/' . $this->fileName;
       $typoScriptConfiguration = array(
         'params' => 'class="fileImage"',
-        'file' => $uploadFolder . '/' . $this->fileName,
+        'file' => $fileName,
         'altText' => $this->getItemConfiguration('alt'),
         'titleText' => ($this->getItemConfiguration('title') ? $this->getItemConfiguration('title') : $this->getItemConfiguration('alt')),
       );
     } else {
       // The file does not exist, the default image (unknown) is used.
       $libraryDefaultFile = Tx_SavLibraryPlus_Managers_LibraryConfigurationManager::getImageRootPath('unknown.gif') . 'unknown.gif';
-      $defaultFile = ($this->getItemConfiguration('default') ? $this->getItemConfiguration('default') : $libraryDefaultFile);
+      $fileName = ($this->getItemConfiguration('default') ? $this->getItemConfiguration('default') : $libraryDefaultFile);
       $typoScriptConfiguration = array(
         'params' => 'class="fileImage"',
-        'file' => $defaultFile,
+        'file' => $fileName,
         'altText' => $this->getItemConfiguration('alt'),
         'titleText' => ($this->getItemConfiguration('title') ? $this->getItemConfiguration('title') : $this->getItemConfiguration('alt')),
       );
@@ -196,7 +197,7 @@ class Tx_SavLibraryPlus_ItemViewers_Default_FilesItemViewer extends Tx_SavLibrar
     	// Merges the typoScript configuration with the tsProperties attribute
     	$typoScriptConfiguration = array_merge($typoScriptConfiguration, $TSparser->setup);      
     }
-      
+    
     // Calls the IMAGE content object
     $contentObject = Tx_SavLibraryPlus_Managers_ExtensionConfigurationManager::getExtensionContentObject();
     $content = $contentObject->IMAGE($typoScriptConfiguration);
@@ -215,7 +216,7 @@ class Tx_SavLibraryPlus_ItemViewers_Default_FilesItemViewer extends Tx_SavLibrar
     
     // Checks if the image should be opened in a new window
     if ($this->getItemConfiguration('func') == 'makeNewWindowLink') {
-      $this->setItemConfiguration('windowurl', $uploadFolder . '/' . $this->fileName);
+      $this->setItemConfiguration('windowurl', $fileName);
       $content = $this->makeNewWindowLink($content);
     }
     

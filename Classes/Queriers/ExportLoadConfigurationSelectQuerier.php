@@ -65,7 +65,15 @@ class Tx_SavLibraryPlus_Queriers_ExportLoadConfigurationSelectQuerier extends Tx
     
     // Injects the additional tables
     $this->queryConfigurationManager->setQueryConfigurationParameter('foreignTables', $loadedExportConfiguration['additionalTables']);
-    
+
+    // Injects the additional fields
+    $aliases = $this->queryConfigurationManager->getAliases();
+    $additionalFields = $loadedExportConfiguration['additionalFields'];
+    if (!empty($additionalFields)) {
+    	$aliases .= (empty($aliases) ? $additionalFields : ', ' . $additionalFields);
+    	$this->queryConfigurationManager->setQueryConfigurationParameter('aliases', $aliases); 	
+    }
+        
     // Calls the parent Query to get the field names
     parent::executeQuery();    
      	

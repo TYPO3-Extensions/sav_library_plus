@@ -86,9 +86,9 @@ abstract class Tx_SavLibraryPlus_Filters_AbstractFilter extends tslib_pibase {
     }
 
     // Gets the session variables
-    $this->sessionFilter = $GLOBALS['TSFE']->fe_user->getKey('ses','filters');
-    $this->sessionFilterSelected = $GLOBALS['TSFE']->fe_user->getKey('ses','selectedFilterKey');
-    $this->sessionAuth = $GLOBALS['TSFE']->fe_user->getKey('ses','auth');
+    $this->sessionFilter = $GLOBALS['TSFE']->fe_user->getKey('ses', 'filters');
+    $this->sessionFilterSelected = $GLOBALS['TSFE']->fe_user->getKey('ses', 'selectedFilterKey');
+    $this->sessionAuth = $GLOBALS['TSFE']->fe_user->getKey('ses', 'auth');
  
     // Sets debug
     if ($this->debugQuery) {
@@ -203,9 +203,9 @@ abstract class Tx_SavLibraryPlus_Filters_AbstractFilter extends tslib_pibase {
     }
   
     // Sets session data
-    $GLOBALS['TSFE']->fe_user->setKey('ses','filters', $this->sessionFilter);
-    $GLOBALS['TSFE']->fe_user->setKey('ses','selectedFilterKey', $this->sessionFilterSelected);
-    $GLOBALS['TSFE']->fe_user->setKey('ses','auth', $this->sessionAuth);
+    $GLOBALS['TSFE']->fe_user->setKey('ses', 'filters', $this->sessionFilter);
+    $GLOBALS['TSFE']->fe_user->setKey('ses', 'selectedFilterKey', $this->sessionFilterSelected);
+    $GLOBALS['TSFE']->fe_user->setKey('ses', 'auth', $this->sessionAuth);
     $GLOBALS['TSFE']->storeSessionData();       
   }
 

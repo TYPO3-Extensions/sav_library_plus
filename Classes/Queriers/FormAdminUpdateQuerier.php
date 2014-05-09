@@ -215,12 +215,16 @@ class Tx_SavLibraryPlus_Queriers_FormAdminUpdateQuerier extends Tx_SavLibraryPlu
     	$renderType = $this->getFieldConfigurationAttribute('renderType');
     	$fieldType = (empty($renderType) ? 'String' : $renderType);
     }
-    
     $fieldType = $this->getFieldConfigurationAttribute('fieldType');
-
+    
+    // If a validation is forced and addEdit is not set, a hidden field was added such that the configuration can be processed when saving but the field is not added nor inserted. 
+		if ($this->getFieldConfigurationAttribute('addvalidationifadmin') && (!$this->getFieldConfigurationAttribute('addedit') || !$this->getFieldConfigurationAttribute('addeditifadmin'))) {
+     	self::$doNotAddValueToUpdateOrInsert = TRUE;
+		}
+		  
     // Calls the verification method for the type if it exists
     $verifierMethod = 'verifierFor' . $fieldType;
-    if (method_exists($this,$verifierMethod) && $this->$verifierMethod($value) !== TRUE) {
+    if (method_exists($this, $verifierMethod) && $this->$verifierMethod($value) !== TRUE) {
      	self::$doNotAddValueToUpdateOrInsert = TRUE;
     	self::$doNotUpdateOrInsert = TRUE;
       return $value;
@@ -237,7 +241,7 @@ class Tx_SavLibraryPlus_Queriers_FormAdminUpdateQuerier extends Tx_SavLibraryPlu
     }
  
     // Calls the methods if it exists
-    if (method_exists($this,$preProcessorMethod)) {
+    if (method_exists($this, $preProcessorMethod)) {
       $newValue =  $this->$preProcessorMethod($value);
     } else {
       $newValue = $value;
@@ -265,7 +269,7 @@ class Tx_SavLibraryPlus_Queriers_FormAdminUpdateQuerier extends Tx_SavLibraryPlu
     // Calls the verifier if it exists
     $verifierMethod = $this->getFieldConfigurationAttribute('verifier');
     if (!empty($verifierMethod)) {
-    	if(!method_exists($this,$verifierMethod)) {
+    	if(!method_exists($this, $verifierMethod)) {
     		self::$doNotAddValueToUpdateOrInsert = TRUE;
     		self::$doNotUpdateOrInsert = TRUE;
     		Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.verifierUnknown');

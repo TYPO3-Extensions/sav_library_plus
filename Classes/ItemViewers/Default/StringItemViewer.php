@@ -54,7 +54,7 @@ class Tx_SavLibraryPlus_ItemViewers_Default_StringItemViewer extends Tx_SavLibra
     } elseif ($this->getItemConfiguration('tsobject')) {
       $content = $value; 
     } else {
-      $content = nl2br(stripslashes($value));
+      $content = nl2br(stripslashes($value));   
     }
 
     return $content;

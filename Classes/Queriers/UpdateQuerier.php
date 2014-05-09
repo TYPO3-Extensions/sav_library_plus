@@ -317,7 +317,7 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
     
     // Calls the verification method for the type if it exists
     $verifierMethod = 'verifierFor' . $fieldType;
-    if (method_exists($this,$verifierMethod) && $this->$verifierMethod($value) !== TRUE) {
+    if (method_exists($this, $verifierMethod) && $this->$verifierMethod($value) !== TRUE) {
      	self::$doNotAddValueToUpdateOrInsert = TRUE;
     	self::$doNotUpdateOrInsert = TRUE;
       return $value;
@@ -374,7 +374,7 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
     // Calls the verifier if it exists
     $verifierMethod = $this->getFieldConfigurationAttribute('verifier');
     if (!empty($verifierMethod)) {
-    	if (!method_exists($this,$verifierMethod)) {
+    	if (!method_exists($this, $verifierMethod)) {
     		self::$doNotAddValueToUpdateOrInsert = TRUE;
     		self::$doNotUpdateOrInsert = TRUE;
     		Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.verifierUnknown');
@@ -508,7 +508,31 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
 
     return $value;
   }
- 
+  
+	/**
+	 * Pre-processor for String
+	 *
+	 * @param mixed $value Value to be pre-processed
+	 *
+	 * @return mixed
+	 */
+  protected function preProcessorForString($value) {
+
+  	return htmlspecialchars($value);
+  }
+
+	/**
+	 * Pre-processor for Text
+	 *
+	 * @param mixed $value Value to be pre-processed
+	 *
+	 * @return mixed
+	 */
+  protected function preProcessorForText($value) {
+  	
+    return htmlspecialchars($value);
+  }
+    
 	/**
 	 * Gets the uid for post processors
 	 *
@@ -800,11 +824,11 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
 			}
 			
 			// Cleans the file content
-			$file = preg_replace('/(###[^\r\n#]*)[\r\n]*([^#]*###)/m', '$1$2' ,$file);
+			$file = preg_replace('/(###[^\r\n#]*)[\r\n]*([^#]*###)/m', '$1$2' , $file);
     	preg_match_all('/###([^#]+)###/', $file, $matches);
     	foreach($matches[0] as $matchKey => $match) {
 				$match = preg_replace('/\\\\[^\s]+ /', '' , $match);
-				$file = str_replace($matches[0][$matchKey], $match ,$file);
+				$file = str_replace($matches[0][$matchKey], $match , $file);
     	}
           	
 			// Parses the file content
@@ -1085,7 +1109,7 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
     );
     
     // Processes the insert query and sets the uid
-    $newInsertedUid = parent::insertFields($tableName,$fields);
+    $newInsertedUid = parent::insertFields($tableName, $fields);
     if($tableName == $this->getQueryConfigurationManager()->getMainTable()) {
       Tx_SavLibraryPlus_Managers_UriManager::setCompressedParameters(
         Tx_SavLibraryPlus_Controller_AbstractController::changeCompressedParameters(
@@ -1312,7 +1336,8 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
       } 
      	// Processes the query
       $row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($resource);
-      $mailReceiver = $row['email']; 
+      $mailReceiver = $row['value'];
+       
       // Injects the row since query aliases may be used as markers
       $additionalMarkers = array();
       foreach($row as $key => $value) {

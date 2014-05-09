@@ -121,7 +121,7 @@ class Tx_SavLibraryPlus_ViewHelpers_FormViewHelper extends Tx_Fluid_ViewHelpers_
 		$this->addFieldNamePrefixToViewHelperVariableContainer();
 		$this->addFormFieldNamesToViewHelperVariableContainer();
 		
-		$content = $this->renderChildren();;
+		$content = $this->renderChildren();
 
 		$this->tag->setContent($content);
 

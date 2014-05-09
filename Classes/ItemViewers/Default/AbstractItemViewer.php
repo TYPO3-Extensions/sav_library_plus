@@ -234,7 +234,7 @@ abstract class Tx_SavLibraryPlus_ItemViewers_Default_AbstractItemViewer {
 	      // Calls the function  	
 	      $content = $this->$functionName($content);
 	    } else {
-	      Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.unknownFunction',array($functionName));
+	      Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.unknownFunction', array($functionName));
 	    }
  		}
  	  return $content;		
@@ -443,7 +443,7 @@ abstract class Tx_SavLibraryPlus_ItemViewers_Default_AbstractItemViewer {
 	 			  /* WHERE    */	'title=\'' . $match[2] . '\'' .
             $this->cObj->enableFields('fe_groups')
 		    );
-        $cond = (bool)$match[1] ^ in_array($rows[0]['uid'], explode(',',$GLOBALS['TSFE']->fe_user->user['usergroup'])); 	
+        $cond = (bool)$match[1] ^ in_array($rows[0]['uid'], explode(',', $GLOBALS['TSFE']->fe_user->user['usergroup'])); 	
         return (
           $cond ?
           $this->buildLinkToPage(

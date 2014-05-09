@@ -129,8 +129,8 @@ class Tx_SavLibraryPlus_Queriers_ExportSelectQuerier extends Tx_SavLibraryPlus_Q
    */ 
   protected function buildWhereClause() {
 
-		// No where clause since we only need to get the field name    
-    $whereClause = '1';    
+		// Gets only one row since we only need to get the field name    
+    $whereClause = $this->getQueryConfigurationManager()->getMainTable() . '.uid=(SELECT uid FROM ' . $this->getQueryConfigurationManager()->getMainTable() . ' LIMIT 1)';    
 
     return $whereClause;
   }  
@@ -146,5 +146,16 @@ class Tx_SavLibraryPlus_Queriers_ExportSelectQuerier extends Tx_SavLibraryPlus_Q
 		return '1';
   }  
 
+   /**
+   * Builds the ORDER BY Clause.
+   *
+   * @param none
+   *
+   * @return string
+   */ 
+  protected function buildOrderByClause() {
+		return '';
+  }   
+  
 }
 ?>

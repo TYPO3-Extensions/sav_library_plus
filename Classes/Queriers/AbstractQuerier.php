@@ -759,7 +759,8 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
 	 * @return none
 	 */
   protected function updateFields($tableName, $fields, $uid) {
-    if ($GLOBALS['TCA'][$tableName]['ctrl']['tstamp']) {
+
+    if ($GLOBALS['TCA'][$tableName]['ctrl']['tstamp'] && !array_key_exists('tstamp', $fields)) {
       $fields = array_merge($fields,
         array($GLOBALS['TCA'][$tableName]['ctrl']['tstamp'] => time())
       );

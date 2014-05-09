@@ -83,6 +83,10 @@ class Tx_SavLibraryPlus_Viewers_ListViewer extends Tx_SavLibraryPlus_Viewers_Abs
 
     // Gets the item template
     $itemTemplate = $this->getItemTemplate();    
+		if (empty($itemTemplate)) {
+			Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.itemTemplateMissingInListView');
+			return $this->renderView();
+		}
     
     // Creates the field configuration manager
     $this->createFieldConfigurationManager();
@@ -428,7 +432,7 @@ class Tx_SavLibraryPlus_Viewers_ListViewer extends Tx_SavLibraryPlus_Viewers_Abs
 				$view->assign('field', array(
 					'value' =>  $fieldConfiguration['label'],
 					'valueAsc' => $fieldConfiguration['labelAsc'],
-					'valueDesc' => $fieldConfiguration['labelDesc'],				
+					'valueDesc' => $fieldConfiguration['labelDesc'],			
 					'whereTagAscendingOrderKey' => $whereTagAscendingOrderKey,
 					'whereTagDescendingOrderKey' => $whereTagDescendingOrderKey,
 					'whereTagKey' => Tx_SavLibraryPlus_Managers_UriManager::getWhereTagKey(),
@@ -438,7 +442,7 @@ class Tx_SavLibraryPlus_Viewers_ListViewer extends Tx_SavLibraryPlus_Viewers_Abs
 				
     		//Gets the link configuration
     		$linkConfiguration = $this->getLinkConfiguration();				
-				$view->assign('configuration',array(
+				$view->assign('configuration', array(
 					'general' => array(
 	      		'additionalParams' => Tx_SavLibraryPlus_Controller_AbstractController::convertLinkAdditionalParametersToArray($linkConfiguration['additionalParams']),
 	      		)	

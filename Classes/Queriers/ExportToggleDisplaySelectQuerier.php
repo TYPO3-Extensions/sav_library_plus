@@ -51,7 +51,15 @@ class Tx_SavLibraryPlus_Queriers_ExportToggleDisplaySelectQuerier extends Tx_Sav
 
     // Injects the additional tables
     $this->queryConfigurationManager->setQueryConfigurationParameter('foreignTables', $postVariables['additionalTables']);
-    
+
+    // Injects the additional fields
+    $aliases = $this->queryConfigurationManager->getAliases();
+    $additionalFields = $this->getController()->getUriManager()->getPostVariablesItem('additionalFields');
+    if (!empty($additionalFields)) {
+    	$aliases .= (empty($aliases) ? $additionalFields : ', ' . $additionalFields);
+    	$this->queryConfigurationManager->setQueryConfigurationParameter('aliases', $aliases); 	
+    }
+        
   	// Calls the parent Query to get the field names  	
     parent::executeQuery();
 

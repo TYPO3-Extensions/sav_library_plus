@@ -164,7 +164,6 @@
 	visibility:hidden;
 }
 
-
 	/**
 	 * Title bar 
 	 */
@@ -479,7 +478,6 @@
 	padding:0 1% 0 1%;
 }
 
-
 	/**
 	 * single view
 	 */
@@ -533,8 +531,11 @@
 }
 .savLibraryPlus .singleView .field DIV.checkbox{
 }
+.savLibraryPlus .singleView .field .richText {
+  width:100%;
+}
 .savLibraryPlus .singleView .field .richText UL{
-  list-style: disc inside;
+  list-style:disc inside;
 }
 .savLibraryPlus .singleView .field .richText LI{
   clear:left;
@@ -598,7 +599,6 @@
 .savLibraryPlus .singleView .subform DIV.field{
 	margin-bottom:1px;
 }
-
 
 	/**
 	 * edit view
@@ -710,7 +710,6 @@
 	padding-left:2px;
 	margin-bottom:4px;
 }
-
 
 	/**
 	 * Edit view subform 
@@ -892,4 +891,3 @@
   font:inherit !important;
   margin:inherit !important;
 }
-

@@ -25,7 +25,7 @@ if (!function_exists('user_savlibraryPlusHelp')) {
 t3lib_extMgm::allowTableOnStandardPages('tx_savlibraryplus_export_configuration');
 
 $TCA['tx_savlibraryplus_export_configuration'] = array (
-	"ctrl" => array (
+	'ctrl' => array (
 		'title'     => 'LLL:EXT:' . $_EXTKEY . '/Resources/Private/Language/locallang_db.xml:tx_savlibraryplus_export_configuration',		
 		'label'     => 'name',	
 		'tstamp'    => 'tstamp',

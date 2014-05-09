@@ -159,7 +159,7 @@ class Tx_SavLibraryPlus_Viewers_FormViewer extends Tx_SavLibraryPlus_Viewers_Abs
     // Parses localization tags
     $itemTemplate = $this->getController()->getQuerier()->parseLocalizationTags($itemTemplate, FALSE);  	
     $itemTemplate = $this->getController()->getQuerier()->parseFieldTags($itemTemplate, FALSE);  	
-    
+  
   	return $itemTemplate;
   }
 
@@ -307,9 +307,22 @@ class Tx_SavLibraryPlus_Viewers_FormViewer extends Tx_SavLibraryPlus_Viewers_Abs
 					$replacementString = $this->renderItem($cryptedFullFieldName);
 					break;
 				case 'Validation':
+					// If a validation is forced and addEdit is not set, adds a hidden field such that the configuration can be processed when saving 
+					if ($this->folderFieldsConfiguration[$cryptedFullFieldName]['addvalidationifadmin'] && (!$this->folderFieldsConfiguration[$cryptedFullFieldName]['addedit'] || !$this->folderFieldsConfiguration[$cryptedFullFieldName]['addeditifadmin'])) {
+	      		$checkboxName = Tx_SavLibraryPlus_Controller_AbstractController::getFormName() . '[' . $cryptedFullFieldName . '][' . $uid . ']';
+	    			$hiddenElement = Tx_SavLibraryPlus_Utility_HtmlElements::htmlInputHiddenElement(
+	      			array(
+	        			Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('name', $checkboxName),
+	        			Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('value', '0'),
+	      			)
+	    			);
+					} else {
+						$hiddenElement = '';
+					}
+										
       		// Adds the hidden element for validation
       		$checkboxName = Tx_SavLibraryPlus_Controller_AbstractController::getFormName() . '[validation][' . $cryptedFullFieldName . ']';
-    			$hiddenElement = Tx_SavLibraryPlus_Utility_HtmlElements::htmlInputHiddenElement(
+    			$hiddenElement .= Tx_SavLibraryPlus_Utility_HtmlElements::htmlInputHiddenElement(
       			array(
         			Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('name', $checkboxName),
         			Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('value', '0'),

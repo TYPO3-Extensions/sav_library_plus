@@ -8,6 +8,7 @@ return array(
 	'tx_savlibraryplus_compatibility_utility_generalutility' =>  $extensionClassesPath . 'Compatibility/Utility/GeneralUtility.php',
 
 	'tx_savlibraryplus_controller_abstractcontroller' => $extensionClassesPath . 'Controller/AbstractController.php',
+	'tx_savlibraryplus_controller_controller' => $extensionClassesPath . 'Controller/Controller.php',
 	'tx_savlibraryplus_controller_flashmessages' => $extensionClassesPath . 'Controller/FlashMessages.php',
 
 	'tx_savlibraryplus_datepicker_datepicker' => $extensionClassesPath . 'DatePicker/DatePicker.php',

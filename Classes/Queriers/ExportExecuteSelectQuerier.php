@@ -70,7 +70,15 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
 
   	// Injects the additional tables
     $this->queryConfigurationManager->setQueryConfigurationParameter('foreignTables', $this->getController()->getUriManager()->getPostVariablesItem('additionalTables'));
-  	
+
+    // Injects the additional fields
+    $aliases = $this->queryConfigurationManager->getAliases();
+    $additionalFields = $this->getController()->getUriManager()->getPostVariablesItem('additionalFields');
+    if (!empty($additionalFields)) {
+    	$aliases .= (empty($aliases) ? $additionalFields : ', ' . $additionalFields);
+    	$this->queryConfigurationManager->setQueryConfigurationParameter('aliases', $aliases); 	
+    }
+    
     // Executes the select query to get the field names
 		$this->resource = $GLOBALS['TYPO3_DB']->exec_SELECTquery(
 			/* SELECT   */	$this->buildSelectClause(),
@@ -125,7 +133,7 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
   	// Initializes the WHERE clause
     $whereClause = $this->getController()->getUriManager()->getPostVariablesItem('whereClause');
     if (empty($whereClause)) {
-    	$whereClause = parent::buildWhereClause(); 
+    	$whereClause = '1'; 
     }
   	    
     // Adds the enable fields conditions for the main table
@@ -234,7 +242,7 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
       }
       fwrite($this->outputFileHandle, $this->csvValues($values, ';') . chr(10));
     }    
-   
+ 
   	// Processes the rows
     $counter = 0;
     $this->rows[0] = $this->getRowWithFullFieldNames($counter++);
@@ -321,7 +329,7 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
         			rename($filePath . $outputFileName, str_replace('###SITEPATH###', dirname(PATH_thisScript), $match[3]));
         			break;
         		case 'COPY':
-        			rename($filePath . $outputFileName, str_replace('###SITEPATH###', dirname(PATH_thisScript),$match[3]));
+        			rename($filePath . $outputFileName, str_replace('###SITEPATH###', dirname(PATH_thisScript), $match[3]));
         			break;        			
         	}
         	return TRUE;       	
@@ -334,12 +342,12 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
         if (!ini_get('safe_mode')) {
           $cmd = escapeshellcmd($cmd);
         }
-           
+         
         // Special processing for white spaces in windows directories      
         $cmd = preg_replace('/\/(\w+(?:\s+\w+)+)/', '/"$1"', $cmd);
 
         // Executes the command
-        exec ($cmd);
+        exec($cmd);
         return TRUE;
        }
     }	
@@ -524,7 +532,8 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
 	 *
 	 * @return boolean	TRUE if OK
 	 */
-	protected function processXmlReferenceArray($row, $markers) {			
+	protected function processXmlReferenceArray($row, $markers) {		
+
 		// Gets the content object
 		$contentObject = $this->getController()->getExtensionConfigurationManager()->getExtensionContentObject();
 
@@ -666,16 +675,18 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
           } 
           break;
         case 'cutifnull':
-        case 'cutifempty':
-        case 'cutifnotnull':
-        case 'cutifnotempty':
+        case 'cutifempty':        	
+        case 'cutifnotnull':       	
+        case 'cutifnotempty':      	
         case 'cutifequal':
         case 'cutifnotequal':
         case 'cutifgreater':
         case 'cutifless':
         case 'cutifgreaterequal':
         case 'cutiflessequal':
-
+        case 'cutifbitset':
+        case 'cutifbitnotset':  
+        	        	 
           // Sets the file name
           $fileName = $key . '.xml';
 
@@ -698,7 +709,7 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
             case 'cutifnull':
             case 'cutifempty':
               $condition = empty($fieldValue);
-              break;
+              break;                        
             case 'cutifnotnull':
             case 'cutifnotempty':
               $condition = !empty($fieldValue);
@@ -721,6 +732,12 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
             case 'cutiflessequal':
               $condition = ($fieldValue <= $value['value']);
               break;
+            case 'cutifbitset':
+              $condition = ($fieldValue & (1 << $value['value'])) > 0;
+              break;  
+            case 'cutifbitnotset':
+              $condition = ($fieldValue & (1 << $value['value'])) == 0;
+              break;                                  
           }
 
           // Checks if the field must be replaced
@@ -762,11 +779,12 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
     foreach ($this->xmlReferenceArray as $key => $value) {
       switch ($value['type']) {
         case 'replacealways':
-
 		      $fileName = $key . '.xml';
-		      
+      
           // Replaces markers in the template
           $buffer = ($this->isInUtf8() ? $value['template'] : utf8_decode($value['template']));
+					$buffer = str_replace('<none>', '', $buffer);
+					$buffer = str_replace('</none>', '', $buffer);					
           $buffer = $contentObject->substituteMarkerArrayCached(
             $buffer,
             $markers,
@@ -774,7 +792,7 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
             array()
           );        
 
-          if(!$this->replaceReferenceMarkers($filePath, $fileName, $buffer)) {
+          if(!$this->replaceReferenceMarkers($filePath, $fileName, $buffer, 'a')) {
             return FALSE;
           }
           break;
@@ -832,18 +850,18 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
 	 * @return	string		The processed template
 	 */  
   protected function processEmptyifsameaspreviousTemplate($key, $template) {
- 	
+
 		// Checks if we are postprocessing the template
-		if ($this->xmlReferenceArray[$key]['postprocessReplaceDistinct']) {
-			$previousFieldValue = $this->xmlReferenceArray[$key]['fieldValue'];
-			$fieldValue = $this->xmlReferenceArray[$key]['nextFieldValue'];
-			$nextFieldValue = '';
-		} else {
+//		if ($this->xmlReferenceArray[$key]['postprocessReplaceDistinct']) {
+//			$previousFieldValue = $this->xmlReferenceArray[$key]['fieldValue'];
+//			$fieldValue = $this->xmlReferenceArray[$key]['nextFieldValue'];
+//			$nextFieldValue = $fieldValue;
+//		} else {
 			$previousFieldValue = $this->xmlReferenceArray[$key]['previousFieldValue'];
 			$fieldValue = $this->xmlReferenceArray[$key]['fieldValue'];
 			$nextFieldValue = $this->xmlReferenceArray[$key]['nextFieldValue'];						
-		}
-		
+//		}
+	
 		// Cuts the value if the previous field is the same as the current one              	
     if ($previousFieldValue == $fieldValue) {	          		           			
        $buffer = preg_replace('/^(<[^>]+>)([^<]*)(<\/[^>]+>)$/', '$1$3', $template); 
@@ -856,8 +874,10 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
 		// Processes the rowsep if any (rowsep is set if the next field is different from the current one
 		if ($nextFieldValue != $fieldValue) {
 			$buffer = str_replace('rowsep="zeroIfSameAsPrevious"', 'rowsep="1"', $buffer);		
+      $this->xmlReferenceArray[$key]['rowsepValue'] = 1; 			
 		} else {
-			$buffer = str_replace('rowsep="zeroIfSameAsPrevious"', 'rowsep="0"', $buffer);				
+			$buffer = str_replace('rowsep="zeroIfSameAsPrevious"', 'rowsep="0"', $buffer);
+      $this->xmlReferenceArray[$key]['rowsepValue'] = 0; 									
 		}          			
    // Keeps the value in the XML reference array             			
    $this->xmlReferenceArray[$key]['previousFieldValue'] = $fieldValue;
@@ -877,6 +897,7 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
   	
   	// Gets the previous brother if any
   	$previousBrother = $this->getPreviousBrother($key, $this->xmlReferenceArray[$key]['type']);
+
 		// Checks if we are postprocessing the template
 		if (!empty($previousBrother)) {
 			
@@ -888,7 +909,7 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
 			} else {
 				$brotherFieldValue = $this->xmlReferenceArray[$previousBrother]['fieldValue'];
 				$brotherNextFieldValue = $this->xmlReferenceArray[$previousBrother]['nextFieldValue'];	
-				$fieldValue = $this->xmlReferenceArray[$key]['fieldValue'];									
+				$fieldValue = $this->xmlReferenceArray[$key]['fieldValue'];							
 			}
 			
 			// Cuts the value if the previous field is the same as the current one              	
@@ -896,15 +917,12 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
 	       $buffer = preg_replace('/^(<[^>]+>)([^<]*)(<\/[^>]+>)$/', '$1$3', $template);                     		          				
 	    } else {
 	       $buffer = $fieldValue;
-	    } 
-	          			
-			// Processes the rowsep if any (rowsep is set if the next field is different from the current one
-			if ($brotherNextFieldValue != $brotherFieldValue) {
-				$buffer = str_replace('rowsep="previousBrother"', 'rowsep="1"', $buffer);		
-			} else {
-				$buffer = str_replace('rowsep="previousBrother"', 'rowsep="0"', $buffer);			
-			}          			
-		  // Keeps the value in the XML reference array             			
+	    }           
+	    			
+			// Processes the rowsep 
+			$buffer = str_replace('rowsep="previousBrother"', 'rowsep="' . $this->xmlReferenceArray[$previousBrother]['rowsepValue'] . '"', $buffer);         			
+
+			// Keeps the value in the XML reference array             			
 		  $this->xmlReferenceArray[$key]['previousFieldValue'] = $fieldValue;
 		}
    	return $buffer;			
@@ -967,7 +985,7 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
 
           $fileName = $key . '.xml';
 
-          if(!$this->replaceReferenceMarkers($filePath, $fileName, $buffer, $utf8Encode, $altPattern)) {
+          if(!$this->replaceReferenceMarkers($filePath, $fileName, $buffer, 'w', $utf8Encode, $altPattern)) {
             return FALSE;
           }
           break;
@@ -1087,7 +1105,7 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
 	 *
 	 * @return	boolean		TRUE if OK
 	 */
-  protected function replaceReferenceMarkers($filePath, $fileName, $template, $utf8Encode = FALSE, $altPattern = '') {
+  protected function replaceReferenceMarkers($filePath, $fileName, $template, $mode = 'w', $utf8Encode = FALSE, $altPattern = '') {
 
   	// Gets the querier
   	$querier = $this->getController()->getQuerier();
@@ -1097,7 +1115,6 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
     $pattern = ($altPattern ? $altPattern : $pattern);
 
     if (preg_match_all($pattern, $template, $matches)) {
-
   		if ($fileHandle = fopen($filePath . $fileName, 'a')) {
         foreach($matches[0] as $matchKey => $match) {
 
@@ -1128,7 +1145,7 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
           // Removes the matched string from the template
           $template = str_replace($matches[0][$matchKey], '', $template);
         }
-      
+     
         // Writes the remaining template
         $template = ($utf8Encode ? utf8_encode($template): $template);        
         $template = $querier->parseConstantTags($template);
@@ -1141,7 +1158,7 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
         return Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.fileOpenError', array($fileName));
       }
     } else {
-    	if ($fileHandle = fopen($filePath . $fileName, 'w')) {    	
+    	if ($fileHandle = fopen($filePath . $fileName, $mode)) {    	
         $template = ($utf8Encode ? utf8_encode($template): $template);
         $template = $querier->parseConstantTags($template);            
         $template = $querier->parseLocalizationTags($template);        
@@ -1174,7 +1191,17 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
     if ($xml === FALSE) {
       return Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.incorrectXmlFile', array($fileName));
     }
-    
+  
+    // Gets the namespaces
+  	$this->namespaces = array();    
+  	$namespaces = $xml->getNamespaces(TRUE);
+
+		$this->namespaces[] = '';
+  	if(!empty($namespaces)) {
+	  	foreach($namespaces as $namespace)
+	  		$this->namespaces[] = $namespace;
+  	} 
+  
     if (!$this->processXmlTree($xml)) {
       return FALSE;
     }
@@ -1207,15 +1234,24 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
 	 * @return	array		Merged arrays
 	 */
   protected function processXmlTree($element) {
-
+ 	
     // Processes recursively all nodes
-    foreach ($element->children() as $child) {
-      if(!$this->processXmlTree($child)) {
-        return FALSE;
-      }
+    foreach($this->namespaces as $namespaceKey => $namespace) {
+	    foreach ($element->children($namespace) as $child) {
+	      if(!$this->processXmlTree($child)) {
+	        return FALSE;
+	      }
+	    }
     }
-
-    $attributes = $element->attributes();
+    
+    // Gets the attributes
+    $attributes = array();
+    foreach($this->namespaces as $namespaceKey => $namespace) {
+    	foreach($element->attributes($namespace) as $attribute) {
+				$attributes[$attribute->getName()] = (string)$attribute;
+    	}
+    }
+       
     if ((string) $attributes['sav_type']) {
       $reference = 'REF_' . (int)$this->referenceCounter++;
 
@@ -1244,7 +1280,7 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
         case 'cutifgreaterequal':
         case 'cutiflessequal':
           if (!$this->xmlReferenceArray[$reference]['id']) {
-            return Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.xmlIdMissing', array($this->xmlReferenceArray[$reference]['type']));;
+            return Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.xmlIdMissing', array($this->xmlReferenceArray[$reference]['type']));
           }
           break;
       }
@@ -1276,10 +1312,12 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
       }
 
       // Deletes all the children
-      foreach ($element->children() as $child) {
-        unset($element->$child);
+      foreach($this->namespaces as $namespaceKey => $namespace) {      
+	      foreach ($element->children($namespace) as $child) {
+	        unset($element->$child);
+	      }
       }
-
+      
       // Replaces the node by the reference or a special reference
       switch ($this->xmlReferenceArray[$reference]['type']) {
         default:
@@ -1314,6 +1352,7 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
       }
     }
     return TRUE;
+    
   }
 
 	/**
@@ -1328,7 +1367,7 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
 	protected function csvValues($row, $delim=',', $quote='"')	{
 		reset($row);
 		$out = array();
-		while(list(,$value)=each($row))	{
+		while(list(, $value)=each($row))	{
 // Modification to keep multiline information		
 //			list($valPart) = explode(chr(10),$value);
 //			$valPart = trim($valPart);
