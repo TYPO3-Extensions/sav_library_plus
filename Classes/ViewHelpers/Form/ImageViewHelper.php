@@ -1,4 +1,7 @@
 <?php
+namespace SAV\SavLibraryPlus\ViewHelpers\Form;
+
+use \TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "Fluid".                      *
@@ -43,7 +46,7 @@
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
-class Tx_SavLibraryPlus_ViewHelpers_Form_ImageViewHelper extends Tx_Fluid_ViewHelpers_Form_AbstractFormFieldViewHelper {
+class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\Form\AbstractFormFieldViewHelper {
 
 	
 	/**
@@ -77,7 +80,7 @@ class Tx_SavLibraryPlus_ViewHelpers_Form_ImageViewHelper extends Tx_Fluid_ViewHe
 	 */
 	public function render($src) {
 
-    $name = Tx_SavLibraryPlus_Controller_AbstractController::getFormName() . '[' . $this->arguments['name'] . ']';
+    $name = \SAV\SavLibraryPlus\Controller\AbstractController::getFormName() . '[' . $this->arguments['name'] . ']';
 		$this->tag->addAttribute('type', 'image');
 		$this->tag->addAttribute('src', $src);
 		$this->tag->addAttribute('name', $name);

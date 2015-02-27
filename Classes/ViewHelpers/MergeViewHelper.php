@@ -1,4 +1,7 @@
 <?php
+namespace SAV\SavLibraryPlus\ViewHelpers;
+
+use \TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -19,7 +22,7 @@
  * @package SavLibraryMvc
  * @version $Id:
  */
-class Tx_SavLibraryPlus_ViewHelpers_MergeViewHelper extends Tx_Fluid_Core_ViewHelper_AbstractViewHelper {
+class MergeViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper {
 
   /**
    * @param array $argument1 Argument

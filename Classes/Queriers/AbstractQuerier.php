@@ -1,4 +1,8 @@
 <?php
+namespace SAV\SavLibraryPlus\Queriers;
+
+use \TYPO3\CMS\Core\Utility\GeneralUtility;
+
 /***************************************************************
 *  Copyright notice
 *
@@ -29,19 +33,19 @@
  * @version $ID:$
  */
  
-abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
+abstract class AbstractQuerier {
 
   /**
    * The controller
    *
-   * @var Tx_SavLibraryPlus_Controller_Controller
+   * @var \SAV\SavLibraryPlus\Controller\Controller
    */
   private $controller;
   
   /**
    * The query configuration manager
    *
-   * @var Tx_SavLibraryPlus_Managers_QueryConfigurationManager
+   * @var \SAV\SavLibraryPlus\Managers\QueryConfigurationManager
    */
   protected $queryConfigurationManager;
   
@@ -53,11 +57,18 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
   protected $resource;
 
   /**
-   * The array of field object
+   * The array of field objects
    *
    * @var array
    */
   protected $fieldObjects = array();  
+
+  /**
+   * The array of localized tables
+   *
+   * @var array
+   */
+  protected $localizedTables = array();   
   
   /**
    * The rows
@@ -86,13 +97,6 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
    * @var array
    */
   protected $queryParameters = array();
-  
-  /**
-   * The table aliases
-   *
-   * @var array
-   */
-  protected $tableAliases = array();
 
   /**
    * The query configuration
@@ -104,14 +108,14 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
   /**
    * The parent querier
    *
-   * @var Tx_SavLibraryPlus_Queriers_AbstractQuerier
+   * @var \SAV\SavLibraryPlus\Queriers\AbstractQuerier
    */
   protected $parentQuerier = NULL;  
   
   /**
    * The update querier
    *
-   * @var Tx_SavLibraryPlus_Queriers_UpdateQuerier
+   * @var \SAV\SavLibraryPlus\Queriers\UpdateQuerier
    */
   protected $updateQuerier = NULL;
   
@@ -127,17 +131,33 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
    *
    * @var array
    */
-  protected $additionalMarkers = array();  
+  protected $additionalMarkers = array(); 
+  
+  /**
+   * Constructor
+   *
+   * @param none
+   *
+   * @return none
+   */
+  public function __construct() {
+  	// Creates the query configuration manager
+    $this->queryConfigurationManager = GeneralUtility::makeInstance('SAV\\SavLibraryPlus\\Managers\\QueryConfigurationManager');
+  }  
   
 	/**
 	 * Injects the controller
 	 *
-	 * @param Tx_SavLibraryPlus_Controller_AbstractController $controller The controller
+	 * @param \SAV\SavLibraryPlus\Controller\AbstractController $controller The controller
 	 *
 	 * @return  none
 	 */
   public function injectController($controller) {
     $this->controller = $controller;
+    $this->queryConfigurationManager->injectController($controller);  
+    if ($controller->getQuerier() !== $this) {
+    	$this->parentQuerier = $controller->getQuerier();    	   	
+    }  	
   }
   
 	/**
@@ -149,7 +169,6 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
 	 */
   public function injectQueryConfiguration() {
 
-    $this->queryConfigurationManager = t3lib_div::makeInstance('Tx_SavLibraryPlus_Managers_QueryConfigurationManager');
     if ($this->queryConfiguration === NULL) {
       // Sets the query configuration manager
       $libraryConfigurationManager = $this->getController()->getLibraryConfigurationManager();
@@ -163,7 +182,7 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
 	/**
 	 * Injects the parent querier
 	 *
-	 * @param Tx_SavLibraryPlus_Queriers_AbstractQuerier $parentQuerier
+	 * @param \SAV\SavLibraryPlus\Queriers\AbstractQuerier $parentQuerier
 	 *
 	 * @return  none
 	 */
@@ -174,7 +193,7 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
 	/**
 	 * Injects the update querier
 	 *
-	 * @param Tx_SavLibraryPlus_Queriers_UpdateQuerier $updateQuerier
+	 * @param \SAV\SavLibraryPlus\Queriers\UpdateQuerier $updateQuerier
 	 *
 	 * @return  none
 	 */
@@ -240,7 +259,7 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
    */  
   protected function clearPagesCache() {
   	// if the plugin type is not USER, the cache has not to be cleared
-		if (Tx_SavLibraryPlus_Managers_ExtensionConfigurationManager::isUserPlugin() === FALSE) {
+		if (\SAV\SavLibraryPlus\Managers\ExtensionConfigurationManager::isUserPlugin() === FALSE) {
 			return;
 		}	
 		
@@ -378,6 +397,7 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
   public function getFieldValue($fieldName) {
   	// Gets the querier where the field exists, if it exists
   	$querier = $this;
+	
   	while (!$querier->fieldExistsInCurrentRow($fieldName) && $querier->parentQuerier !== NULL) {
   		$querier = $querier->getParentQuerier();
   	}
@@ -436,7 +456,7 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
 	 *
 	 * @param none
 	 *
-	 * @return Tx_SavLibraryPlus_Controller_AbstractController
+	 * @return \SAV\SavLibraryPlus\Controller\AbstractController
 	 */
   public function getController() {
     return $this->controller;
@@ -447,7 +467,7 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
 	 *
 	 * @param none
 	 *
-	 * @return Tx_SavLibraryPlus_Queriers_AbstractQuerier 
+	 * @return \SAV\SavLibraryPlus\Queriers\AbstractQuerier 
 	 */
   public function getParentQuerier() {
     return $this->parentQuerier;
@@ -458,7 +478,7 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
 	 *
 	 * @param none
 	 *
-	 * @return Tx_SavLibraryPlus_Queriers_UpdateQuerier 
+	 * @return \SAV\SavLibraryPlus\Queriers\UpdateQuerier 
 	 */
   public function getUpdateQuerier() {
     return $this->updateQuerier;
@@ -490,8 +510,8 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
 	 */	
 	public function getFieldValueFromProcessedPostVariables($fullFieldName) {
 		$uid = $this->getFieldValueFromCurrentRow(preg_replace('/\.\w+$/', '.uid', $fullFieldName));
-		if ($uid === NULL && $this->getUpdateQuerier()->isNewRecord()) {
-			$uid = 0;
+		if ($this->getUpdateQuerier()->isNewRecord()) {
+		  $uid = 0;
 		}
     $processedPostVariable = $this->getUpdateQuerier()->getProcessedPostVariable($fullFieldName, $uid);
     $value = $processedPostVariable['value'];
@@ -508,7 +528,7 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
 	 */	
 	public function getFieldErrorCodeFromProcessedPostVariables($fullFieldName) {
 		$uid = $this->getFieldValueFromCurrentRow(preg_replace('/\.\w+$/', '.uid', $fullFieldName));
-		if ($uid === NULL && $this->getUpdateQuerier()->isNewRecord()) {
+    if ($this->getUpdateQuerier()->isNewRecord()) {
 			$uid = 0;
 		}		
     $processedPostVariable = $this->getUpdateQuerier()->getProcessedPostVariable($fullFieldName, $uid);
@@ -519,7 +539,7 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
 	/**
 	 * Gets the query configuration manager
 	 *
-	 * @return Tx_SavLibraryPlus_Managers_QueryConfigurationManager
+	 * @return \SAV\SavLibraryPlus\Managers\QueryConfigurationManager
 	 */
   public function getQueryConfigurationManager() {
     return $this->queryConfigurationManager;
@@ -544,7 +564,11 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
   protected function buildSelectClause() {
     $selectClause = $this->queryConfigurationManager->getSelectClause();
     $aliases = $this->queryConfigurationManager->getAliases();
-    $selectClause .= $this->replaceTableNames($aliases ? ', ' . $aliases : '');
+    $selectClause .= ($aliases ? ', ' . $aliases : '');
+ 		$selectClause = $this->processWhereClauseTags($selectClause);   	
+  	$selectClause = $this->parseLocalizationTags($selectClause);
+  	$selectClause = $this->parseFieldTags($selectClause);    
+	
     return $selectClause;
   }
 
@@ -554,7 +578,22 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
 	 * @return string
 	 */
   protected function buildFromClause() {
-    return $this->buildTableReferences();
+  	// Gets the main table
+  	$fromClause = $this->queryConfigurationManager->getMainTable();
+    
+  	// Adds the foreign table
+    // Checks that the 'tableForeign' start either by LEFT JOIN, INNER JOIN or RIGHT JOIN or a comma
+    $foreignTables = $this->getQueryConfigurationManager()->getForeignTables();
+    if (empty($foreignTables) === FALSE) {
+    	$foreignTables = $this->parseFieldTags($foreignTables);    	
+      if (!preg_match('/^[\s]*(?i)(,|inner join|left join|right join)\s?([^\s]*)/', $foreignTables, $match)) {
+				\SAV\SavLibraryPlus\Controller\FlashMessages::addError('error.incorrectQueryForeignTable');
+      } else {
+        $fromClause = '(' . $fromClause . ') ' . $foreignTables;
+      }
+    }
+    
+    return $fromClause;
   }
   
 	/**
@@ -847,7 +886,7 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
 	protected function addToPageIdentifiersToClearInCache($tableName, $uid) {
 		
 		// if the plugin type is not USER, the cache has not to be clerared
-		if(Tx_SavLibraryPlus_Managers_ExtensionConfigurationManager::isUserPlugin() === FALSE) {
+		if(\SAV\SavLibraryPlus\Managers\ExtensionConfigurationManager::isUserPlugin() === FALSE) {
 			return;
 		}
 		
@@ -874,224 +913,6 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
 		}
 	} 
   
-	/**
-	 * Builds the table references (from part) of the query
- 	 *
-	 * @return string (the tables with their left join fields )
-	 */
-  public function buildTableReferences() {
-
-  	// Initializes the table aliases
-    $this->tableAliases = array();
-    
-    // Loads the main table configuration
-    $mainTable = $this->queryConfigurationManager->getMainTable();
-    $this->addNewTableAlias($mainTable);
-    
-    // Gets the TCA columns of the main table
-		$tcaColumnsMainTable = Tx_SavLibraryPlus_Managers_TcaConfigurationManager::getTcaColumns($mainTable);
-	
-		// Processes the main table columns
-		if (is_array($tcaColumnsMainTable)) {		
-
-			$mainTableConfigurationArray = array();			
-			foreach ($tcaColumnsMainTable as $mainTableFieldKey => $mainTableField) {
-				// Builds the field configuration array
-				$fieldConfigurationArray = $this->buildFieldConfigurationArray($mainTable, $mainTableFieldKey, $mainTableField);
-				
-				// Merges it to the main table configuration array
-				$mainTableConfigurationArray = array_merge($mainTableConfigurationArray, $fieldConfigurationArray);      				
-			}		
-		} else {
-			throw new Tx_SavLibraryPlus_Exception(Tx_SavLibraryPlus_Controller_FlashMessages::translate('fatal.incorrectTCA'));
-    }	
-
-    // Adds the columns for existing tables.
-    $externalTcaConfiguration = $this->getController()->getLibraryConfigurationManager()->getExternalTcaConfiguration();  
-    if (is_array($externalTcaConfiguration)) {
-			$externalTableReferences = '';
-    	foreach($externalTcaConfiguration as $tableKey => $table) {
-
-    		$externalTableConfigurationArray = array();    		
-
-    		// Processes the table
-    		foreach($table as $fieldKey => $field) {
-    			
-					// Builds the field configuration array
-					$fieldConfigurationArray = $this->buildFieldConfigurationArray($tableKey, $fieldKey, $field);
-    			
-					// Merges it either to the external or the main table configuration array
-    			if ($tableKey != $mainTable){ 
-	          $externalTableConfigurationArray = array_merge($externalTableConfigurationArray, $fieldConfigurationArray);        
-    			} else {
-	          $mainTableConfigurationArray = array_merge($mainTableConfigurationArray, $fieldConfigurationArray);    			
-	    		}
-    		}
- 		
-	      // builds the external tables references
-    		if ($tableKey != $mainTable){ 	          
-    			$this->addNewTableAlias($tableKey);  				
-    			$externalTableReferences .= ', ' . $this->buildTableReferencesFromTca($this->getTableAliasDefinition($tableKey), $fieldConfigurationArray);        
-    		}
-    	}
-    }
-
-    // Builds the references for the main table   
-    $mainTableReferences = $this->buildTableReferencesFromTca($mainTable, $mainTableConfigurationArray); 
-
-    // Builds the table references
-    $tableReferences = $mainTableReferences . $externalTableReferences;
-      
-    // Adds the foreign table
-    // Checks that the 'tableForeign' start either by LEFT JOIN, INNER JOIN or RIGHT JOIN or a comma
-    $foreignTables = $this->getQueryConfigurationManager()->getForeignTables();
-    if (empty($foreignTables) === FALSE) {
-    	$foreignTables = $this->parseFieldTags($foreignTables);    	
-      if (!preg_match('/^[\s]*(?i)(,|inner join|left join|right join)\s?([^\s]*)/', $foreignTables, $match)) {
-				Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.incorrectQueryForeignTable');
-      } else {
-        $tableReferences = '(' . $tableReferences . ')' . $foreignTables;
-      }
-    }
-
-    return $tableReferences;
-  }
-  
-  /**
-	 * Builds the field configuration array with subform fields, if any 
-	 *
-   * @param string $tableName Table name
-   * @param string $fieldName Field name
-   * @param array $fieldConfiguration Field configuration
- 	 *
-	 * @return array 
-	 */
-	protected function buildFieldConfigurationArray($tableName, $fieldName, $fieldConfiguration) {
-		// Builds the full field name
-		$fullFieldName = $tableName . '.' . $fieldName;
-					
-		// Sets the field configuration
-		$fieldConfigurationArray[$fullFieldName] = $fieldConfiguration;
-		$fieldConfigurationArray[$fullFieldName]['mainTable'] = $tableName;  
-		$fieldConfigurationArray[$fullFieldName]['fieldName'] = $fieldName;					      					
-				
-		// Checks if there is a subform
-    if ($fieldConfiguration['config']['type'] == 'inline' && !$fieldConfiguration['config']['norelation']) {
-      // Gets the TCA columns of the foreign table
-      $foreignTable = $fieldConfiguration['config']['foreign_table'];
-      $tcaColumnsForeignTable = Tx_SavLibraryPlus_Managers_TcaConfigurationManager::getTcaColumns($foreignTable);
-          
-      // Processes the foreign table columns
-      if (is_array($tcaColumnsForeignTable)) {
-        foreach ($tcaColumnsForeignTable as $foreignTableFieldKey => $foreignTableField) {
-					// Builds the full field name            	
-          $fullFieldName = $foreignTable . '.' . $foreignTableFieldKey;
-            	
-          // Sets the field configuration
-          $fieldConfigurationArray[$fullFieldName] = $foreignTableField;
-					$fieldConfigurationArray[$fullFieldName]['mainTable'] = $foreignTable;
-					$fieldConfigurationArray[$fullFieldName]['fieldName'] = $foreignTableFieldKey;
-        }
-      } 
-		}
-
-		return $fieldConfigurationArray;
-	}      
-  
-	/**
-	 * Builds references from TCA
-	 *
-   * @param string $tableName Table name
-   * @param array $tableConfigurationArray Table configuration array
- 	 *
-	 * @return string 
-	 */
-	protected function buildTableReferencesFromTca($tableName, $tableConfigurationArray) {
-		$tableReferences  = '(' . $tableName;
-		
-	  // Builds the reference
-    foreach ($tableConfigurationArray as $fieldKey => $field) {
-    
-      // Gets the config part of the TCA array
-      $configuration = $field['config'];
-
-      if ($configuration['type'] == 'inline' && !$configuration['norelation']) {
-        $this->addNewTableAlias($configuration['MM']);
-        $this->addNewTableAlias($configuration['foreign_table']);
-        $tableReferences .= ' LEFT JOIN ' . $this->getTableAliasDefinition($configuration['MM']) .
-          ' ON (' .  $this->getTableAlias($configuration['MM']) . '.uid_local=' . $field['mainTable'] . '.uid) LEFT JOIN ' . $this->getTableAliasDefinition($configuration['foreign_table']) . ' ON (' .  $this->getTableAlias($configuration['MM']) . '.uid_foreign=' .  $this->getTableAlias($configuration['foreign_table']) . '.uid)';
-      } elseif ($configuration['type'] == 'select') {
-        if ($configuration['MM']) {
-          // MM table
-          $this->addNewTableAlias($configuration['MM']);
-          $this->addNewTableAlias($configuration['foreign_table']);
-          $tableReferences .= ' LEFT JOIN ' . $this->getTableAliasDefinition($configuration['MM']) .
-            ' ON (' .  $this->getTableAlias($configuration['MM']) . '.uid_local=' . $field['mainTable'] . '.uid) LEFT JOIN ' . $this->getTableAliasDefinition($configuration['foreign_table']) . ' ON (' .  $this->getTableAlias($configuration['MM']) . '.uid_foreign=' .  $this->getTableAlias($configuration['foreign_table']) . '.uid)';
-        } elseif ($configuration['foreign_table']) {
-          $this->addNewTableAlias($configuration['foreign_table']);
-          // Checks if there is a comma-separated MM relation
-          if ($configuration['maxitems'] > 1) {
-           $tableReferences .= ' LEFT JOIN ' . $this->getTableAliasDefinition($configuration['foreign_table']) .
-            ' ON (FIND_IN_SET(' . $this->getTableAlias($configuration['foreign_table']) . '.uid, ' . $field['mainTable'] . '.' . $field['fieldName'] . ')>0)';
-          } else {
-          $tableReferences .= ' LEFT JOIN ' . $this->getTableAliasDefinition($configuration['foreign_table']) .
-            ' ON (' . $this->getTableAlias($configuration['foreign_table']) . '.uid=' . $field['mainTable'] . '.' . $field['fieldName'] . ')';
-          }
-        }
-      }     
-    }
-    return $tableReferences . ')';  
-	}  
-	
-	/**
-	 * Adds a new table alias
-	 *
-   * @param $tableName string (table name)
- 	 *
-	 * @return none
-	 */
-  protected function addNewTableAlias($tableName) {
-    if (isset($this->tableAliases[$tableName])) {
-      $this->tableAliases[$tableName] = $this->tableAliases[$tableName] + 1;
-    } else {
-      $this->tableAliases[$tableName] = 1;
-    }
-  }
-  
-	/**
-	 * Gets an alias definition for a table
-	 *
-   * @param $tableName string (table name)
- 	 *
-	 * @return string
-	 */  
-  protected function getTableAliasDefinition($tableName) {
-    if (isset($tableName) === FALSE) {
-			throw new Tx_SavLibraryPlus_Exception(Tx_SavLibraryPlus_Controller_FlashMessages::translate('fatal.incorrectConfiguration') . ' Tx_SavLibraryPlus_Queriers_AbstractQuerier->getTableAliasDefinition(' . $tableName . ')');
-    } elseif ($this->tableAliases[$tableName] == 1) {
-      return $tableName;
-    } else {
-      return $tableName . ' AS ' . $tableName . '_' . $this->tableAliases[$tableName];
-    }
-  }
-  
- 	/**
-	 * Gets an alias for a table
-	 *
-   * @param $tableName string (table name)
- 	 *
-	 * @return string
-	 */   
-  protected function getTableAlias($tableName) {
-    if (isset($tableName) === FALSE) {
-			throw new Tx_SavLibraryPlus_Exception(Tx_SavLibraryPlus_Controller_FlashMessages::translate('fatal.incorrectConfiguration') . ' Tx_SavLibraryPlus_Queriers_AbstractQuerier->getTableAlias(' . $tableName . ')');
-    } elseif ($this->tableAliases[$tableName] == 1) {
-      return $tableName;
-    } else {
-      return $tableName . '_' . $this->tableAliases[$tableName];
-    }
-  }
-
 	/**
 	 * Gets allowed Pages from the starting point and the storage page
 	 *
@@ -1123,6 +944,18 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
     }
   }
 
+	/**
+	 * Builds the record localization WHERE condition
+	 *
+   * @param string $tableName The table name
+ 	 *
+	 * @return string
+	 */
+	public function buildRecordLocalizationCondition() {
+		$languageUid = $GLOBALS['TSFE']->sys_language_uid;
+		
+	}    
+  
 	/**
 	 * Parses contant tags
 	 *
@@ -1181,7 +1014,7 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
             // Found in locallang_db.xml file, replaces it
             $value = str_replace($matches[0][$matchKey], $label, $value);
           } elseif ($reportError === TRUE) {
-            Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.missingLabel', array($match));
+            \SAV\SavLibraryPlus\Controller\FlashMessages::addError('error.missingLabel', array($match));
           } else {
       			$value = str_replace($matches[0][$matchKey], $matches[1][$matchKey], $value);
       		}
@@ -1192,12 +1025,12 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
     // Checks if the label is in the locallang.xml file
     preg_match_all('/\$\$\$([^\$]+)\$\$\$/', $value, $matches);
     foreach ($matches[1] as $matchKey => $match) {
-      $label = Tx_Extbase_Utility_Localization::translate($match, $extensionKey);
+      $label = \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($match, $extensionKey);
       if (!empty($label)) {
         // Found in locallang.xml file, replaces it
         $value = str_replace($matches[0][$matchKey], $label, $value);
       } elseif ($reportError === TRUE) {
-        Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.missingLabel', array($match));
+        \SAV\SavLibraryPlus\Controller\FlashMessages::addError('error.missingLabel', array($match));
       } else {
       	$value = str_replace($matches[0][$matchKey], $matches[1][$matchKey], $value);
       }
@@ -1227,11 +1060,11 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
   	// Initaializes the markers
   	$markers = $this->buildSpecialMarkers();
   	$markers = array_merge($markers, $this->additionalMarkers);
- 	
+
 		// Processes special tags
     $markers['###linkToPage###'] = str_replace(
       '<a href="',
-      '<a href="' . t3lib_div::getIndpEnv('TYPO3_SITE_URL'),
+      '<a href="' . GeneralUtility::getIndpEnv('TYPO3_SITE_URL'),
       $extension->pi_linkToPage('', $GLOBALS['TSFE']->id)
     );  	
     // Compatiblity with SAV Library
@@ -1245,7 +1078,7 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
 
     foreach ($matches['fullFieldName'] as $matchKey => $match) {
     	$fullFieldName = NULL;
-    	if (array_key_exists($matches[0][$matchKey], $markers) && ($matches[0][$matchKey]!='###uid###' || ($this->getController()->getQuerier() instanceof Tx_SavLibraryPlus_Queriers_UpdateQuerier))) {
+    	if (array_key_exists($matches[0][$matchKey], $markers) && ($matches[0][$matchKey]!='###uid###' || ($this->getController()->getQuerier() instanceof \SAV\SavLibraryPlus\Queriers\UpdateQuerier))) {
       		// Already in the markers array
       		continue;
     	} elseif ($matches['fieldName'][$matchKey]) {
@@ -1265,17 +1098,19 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
           continue;
       	} 
       }
-     
+ 
       // Special Processing when the full field name is not found
       if ($fullFieldName === NULL) {
-      	if ($this->getController()->getViewer() instanceof Tx_SavLibraryPlus_Viewers_NewViewer) {
+      	if ($this->getController()->getViewer() instanceof \SAV\SavLibraryPlus\Viewers\NewViewer ||
+      	  ($this->getController()->getViewer() instanceof \SAV\SavLibraryPlus\Viewers\SubformEditViewer &&  $this->getController()->getViewer()->isNewView())
+      	) {     	  
       		// In new view, it may occur that markers are used, in reqValue for example. The markers are replaced by 0.
         	$markers[$matches[0][$matchKey]] = '0'; 
          	continue;        	     		    		
-      	} elseif ($this->getController()->getQuerier() instanceof Tx_SavLibraryPlus_Queriers_UpdateQuerier) {
+      	} elseif ($this->getController()->getQuerier() instanceof \SAV\SavLibraryPlus\Queriers\UpdateQuerier) {
       		// In an update, it may occur that markers are used, in reqValue for example.
       		$fullFieldName = $this->getController()->getQuerier()->buildFullFieldname($matches['fullFieldName'][$matchKey]);
-      		$cryptedFullFieldName = Tx_SavLibraryPlus_Controller_AbstractController::cryptTag($fullFieldName); 
+      		$cryptedFullFieldName = \SAV\SavLibraryPlus\Controller\AbstractController::cryptTag($fullFieldName); 
       		if ($this->getController()->getQuerier()->fieldExistsInPostVariable($cryptedFullFieldName)) {
       			// Replaces the marker by the current value in the post variable
       			$markers[$matches[0][$matchKey]] = $this->getController()->getQuerier()->getPostVariable($cryptedFullFieldName);
@@ -1286,7 +1121,7 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
       		continue;
       	} elseif ($reportError === TRUE) { 
           // Unknown marker
-          Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.unknownMarker', array($matches[0][$matchKey]));
+          \SAV\SavLibraryPlus\Controller\FlashMessages::addError('error.unknownMarker', array($matches[0][$matchKey]));
          continue;
         } else {
         	// Error is not reported and the value is unchanged
@@ -1298,9 +1133,9 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
       // Sets the marker either by rendering the field from the single view configuration or directly from the database
       if ($matches['render'][$matchKey]) {  
     		// Renders the field based on the TCA configuration as it would be rendered in a single view
-    		$fieldKey = Tx_SavLibraryPlus_Controller_AbstractController::cryptTag($fullFieldName);
+    		$fieldKey = \SAV\SavLibraryPlus\Controller\AbstractController::cryptTag($fullFieldName);
     		$basicFieldConfiguration = $this->getController()->getLibraryConfigurationManager()->searchBasicFieldConfiguration($fieldKey);    		
-    		$fieldConfiguration = Tx_SavLibraryPlus_Managers_TcaConfigurationManager::getTcaConfigFieldFromFullFieldName($fullFieldName);
+    		$fieldConfiguration = \SAV\SavLibraryPlus\Managers\TcaConfigurationManager::getTcaConfigFieldFromFullFieldName($fullFieldName);
   		
     		// Adds the basic configuration if found
     		if (is_array($basicFieldConfiguration)) {
@@ -1321,8 +1156,8 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
     		$fieldConfiguration['value'] = $this->getFieldValue($fullFieldName);  
   		
 				// Calls the item viewer 		
-      	$className = 'Tx_SavLibraryPlus_ItemViewers_Default_' . $fieldConfiguration['fieldType'] . 'ItemViewer';
-      	$itemViewer = t3lib_div::makeInstance($className);
+      	$className = 'SAV\\SavLibraryPlus\\ItemViewers\\General\\' . $fieldConfiguration['fieldType'] . 'ItemViewer';
+      	$itemViewer = GeneralUtility::makeInstance($className);
       	$itemViewer->injectController($this->getController());
       	$itemViewer->injectItemConfiguration($fieldConfiguration);        	
       	$markers[$matches[0][$matchKey]] = $itemViewer->render();    
@@ -1362,6 +1197,7 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
     
 		// Processes the ###group_list### tag
     if (preg_match_all('/###group_list\s*([!]?)=([^#]*)###/', $whereClause, $matches)) {
+
       foreach ($matches[2] as $matchKey => $match) {
         $groups = explode (',', str_replace(' ', '', $match)); 
         $clause = '';    
@@ -1387,7 +1223,7 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
             }        
           }     
         }
-    
+  
         // Replaces the tag
         if ($matches[1][$matchKey] == '!') {
           $whereClause = preg_replace(
@@ -1413,19 +1249,19 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
         preg_match('/([^\(]+)(?:\(([^\)]*)\)){0,1}/', $match, $matchFunctions);
         
         $conditionFunction = $matchFunctions[1];
-        if ($conditionFunction && method_exists('Tx_SavLibraryPlus_Utility_Conditions', $conditionFunction)) {
+        if ($conditionFunction && method_exists('\SAV\SavLibraryPlus\Utility\Conditions', $conditionFunction)) {
           // Checks if there is one parameter
           if ($matchFunctions[2]) {
-            if (Tx_SavLibraryPlus_Utility_Conditions::$conditionFunction($matchFunctions[2])) {
+            if (\SAV\SavLibraryPlus\Utility\Conditions::$conditionFunction($matchFunctions[2])) {
               $replace .= ' AND ' . $matches[2][$matchKey];
             }          
           } else {
-            if (Tx_SavLibraryPlus_Utility_Conditions::$conditionFunction()) {
+            if (\SAV\SavLibraryPlus\Utility\Conditions::$conditionFunction()) {
               $replace .= ' AND ' . $matches[2][$matchKey];
             }
           }
         } else {
-          Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.unknownFunctionInWhere', array($matchFunc[1]));
+          \SAV\SavLibraryPlus\Controller\FlashMessages::addError('error.unknownFunctionInWhere', array($matchFunc[1]));
         }       
 
         $whereClause = preg_replace('/###[^:]+:[^#]+###/', $replace, $whereClause);
@@ -1444,10 +1280,12 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
   protected function buildSpecialMarkers() {
 
     // ###uid### marker
-    $markers['###uid###'] = Tx_SavLibraryPlus_Managers_UriManager::getUid();   
+    $markers['###uid###'] = (is_object($this->getController()->getViewer()) && $this->getController()->getViewer()->getViewType()=='ListView' ? 
+    	$this->getFieldValueFromCurrentRow('uid') :
+    	\SAV\SavLibraryPlus\Managers\UriManager::getUid());   
     
     // ###uidMainTable
-    $markers['###uidMainTable###'] = Tx_SavLibraryPlus_Managers_UriManager::getUid(); 
+    $markers['###uidMainTable###'] = $markers['###uid###']; 
     
     // ###user### marker
     $markers['###user###'] = $GLOBALS['TSFE']->fe_user->user['uid'];
@@ -1474,34 +1312,6 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
   }  
   
 	/**
-	 * Replaces table names by their alias
-	 *
-   * @param $x string (string to process)
- 	 *
-	 * @return string (result)
-	 */
-  public function replaceTableNames($x) {
-
-    preg_match_all('/([^(\. =0-9]+)([0-9]*)\./', $x, $matches);
-
-    if ($matches[1]) {
-      foreach($matches[1] as $key=>$match) {
-        if ($matches[2][$key]) {
-          if ($this->aliasTable[$match.$matches[2][$key]]) {
-            $x = str_replace(
-              $matches[0][$key],
-              $this->aliasTable[$match . $matches[2][$key]] . '.',
-              $x
-            );
-          }
-        }
-      }
-    }
-
-    return $x;
-  }
-
-	/**
 	 * Sets the rows
 	 *
 	 * @param none
@@ -1511,12 +1321,88 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
   protected function setRows() {
     $counter = 0;
     $this->rows = array();
+    $tablesForOverlay = array();
 		while ($row = $this->getRowWithFullFieldNames($counter++)) {
-			$this->rows[] = $row;
+			foreach($row as $tableName => $fields) {
+				if (empty($tableName)) {
+					$this->rows[] = $fields;
+				} else {
+					$tablesForOverlay[$tableName][] = $fields;
+				}
+			}
 		}
 		$GLOBALS['TYPO3_DB']->sql_free_result($this->resource);
-  }
 
+		// Processes the tables which must be overlayed		
+		foreach($tablesForOverlay as $tableKey => $rows) {
+			$overlayedRows = $this->doLanguageAndWorkspaceOverlay($tableKey, $rows);					
+			foreach($overlayedRows as $rowKey => $row) {
+				foreach($row as $fieldKey => $field) {
+					$this->rows[$rowKey][$tableKey . '.' . $fieldKey] = $field;					
+				}
+			}
+		}
+  }
+  
+	/**
+	 * Function adapted from Tx_Extbase_Persistence_Storage_Typo3DbBackend
+	 *  
+	 * Performs workspace and language overlay on the given row array. The language and workspace id is automatically
+	 * detected (depending on FE or BE context). You can also explicitly set the language/workspace id.
+	 *
+	 * @param string $tableName The tableName)
+	 * @param array $row The row array (as reference)
+	 * @param string $languageUid The language id
+	 * @param string $workspaceUidUid The workspace id
+	 * @return void
+	 */
+	protected function doLanguageAndWorkspaceOverlay($tableName, array &$rows, $languageUid = NULL, $workspaceUid = NULL) {
+		$overlayedRows = array();
+		foreach ($rows as $row) {
+			if (!($pageSelectObject instanceof \TYPO3\CMS\Frontend\Page\PageRepository)) {
+				if (TYPO3_MODE == 'FE') {
+					if (is_object($GLOBALS['TSFE'])) {
+						$pageSelectObject = $GLOBALS['TSFE']->sys_page;
+					} else {
+						$pageSelectObject = GeneralUtility::makeInstance('TYPO3\\CMS\\Frontend\\Page\\PageRepository');
+					}
+				} else {
+					$pageSelectObject = GeneralUtility::makeInstance( 'TYPO3\\CMS\\Frontend\\Page\\PageRepository' );
+				}
+			}
+			if (is_object($GLOBALS['TSFE'])) {
+				if ($languageUid === NULL) {
+					$languageUid = $GLOBALS['TSFE']->sys_language_uid;
+					$languageMode = $GLOBALS['TSFE']->sys_language_mode;
+				}
+				if ($workspaceUid !== NULL) {
+					$pageSelectObject->versioningWorkspaceId = $workspaceUid;
+				}
+			} else {
+				if ($languageUid === NULL) {
+					$languageUid = intval(GeneralUtility::_GP('L'));
+				}
+				if ($workspaceUid === NULL) {
+					$workspaceUid = $GLOBALS['BE_USER']->workspace;
+				}
+				$pageSelectObject->versioningWorkspaceId = $workspaceUid;
+			}
+			$pageSelectObject->versionOL($tableName, $row, TRUE);
+			if ($tableName == 'pages') {
+				$row = $pageSelectObject->getPageOverlay($row, $languageUid);
+			} elseif (\SAV\SavLibraryPlus\Managers\TcaConfigurationManager::isLocalized($tableName)) {
+				if (in_array($row[\SAV\SavLibraryPlus\Managers\TcaConfigurationManager::getTcaCtrlField($tableName, 'languageField')], array(-1,0))) {
+					$overlayMode = ($languageMode === 'strict') ? 'hideNonTranslated' : '';				
+					$row = $pageSelectObject->getRecordOverlay($tableName, $row, $languageUid, $overlayMode);
+				}
+			}
+			if ($row !== NULL && is_array($row)) {
+				$overlayedRows[] = $row;
+			}
+		}
+		return $overlayedRows;
+	}
+  
 	/**
 	 * Reads rows and return an array with the tablenames
 	 *
@@ -1524,34 +1410,53 @@ abstract class Tx_SavLibraryPlus_Queriers_AbstractQuerier {
  	 *
 	 * @return array or boolean
 	 */
-  protected function getRowWithFullFieldNames($rowCounter = 0) {
-
+  protected function getRowWithFullFieldNames($rowCounter = 0, $overlay = TRUE) {
+  
+		// Gets the row
 		$row = $GLOBALS['TYPO3_DB']->sql_fetch_row($this->resource);
-
     if ($row) {
+    	$result = array();
     	
+    	// Gets the fields objects once
+      if ($rowCounter == 0) {
+      	foreach($row as $fieldKey => $field) {
+    		  $this->fieldObjects[$fieldKey] = \SAV\SavLibraryPlus\Compatibility\Database\DatabaseConnection::fetchField($this->resource, $fieldKey);
+      		$tableName = $this->fieldObjects[$fieldKey]->table;
+    		  if (!empty($tableName) && $this->localizedTables[$tableName] !== TRUE && \SAV\SavLibraryPlus\Managers\TcaConfigurationManager::isLocalized($tableName)) {
+    		  	$this->localizedTables[$tableName] = TRUE;
+    			}
+      	}       	
+      }    	
+ 	
+      // Processes the row
   		foreach($row as $fieldKey => $field) {
-  	    if ($rowCounter == 0) {
-    		  $this->fieldObjects[$fieldKey] = Tx_SavLibraryPlus_Compatibility_Database_DatabaseConnection::fetchField($this->resource, $fieldKey);
-        }
-
         $fieldObject = $this->fieldObjects[$fieldKey];
         if ($fieldObject->table) {
-    		  $result[$fieldObject->table . '.' . $fieldObject->name] = $field;
+        	if ($this->localizedTables[$fieldObject->table] === TRUE && $overlay === TRUE){
+    		  	$result[$fieldObject->table][$fieldObject->name] = $field;
+        	} else {
+        		$result[''][$fieldObject->table . '.' . $fieldObject->name] = $field;
+        	}
     		} else {
-    		  $result[$fieldObject->name] = $field;
+    		  $result[''][$fieldObject->name] = $field;
         }
-      }
+      }    
+     
       // Adds the uid and cruser_id aliases
     	$mainTable = $this->queryConfigurationManager->getMainTable(); 
-		  $result['uid'] = $result[$mainTable . '.uid'];
-		  $result['cruser_id'] = $result[$mainTable . '.cruser_id'];  
-	    	     
-    return $result;
+    	if ($this->localizedTables[$mainTable] === TRUE){
+		  	$result['']['uid'] = $result[$mainTable]['uid'];
+		  	$result['']['cruser_id'] = $result[$mainTable]['cruser_id'];       		
+    	} else {
+		  	$result['']['uid'] = $result[''][$mainTable . '.uid'];
+		  	$result['']['cruser_id'] = $result[''][$mainTable . '.cruser_id'];     		
+    	}
+ 	    	     
+    return ($overlay === TRUE ? $result : $result['']);
     } else {
       return FALSE;
     }
   }
-
+  
 }
 ?>

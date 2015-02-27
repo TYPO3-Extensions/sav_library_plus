@@ -1,4 +1,8 @@
 <?php
+namespace SAV\SavLibraryPlus\Queriers;
+
+use \TYPO3\CMS\Core\Utility\GeneralUtility;
+
 /***************************************************************
 *  Copyright notice
 *
@@ -29,7 +33,7 @@
  * @version $ID:$
  */
 
-class Tx_SavLibraryPlus_Queriers_DeleteQuerier extends Tx_SavLibraryPlus_Queriers_AbstractQuerier {
+class DeleteQuerier extends AbstractQuerier {
 
 	/**
 	 * Executes the query.
@@ -42,12 +46,12 @@ class Tx_SavLibraryPlus_Queriers_DeleteQuerier extends Tx_SavLibraryPlus_Querier
   
     // Checks if the user is authenticated
  		if (is_null($GLOBALS['TSFE']->fe_user->user['uid'])) {
-      Tx_SavLibraryPlus_Controller_FlashMessages::addError('fatal.notAuthenticated');
+      \SAV\SavLibraryPlus\Controller\FlashMessages::addError('fatal.notAuthenticated');
       return FALSE;
 		}
 
 		// Gets the uid
-    $uid = Tx_SavLibraryPlus_Managers_UriManager::getUid();
+    $uid = \SAV\SavLibraryPlus\Managers\UriManager::getUid();
     
     // Gets the main table 
     $mainTable = $this->getQueryConfigurationManager()->getMainTable();    

@@ -1,4 +1,7 @@
 <?php
+namespace SAV\SavLibraryPlus\ViewHelpers;
+
+use \TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "Fluid".                      *
@@ -59,7 +62,7 @@
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  */
-class Tx_SavLibraryPlus_ViewHelpers_FormViewHelper extends Tx_Fluid_ViewHelpers_FormViewHelper {
+class FormViewHelper extends  \TYPO3\CMS\Fluid\ViewHelpers\FormViewHelper {
 
 	/**
 	 * Render the form.
@@ -80,19 +83,19 @@ class Tx_SavLibraryPlus_ViewHelpers_FormViewHelper extends Tx_Fluid_ViewHelpers_
 	public function render($action = NULL, array $arguments = array(), $controller = NULL, $extensionName = NULL, $pluginName = NULL, $pageUid = NULL, $object = NULL, array $additionalParams = array(), $pageType = 0, $fieldNamePrefix = NULL, $actionUri = NULL) {
 
     // Sets the new action
-    $compressedParameters = Tx_SavLibraryPlus_Managers_UriManager::getCompressedParameters();
-    $libraryParam = Tx_SavLibraryPlus_Controller_AbstractController::changeCompressedParameters($compressedParameters, 'formAction', $action);
+    $compressedParameters = \SAV\SavLibraryPlus\Managers\UriManager::getCompressedParameters();
+    $libraryParam = \SAV\SavLibraryPlus\Controller\AbstractController::changeCompressedParameters($compressedParameters, 'formAction', $action);
 
     // Changes the other parameters if any
     foreach($arguments as $argumentKey => $argument) {
-      $libraryParam = Tx_SavLibraryPlus_Controller_AbstractController::changeCompressedParameters($libraryParam, $argumentKey, $argument);
+      $libraryParam = \SAV\SavLibraryPlus\Controller\AbstractController::changeCompressedParameters($libraryParam, $argumentKey, $argument);
     }
 
     // sets the additionalParams
-    $additionalParams = array_merge($additionalParams, array(Tx_SavLibraryPlus_Controller_AbstractController::LIBRARY_NAME => $libraryParam));
+    $additionalParams = array_merge($additionalParams, array(\SAV\SavLibraryPlus\Controller\AbstractController::LIBRARY_NAME => $libraryParam));
 
     // Sets the noCacheHash based on the extension type
-    $noCacheHash = !Tx_SavLibraryPlus_Managers_ExtensionConfigurationManager::isUserPlugin();
+    $noCacheHash = !\SAV\SavLibraryPlus\Managers\ExtensionConfigurationManager::isUserPlugin();
     
 		if ($this->hasArgumentCompatibleMethod('actionUri')) {
 			$formActionUri = $this->arguments['actionUri'];

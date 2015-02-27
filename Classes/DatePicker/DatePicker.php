@@ -1,5 +1,7 @@
 <?php
+namespace SAV\SavLibraryPlus\DatePicker;
 
+use \TYPO3\CMS\Core\Utility\GeneralUtility;
 /***************************************************************
 *  Copyright notice
 *
@@ -30,7 +32,7 @@
  * @version $ID:$
  */
  
-class Tx_SavLibraryPlus_DatePicker_DatePicker {
+class DatePicker {
 
   // Constants
   const KEY = 'datePicker';	
@@ -67,7 +69,7 @@ class Tx_SavLibraryPlus_DatePicker_DatePicker {
    */
   public function __construct() {
     self::$datePickerLanguageFile = 'calendar-' . $GLOBALS['TSFE']->config['config']['language'] . '.js';
-    $datePickerLanguagePath = t3lib_extMgm::siteRelPath(Tx_SavLibraryPlus_Controller_AbstractController::LIBRARY_NAME) . self::$datePickerPath . 'lang/';
+    $datePickerLanguagePath = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::siteRelPath(\SAV\SavLibraryPlus\Controller\AbstractController::LIBRARY_NAME) . self::$datePickerPath . 'lang/';
     if (file_exists($datePickerLanguagePath . self::$datePickerLanguageFile) === FALSE) {
       self::$datePickerLanguageFile = 'calendar-en.js';
     }
@@ -101,35 +103,35 @@ class Tx_SavLibraryPlus_DatePicker_DatePicker {
    * @return none
    */
   protected static function addCascadingStyleSheet() {
-    $extensionKey = Tx_SavLibraryPlus_Controller_AbstractController::LIBRARY_NAME;
+    $extensionKey = \SAV\SavLibraryPlus\Controller\AbstractController::LIBRARY_NAME;
   	$key = self::KEY . '.';
-  	$extensionTypoScriptConfiguration = Tx_SavLibraryPlus_Managers_ExtensionConfigurationManager::getTypoScriptConfiguration();
+  	$extensionTypoScriptConfiguration = \SAV\SavLibraryPlus\Managers\ExtensionConfigurationManager::getTypoScriptConfiguration();
   	$datePickerTypoScriptConfiguration = $extensionTypoScriptConfiguration[$key];
   	if (empty($datePickerTypoScriptConfiguration['stylesheet']) === FALSE) {
   		// The style sheet is given by the extension TypoScript
-  		$cascadingStyleSheetAbsoluteFileName = t3lib_div::getFileAbsFileName($datePickerTypoScriptConfiguration['stylesheet']);
+  		$cascadingStyleSheetAbsoluteFileName = GeneralUtility::getFileAbsFileName($datePickerTypoScriptConfiguration['stylesheet']);
   		if (is_file($cascadingStyleSheetAbsoluteFileName)) {
   			$cascadingStyleSheet = substr($cascadingStyleSheetAbsoluteFileName, strlen(PATH_site));
-				Tx_SavLibraryPlus_Managers_AdditionalHeaderManager::addCascadingStyleSheet($cascadingStyleSheet);
+				\SAV\SavLibraryPlus\Managers\AdditionalHeaderManager::addCascadingStyleSheet($cascadingStyleSheet);
   		} else {
-				throw new Tx_SavLibraryPlus_Exception(Tx_SavLibraryPlus_Controller_FlashMessages::translate('error.fileDoesNotExist', array(htmlspecialchars($cascadingStyleSheetAbsoluteFileName))));		
+				throw new \SAV\SavLibraryPlus\Exception(\SAV\SavLibraryPlus\Controller\FlashMessages::translate('error.fileDoesNotExist', array(htmlspecialchars($cascadingStyleSheetAbsoluteFileName))));		
   		}
   	} else {
-			$libraryTypoScriptConfiguration = Tx_SavLibraryPlus_Managers_LibraryConfigurationManager::getTypoScriptConfiguration();
+			$libraryTypoScriptConfiguration = \SAV\SavLibraryPlus\Managers\LibraryConfigurationManager::getTypoScriptConfiguration();
   	  $datePickerTypoScriptConfiguration = $libraryTypoScriptConfiguration[$key];
   		if (empty($datePickerTypoScriptConfiguration['stylesheet']) === FALSE) {
   			// The style sheet is given by the library TypoScript		
-  			$cascadingStyleSheetAbsoluteFileName = t3lib_div::getFileAbsFileName($datePickerTypoScriptConfiguration['stylesheet']);
+  			$cascadingStyleSheetAbsoluteFileName = GeneralUtility::getFileAbsFileName($datePickerTypoScriptConfiguration['stylesheet']);
   			if (is_file($cascadingStyleSheetAbsoluteFileName)) {
   				$cascadingStyleSheet = substr($cascadingStyleSheetAbsoluteFileName, strlen(PATH_site));
-					Tx_SavLibraryPlus_Managers_AdditionalHeaderManager::addCascadingStyleSheet($cascadingStyleSheet);
+					\SAV\SavLibraryPlus\Managers\AdditionalHeaderManager::addCascadingStyleSheet($cascadingStyleSheet);
   			} else {
-					throw new Tx_SavLibraryPlus_Exception(Tx_SavLibraryPlus_Controller_FlashMessages::translate('error.fileDoesNotExist', array(htmlspecialchars($cascadingStyleSheetAbsoluteFileName))));		
+					throw new \SAV\SavLibraryPlus\Exception(\SAV\SavLibraryPlus\Controller\FlashMessages::translate('error.fileDoesNotExist', array(htmlspecialchars($cascadingStyleSheetAbsoluteFileName))));		
   			}
-  		} else {
+  		} else { 
   				// The style sheet is the default one
-					$cascadingStyleSheet = t3lib_extMgm::siteRelPath($extensionKey) . self::$datePickerPath . 'css/'. self::$datePickerCssFile;
-					Tx_SavLibraryPlus_Managers_AdditionalHeaderManager::addCascadingStyleSheet($cascadingStyleSheet); 			
+					$cascadingStyleSheet = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::siteRelPath($extensionKey) . self::$datePickerPath . 'css/'. self::$datePickerCssFile;
+					\SAV\SavLibraryPlus\Managers\AdditionalHeaderManager::addCascadingStyleSheet($cascadingStyleSheet); 			
   		}  		
   	} 
   }
@@ -142,10 +144,10 @@ class Tx_SavLibraryPlus_DatePicker_DatePicker {
    * @return none
    */
   public static function addJavaScript() {
-  	$datePickerSiteRelativePath = t3lib_extMgm::siteRelPath(Tx_SavLibraryPlus_Controller_AbstractController::LIBRARY_NAME) . self::$datePickerPath;
-  	Tx_SavLibraryPlus_Managers_AdditionalHeaderManager::addJavaScriptFile($datePickerSiteRelativePath . 'js/' . self::$datePickerJsFile);
-  	Tx_SavLibraryPlus_Managers_AdditionalHeaderManager::addJavaScriptFile($datePickerSiteRelativePath . 'lang/' . self::$datePickerLanguageFile);
-  	Tx_SavLibraryPlus_Managers_AdditionalHeaderManager::addJavaScriptFile($datePickerSiteRelativePath . 'js/' . self::$datePickerJsSetupFile);
+  	$datePickerSiteRelativePath = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::siteRelPath(\SAV\SavLibraryPlus\Controller\AbstractController::LIBRARY_NAME) . self::$datePickerPath;
+  	\SAV\SavLibraryPlus\Managers\AdditionalHeaderManager::addJavaScriptFile($datePickerSiteRelativePath . 'js/' . self::$datePickerJsFile);
+  	\SAV\SavLibraryPlus\Managers\AdditionalHeaderManager::addJavaScriptFile($datePickerSiteRelativePath . 'lang/' . self::$datePickerLanguageFile);
+  	\SAV\SavLibraryPlus\Managers\AdditionalHeaderManager::addJavaScriptFile($datePickerSiteRelativePath . 'js/' . self::$datePickerJsSetupFile);
   }
 
   /**
@@ -156,14 +158,14 @@ class Tx_SavLibraryPlus_DatePicker_DatePicker {
    * @return none
    */
   protected static function getDatePickerFormat() {
-    $extensionKey = Tx_SavLibraryPlus_Controller_AbstractController::LIBRARY_NAME;
+    $extensionKey = \SAV\SavLibraryPlus\Controller\AbstractController::LIBRARY_NAME;
   	$key = self::KEY . '.';
-  	$extensionTypoScriptConfiguration = Tx_SavLibraryPlus_Managers_ExtensionConfigurationManager::getTypoScriptConfiguration();
+  	$extensionTypoScriptConfiguration = \SAV\SavLibraryPlus\Managers\ExtensionConfigurationManager::getTypoScriptConfiguration();
   	$datePickerTypoScriptConfiguration = $extensionTypoScriptConfiguration[$key];
   	if (is_array($datePickerTypoScriptConfiguration['format.'])) {
   		return $datePickerTypoScriptConfiguration['format.'];
   	} else {
-  		$libraryTypoScriptConfiguration = Tx_SavLibraryPlus_Managers_LibraryConfigurationManager::getTypoScriptConfiguration();
+  		$libraryTypoScriptConfiguration = \SAV\SavLibraryPlus\Managers\LibraryConfigurationManager::getTypoScriptConfiguration();
   		$datePickerTypoScriptConfiguration = $libraryTypoScriptConfiguration[$key];
   		if (is_array($datePickerTypoScriptConfiguration['format.'])) {
   			return $datePickerTypoScriptConfiguration['format.'];

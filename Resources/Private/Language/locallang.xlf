@@ -309,6 +309,9 @@
 			<trans-unit id="error.templateNeeded" xml:space="preserve">
 				<source>A template file is needed and the defaut template was not found. Please contact the WebMaster.</source>
 			</trans-unit>
+			<trans-unit id="error.todo" xml:space="preserve">
+				<source>TODO in %s: %s.</source>
+			</trans-unit>			
 			<trans-unit id="error.underMaintenance" xml:space="preserve">
 				<source>This service is temporarily unavailable due to maintenance - please come back later.</source>
 			</trans-unit>
@@ -377,6 +380,9 @@
 			</trans-unit>
 			<trans-unit id="fatal.notAllowedToEnterInFormAdministration" xml:space="preserve">
 				<source>Fatal error. You are not allowed to enter in the form administration.</source>
+			</trans-unit>
+			<trans-unit id="fatal.notAllowedToUseQueryInExport" xml:space="preserve">
+				<source>Fatal error. Fatal error. You are not allowed to use queries in export view.</source>
 			</trans-unit>
 			<trans-unit id="button.edit" xml:space="preserve">
 				<source>Edit</source>
@@ -489,6 +495,12 @@
 			<trans-unit id="button.exportToggleDisplaySelectedFields" xml:space="preserve">
 				<source>Display only selected fields</source>
 			</trans-unit>
+			<trans-unit id="button.exportQueryModeOff" xml:space="preserve">
+				<source>Query mode off</source>
+			</trans-unit>
+			<trans-unit id="button.exportQueryModeOn" xml:space="preserve">
+				<source>Query mode on</source>
+			</trans-unit>
 			<trans-unit id="icon.required" xml:space="preserve">
 				<source>Required field</source>
 			</trans-unit>
@@ -533,6 +545,9 @@
 			</trans-unit>
 			<trans-unit id="itemviewer.xsltFile" xml:space="preserve">
 				<source>XSLT file</source>
+			</trans-unit>
+			<trans-unit id="itemviewer.query" xml:space="preserve">
+				<source>Query</source>
 			</trans-unit>
 			<trans-unit id="itemviewer.fields" xml:space="preserve">
 				<source>Fields</source>

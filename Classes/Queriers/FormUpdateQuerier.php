@@ -1,4 +1,8 @@
 <?php
+namespace SAV\SavLibraryPlus\Queriers;
+
+use \TYPO3\CMS\Core\Utility\GeneralUtility;
+
 /***************************************************************
 *  Copyright notice
 *
@@ -29,7 +33,14 @@
  * @version $ID:$
  */
  
-class Tx_SavLibraryPlus_Queriers_FormUpdateQuerier extends Tx_SavLibraryPlus_Queriers_UpdateQuerier {
+class FormUpdateQuerier extends UpdateQuerier {
+	
+	/**
+	 * Querier which is used to retreive data
+	 * 
+	 * @var string
+	 */
+	protected $editQuerierClassName = 'SAV\\SavLibraryPlus\\Queriers\\FormSelectQuerier';
 
   /**
    * Executes the query
@@ -58,7 +69,7 @@ class Tx_SavLibraryPlus_Queriers_FormUpdateQuerier extends Tx_SavLibraryPlus_Que
     $activeFolder = $viewConfiguration[$activeFolderKey];
 
     // Creates the field configuration manager
-    $fieldConfigurationManager = t3lib_div::makeInstance('Tx_SavLibraryPlus_Managers_FieldConfigurationManager');
+    $fieldConfigurationManager = GeneralUtility::makeInstance('SAV\\SavLibraryPlus\\Managers\\FieldConfigurationManager');
     $fieldConfigurationManager->injectController($this->getController());
     
     // Gets the fields configuration for the folder
@@ -70,9 +81,9 @@ class Tx_SavLibraryPlus_Queriers_FormUpdateQuerier extends Tx_SavLibraryPlus_Que
    
     // Gets the main table
     $mainTable = $this->getQueryConfigurationManager()->getMainTable();
-		$mainTableUid = Tx_SavLibraryPlus_Managers_UriManager::getUid();
+		$mainTableUid = \SAV\SavLibraryPlus\Managers\UriManager::getUid();
 		    
-		// Processes the regular fields. Explode the key to get the table and field names
+		// Processes the regular fields. Explodes the key to get the table and field names
 		$variablesToUpdate = array();
 		if (is_array($postVariables)) {
 			foreach($postVariables as $postVariableKey => $postVariable) {
@@ -108,7 +119,7 @@ class Tx_SavLibraryPlus_Queriers_FormUpdateQuerier extends Tx_SavLibraryPlus_Que
 
 		// Checks if error exists
 		if (self::$doNotUpdateOrInsert === TRUE) {
-			Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.dataNotSaved');
+			\SAV\SavLibraryPlus\Controller\FlashMessages::addError('error.dataNotSaved');
 			return; 			    		
 		}		
 				
@@ -122,10 +133,10 @@ class Tx_SavLibraryPlus_Queriers_FormUpdateQuerier extends Tx_SavLibraryPlus_Que
       }
 
       // Updates the _submitted_data_ field
-			$shortFormName = Tx_SavLibraryPlus_Controller_AbstractController::getShortFormName();
+			$shortFormName = \SAV\SavLibraryPlus\Controller\AbstractController::getShortFormName();
 			$serializedVariable = serialize(array($shortFormName => array('temporary' => $variableToSerialize)));  
       $this->updateFields($mainTable, array('_submitted_data_' => $serializedVariable,'_validated_' => 0), $mainTableUid);   
-			Tx_SavLibraryPlus_Controller_FlashMessages::addMessage('message.dataSaved'); 			    	
+			\SAV\SavLibraryPlus\Controller\FlashMessages::addMessage('message.dataSaved'); 			    	
     }
 
     // Post-processing
@@ -139,6 +150,6 @@ class Tx_SavLibraryPlus_Queriers_FormUpdateQuerier extends Tx_SavLibraryPlus_Que
     }
    
   }
-
+  
 }
 ?>

@@ -1,4 +1,8 @@
 <?php
+namespace SAV\SavLibraryPlus\Queriers;
+
+use \TYPO3\CMS\Core\Utility\GeneralUtility;
+
 /***************************************************************
 *  Copyright notice
 *
@@ -29,7 +33,7 @@
  * @version $ID:$
  */
  
-class Tx_SavLibraryPlus_Queriers_SingleSelectQuerier extends Tx_SavLibraryPlus_Queriers_AbstractQuerier {
+class SingleSelectQuerier extends AbstractQuerier {
   
   /**
    * Executes the query
@@ -39,8 +43,8 @@ class Tx_SavLibraryPlus_Queriers_SingleSelectQuerier extends Tx_SavLibraryPlus_Q
    * @return none
    */
   protected function executeQuery() {
-
-    // Select the items
+  
+    // Executes the select query 
 		$this->resource = $GLOBALS['TYPO3_DB']->exec_SELECTquery(
 			/* SELECT   */	$this->buildSelectClause(),
 			/* FROM     */	$this->buildFromClause(),

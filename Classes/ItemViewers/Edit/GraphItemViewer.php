@@ -1,4 +1,8 @@
 <?php
+namespace SAV\SavLibraryPlus\ItemViewers\Edit;
+
+use \TYPO3\CMS\Core\Utility\GeneralUtility;
+
 /***************************************************************
 *  Copyright notice
 *
@@ -29,7 +33,7 @@
  * @version $ID:$
  */
  
-class Tx_SavLibraryPlus_ItemViewers_Edit_GraphItemViewer extends Tx_SavLibraryPlus_ItemViewers_Default_GraphItemViewer {
+class GraphItemViewer extends \SAV\SavLibraryPlus\ItemViewers\General\GraphItemViewer {
 
 }
 ?>

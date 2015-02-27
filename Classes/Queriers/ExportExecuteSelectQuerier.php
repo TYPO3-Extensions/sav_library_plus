@@ -1,4 +1,8 @@
 <?php
+namespace SAV\SavLibraryPlus\Queriers;
+
+use \TYPO3\CMS\Core\Utility\GeneralUtility;
+
 /***************************************************************
 *  Copyright notice
 *
@@ -29,7 +33,7 @@
  * @version $ID:$
  */
 
-class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibraryPlus_Queriers_ExportSelectQuerier {
+class ExportExecuteSelectQuerier extends ExportSelectQuerier {
 
   /**
    * The xml reference array
@@ -78,20 +82,56 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
     	$aliases .= (empty($aliases) ? $additionalFields : ', ' . $additionalFields);
     	$this->queryConfigurationManager->setQueryConfigurationParameter('aliases', $aliases); 	
     }
-    
-    // Executes the select query to get the field names
-		$this->resource = $GLOBALS['TYPO3_DB']->exec_SELECTquery(
-			/* SELECT   */	$this->buildSelectClause(),
-			/* FROM     */	$this->buildFromClause(),
- 			/* WHERE    */	$this->buildWhereClause(),
-			/* GROUP BY */	$this->buildGroupByClause(),
-			/* ORDER BY */  $this->buildOrderByClause(),
-			/* LIMIT    */  $this->buildLimitClause()
-		);
+
+    // Processes the query
+		$this->exportConfiguration = array(); 
+		$query = $this->getController()->getUriManager()->getPostVariablesItem('query');   
+		if (!empty($query)) {
+			// Checks if the user is allowed to use queries
+			if ($this->getController()->getUserManager()->userIsAllowedToExportDataWithQuery() === FALSE) {
+				\SAV\SavLibraryPlus\Controller\FlashMessages::addError('fatal.notAllowedToUseQueryInExport');
+				
+  			// Sets the export configuration				
+				$this->exportConfiguration = $this->getController()->getUriManager()->getPostVariables();
+				
+				// Adds the query mode to redisplay the query
+				$this->exportConfiguration['queryMode'] = 1;
+	
+				return;
+			}
+			// Executes the query			
+			$this->resource = $GLOBALS['TYPO3_DB']->sql_query($query);	
+			
+			// Sets the fields in not already done
+			if (count($this->getController()->getUriManager()->getPostVariablesItem('fields')) == 0) {
+    		$this->rows[0] = $this->getRowWithFullFieldNames();
+		    // Replaces the field values by the checkbox value 
+		    $this->exportConfiguration = array();
+		    foreach ($this->rows[0] as $rowKey => $row) {
+		    	if ($this->isFieldToExclude($rowKey) === FALSE) {
+		    		$this->exportConfiguration['fields'][$rowKey]['selected'] = 0;
+		    		$this->exportConfiguration['fields'][$rowKey]['render'] = 0;   
+		    	} 	
+   		 	} 
+   		 	// Re-executes the query
+				$this->resource = $GLOBALS['TYPO3_DB']->sql_query($query);	      		 	
+    	}				
+		} else {  
+	  
+	    // Executes the select query to get the field names
+			$this->resource = $GLOBALS['TYPO3_DB']->exec_SELECTquery(
+				/* SELECT   */	$this->buildSelectClause(),
+				/* FROM     */	$this->buildFromClause(),
+	 			/* WHERE    */	$this->buildWhereClause(),
+				/* GROUP BY */	$this->buildGroupByClause(),
+				/* ORDER BY */  $this->buildOrderByClause(),
+				/* LIMIT    */  $this->buildLimitClause()
+			);
+		}
 
 		// Checks if the query returns rows
-		if ($GLOBALS['TYPO3_DB']->sql_num_rows($this->resource) == 0) {
-			Tx_SavLibraryPlus_Controller_FlashMessages::addError('warning.noRecord');
+		if ($GLOBALS['TYPO3_DB']->sql_num_rows($this->resource) == 0) {	
+			\SAV\SavLibraryPlus\Controller\FlashMessages::addError('warning.noRecord');
 		}
 		
     // Exports the data in CSV
@@ -103,8 +143,8 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
   	$postVariables = $this->getController()->getUriManager()->getPostVariables();
 
   	// Sets the export configuration
-  	$this->exportConfiguration = $postVariables; 
-  	
+  	$this->exportConfiguration = array_merge($this->exportConfiguration, $postVariables); 
+	
   	// Creates the file link, if needed
    	if (is_string($exportStatus)) {
     	// Builds a link to the file
@@ -113,7 +153,7 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
       	'parameter' => $this->getTemporaryFilesPath(TRUE) . $exportStatus,
       	'extTarget'  => '_blank',   
     	);
-    	$message = Tx_SavLibraryPlus_Controller_FlashMessages::translate('general.clickHereToDowload');
+    	$message = \SAV\SavLibraryPlus\Controller\FlashMessages::translate('general.clickHere');
     	$this->exportConfiguration['fileLink'] = $extensionConfigurationManager->getExtensionContentObject()->typoLink($message, $typoScriptConfiguration);
     } 	
   }
@@ -219,13 +259,13 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
     }
 
     // Sets the output file
-    $outputFileName = Tx_SavLibraryPlus_Controller_AbstractController::getFormName() . date('_Y_m_d_H_i') . '.csv';
-    t3lib_div::unlink_tempfile($outputFileName);
+    $outputFileName = \SAV\SavLibraryPlus\Controller\AbstractController::getFormName() . date('_Y_m_d_H_i') . '.csv';
+    GeneralUtility::unlink_tempfile($outputFileName);
     
     // Opens the output file
     $this->outputFileHandle = fopen($filePath . $outputFileName, 'ab');
     if ($this->outputFileHandle === FALSE) {
-    	return Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.fileOpenError', array($outputFileName));
+    	return \SAV\SavLibraryPlus\Controller\FlashMessages::addError('error.fileOpenError', array($outputFileName));
     }
 		  
     // Exports the field names if requested and there is no XML file
@@ -245,16 +285,16 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
  
   	// Processes the rows
     $counter = 0;
-    $this->rows[0] = $this->getRowWithFullFieldNames($counter++);
+    $this->rows[0] = $this->getRowWithFullFieldNames($counter++, FALSE);
     $markers = $this->processRow(); 
-    
+
     while ($this->rows[0]) {
 
       // The current row is kept for post processing
       $previousRow = $this->rows[0]; 
       
       // Gets the next row
-      $this->rows[0] = $this->getRowWithFullFieldNames($counter++);
+      $this->rows[0] = $this->getRowWithFullFieldNames($counter++, FALSE);
       if ($this->rows[0]) {
 	      $this->nextMarkers = $this->processRow();
 	      
@@ -316,7 +356,7 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
     }
         
     clearstatcache();
-		t3lib_div::fixPermissions($filePath . $outputFileName);
+		GeneralUtility::fixPermissions($filePath . $outputFileName);
 
 		// Checks if an Exec command exists, if allowed
 		if ($this->getController()->getExtensionConfigurationManager()->getAllowExec()) {			
@@ -383,16 +423,16 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
       	$extensionConfigurationManager = $this->getController()->getExtensionConfigurationManager();   
       	$typoScriptConfiguration['parameter'] = 'typo3temp/' . $extensionConfigurationManager->getExtensionKey() . '/' . $xmlfileName;
         $typoScriptConfiguration['target'] = '_blank';
-        Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.incorrectXmlProducedFile', 
+        \SAV\SavLibraryPlus\Controller\FlashMessages::addError('error.incorrectXmlProducedFile', 
         	array($extensionConfigurationManager->getExtensionContentObject()->typoLink(
-        		Tx_SavLibraryPlus_Controller_FlashMessages::translate('error.xmlErrorFile'), $typoScriptConfiguration)
+        		\SAV\SavLibraryPlus\Controller\FlashMessages::translate('error.xmlErrorFile'), $typoScriptConfiguration)
           )  
         );
 
         // Gets the errors
         $errors = libxml_get_errors();
         foreach ($errors as $error) {
-          Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.xmlError', array($error->message, $error->line));
+          \SAV\SavLibraryPlus\Controller\FlashMessages::addError('error.xmlError', array($error->message, $error->line));
         } 
         libxml_clear_errors();
         return FALSE;
@@ -401,7 +441,7 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
       // Loads the xslt file
       $xsl = new DOMDocument;
       if (@$xsl->load($xsltFile) === FALSE) {
-				Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.incorrectXsltFile', array($xsltFile));
+				\SAV\SavLibraryPlus\Controller\FlashMessages::addError('error.incorrectXsltFile', array($xsltFile));
         return FALSE;
       }
 
@@ -413,7 +453,7 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
       fclose($this->outputFileHandle);
       $bytes = @$proc->transformToURI($xml, 'file://' . $filePath . $fileName);
 			if ($bytes === FALSE) {
-				Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.incorrectXsltResult');
+				\SAV\SavLibraryPlus\Controller\FlashMessages::addError('error.incorrectXsltResult');
         return FALSE;
       }
             
@@ -421,7 +461,7 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
       unlink($filePath . $xmlfileName);
       return TRUE;
     } else {
-			Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.fileDoesNotExist', array($xsltFile));
+			\SAV\SavLibraryPlus\Controller\FlashMessages::addError('error.fileDoesNotExist', array($xsltFile));
       return FALSE;
     } 	
   }
@@ -483,14 +523,14 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
     			$markers['###' . $fieldName . '###'] = $this->getFieldValueFromCurrentRow($fieldName);
     		} else {
     			// Renders the field based on the TCA configuration as it would be rendered in a single view 			
-    			$basicFieldConfiguration = $this->getController()->getLibraryConfigurationManager()->searchBasicFieldConfiguration(Tx_SavLibraryPlus_Controller_Controller::cryptTag($fieldName));    		 
+    			$basicFieldConfiguration = $this->getController()->getLibraryConfigurationManager()->searchBasicFieldConfiguration(\SAV\SavLibraryPlus\Controller\Controller::cryptTag($fieldName));    		 
    		
     			// Adds the basic configuration, if found, to the TCA 
     			if (is_array($basicFieldConfiguration)) {
-    				$fieldConfiguration = array_merge(Tx_SavLibraryPlus_Managers_TcaConfigurationManager::getTcaConfigFieldFromFullFieldName($fieldName), $basicFieldConfiguration);
+    				$fieldConfiguration = array_merge(\SAV\SavLibraryPlus\Managers\TcaConfigurationManager::getTcaConfigFieldFromFullFieldName($fieldName), $basicFieldConfiguration);
     			} else {
     				// Builds the basic configuration from the TCA
-    				$fieldConfiguration = Tx_SavLibraryPlus_Managers_TcaConfigurationManager::buildBasicConfigurationFromTCA($fieldName);
+    				$fieldConfiguration = \SAV\SavLibraryPlus\Managers\TcaConfigurationManager::buildBasicConfigurationFromTCA($fieldName);
     			}
     		  // Adds the additional field configuration
     		  if (is_array($additionalFieldsConfiguration[$fieldName])) {
@@ -508,8 +548,8 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
 						}
 						
 						// Calls the item viewer
-	      		$className = 'Tx_SavLibraryPlus_ItemViewers_Default_' . $fieldConfiguration['fieldType'] . 'ItemViewer';
-	      		$itemViewer = t3lib_div::makeInstance($className);
+	      		$className = 'SAV\\SavLibraryPlus\\ItemViewers\\General\\' . $fieldConfiguration['fieldType'] . 'ItemViewer';
+	      		$itemViewer = GeneralUtility::makeInstance($className);
 	      		$itemViewer->injectController($this->getController());
 	      		$itemViewer->injectItemConfiguration($fieldConfiguration);        	
 	      		$markers['###' . $fieldName . '###'] = $itemViewer->render();   
@@ -851,16 +891,10 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
 	 */  
   protected function processEmptyifsameaspreviousTemplate($key, $template) {
 
-		// Checks if we are postprocessing the template
-//		if ($this->xmlReferenceArray[$key]['postprocessReplaceDistinct']) {
-//			$previousFieldValue = $this->xmlReferenceArray[$key]['fieldValue'];
-//			$fieldValue = $this->xmlReferenceArray[$key]['nextFieldValue'];
-//			$nextFieldValue = $fieldValue;
-//		} else {
-			$previousFieldValue = $this->xmlReferenceArray[$key]['previousFieldValue'];
-			$fieldValue = $this->xmlReferenceArray[$key]['fieldValue'];
-			$nextFieldValue = $this->xmlReferenceArray[$key]['nextFieldValue'];						
-//		}
+		// Initialization
+		$previousFieldValue = $this->xmlReferenceArray[$key]['previousFieldValue'];
+		$fieldValue = $this->xmlReferenceArray[$key]['fieldValue'];
+		$nextFieldValue = $this->xmlReferenceArray[$key]['nextFieldValue'];						
 	
 		// Cuts the value if the previous field is the same as the current one              	
     if ($previousFieldValue == $fieldValue) {	          		           			
@@ -1135,11 +1169,11 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
               fclose($fileHandleRef);
               unlink($filePath . $fileNameRef);
             } else {
-              return Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.fileOpenError', array($fileName));
+              return \SAV\SavLibraryPlus\Controller\FlashMessages::addError('error.fileOpenError', array($fileName));
             }
           } else {
             // Error, the file does not exist
-            return Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.fileDoesNotExist', array($fileNameRef));
+            return \SAV\SavLibraryPlus\Controller\FlashMessages::addError('error.fileDoesNotExist', array($fileNameRef));
           }
           
           // Removes the matched string from the template
@@ -1155,7 +1189,7 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
         fclose($fileHandle);          
       } else {
         // Error, the file cannot be opened
-        return Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.fileOpenError', array($fileName));
+        return \SAV\SavLibraryPlus\Controller\FlashMessages::addError('error.fileOpenError', array($fileName));
       }
     } else {
     	if ($fileHandle = fopen($filePath . $fileName, $mode)) {    	
@@ -1166,7 +1200,7 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
         fwrite($fileHandle, $template);
         fclose($fileHandle);
       } else {
-        return Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.fileOpenError', array($fileName));
+        return \SAV\SavLibraryPlus\Controller\FlashMessages::addError('error.fileOpenError', array($fileName));
       }    	 	
     }
     return TRUE;
@@ -1183,13 +1217,13 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
   	
   	// Checks if the file exists
     if (file_exists($fileName) === FALSE) {
-			return Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.fileDoesNotExist', array($fileName));
+			return \SAV\SavLibraryPlus\Controller\FlashMessages::addError('error.fileDoesNotExist', array($fileName));
     }	
     
     // Loads and processes the xml file
     $xml = simplexml_load_file($fileName);
     if ($xml === FALSE) {
-      return Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.incorrectXmlFile', array($fileName));
+      return \SAV\SavLibraryPlus\Controller\FlashMessages::addError('error.incorrectXmlFile', array($fileName));
     }
   
     // Gets the namespaces
@@ -1280,7 +1314,7 @@ class Tx_SavLibraryPlus_Queriers_ExportExecuteSelectQuerier extends Tx_SavLibrar
         case 'cutifgreaterequal':
         case 'cutiflessequal':
           if (!$this->xmlReferenceArray[$reference]['id']) {
-            return Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.xmlIdMissing', array($this->xmlReferenceArray[$reference]['type']));
+            return \SAV\SavLibraryPlus\Controller\FlashMessages::addError('error.xmlIdMissing', array($this->xmlReferenceArray[$reference]['type']));
           }
           break;
       }

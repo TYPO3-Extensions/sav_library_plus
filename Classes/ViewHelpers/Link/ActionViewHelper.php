@@ -1,4 +1,7 @@
 <?php
+namespace SAV\SavLibraryPlus\ViewHelpers\Link;
+
+use \TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -28,7 +31,7 @@
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class Tx_SavLibraryPlus_ViewHelpers_Link_ActionViewHelper extends Tx_Fluid_Core_ViewHelper_AbstractTagBasedViewHelper {
+class ActionViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper {
 
 	/**
 	 * @var string
@@ -73,24 +76,24 @@ class Tx_SavLibraryPlus_ViewHelpers_Link_ActionViewHelper extends Tx_Fluid_Core_
 	public function render($action = NULL, array $arguments = array(), $controller = NULL, $extensionName = NULL, $pluginName = NULL, $pageUid = NULL, $pageType = 0, $noCache = FALSE, $noCacheHash = FALSE, $section = '', $format = '', $linkAccessRestrictedPages = FALSE, array $additionalParams = array(), $absolute = FALSE, $addQueryString = FALSE, array $argumentsToBeExcludedFromQueryString = array()) {
 
     // Sets the new action
-    $compressedParameters = Tx_SavLibraryPlus_Managers_UriManager::getCompressedParameters();
-    $libraryParam = Tx_SavLibraryPlus_Controller_AbstractController::changeCompressedParameters($compressedParameters, 'formAction', $action);
-    $formName = Tx_SavLibraryPlus_Controller_AbstractController::getFormName();
-    $libraryParam = Tx_SavLibraryPlus_Controller_AbstractController::changeCompressedParameters($libraryParam, 'formName', $formName);
+    $compressedParameters = \SAV\SavLibraryPlus\Managers\UriManager::getCompressedParameters();
+    $libraryParam = \SAV\SavLibraryPlus\Controller\AbstractController::changeCompressedParameters($compressedParameters, 'formAction', $action);
+    $formName = \SAV\SavLibraryPlus\Controller\AbstractController::getFormName();
+    $libraryParam = \SAV\SavLibraryPlus\Controller\AbstractController::changeCompressedParameters($libraryParam, 'formName', $formName);
      
     // Changes the other parameters if any
     foreach($arguments as $argumentKey => $argument) {
-      $libraryParam = Tx_SavLibraryPlus_Controller_AbstractController::changeCompressedParameters($libraryParam, $argumentKey, $argument);
+      $libraryParam = \SAV\SavLibraryPlus\Controller\AbstractController::changeCompressedParameters($libraryParam, $argumentKey, $argument);
     }
     
     // sets the additionalParams
-    $additionalParams = array_merge($additionalParams, array(Tx_SavLibraryPlus_Controller_AbstractController::LIBRARY_NAME => $libraryParam));
+    $additionalParams = array_merge($additionalParams, array(\SAV\SavLibraryPlus\Controller\AbstractController::LIBRARY_NAME => $libraryParam));
 
     // Sets the noCacheHash based on the extension type
-    $noCacheHash = !Tx_SavLibraryPlus_Managers_ExtensionConfigurationManager::isCacheHashRequired();
+    $noCacheHash = !\SAV\SavLibraryPlus\Managers\ExtensionConfigurationManager::isCacheHashRequired();
     
     // Sets the noCache
-    $noCache = Tx_SavLibraryPlus_Managers_UriManager::hasNoCacheParameter();
+    $noCache = \SAV\SavLibraryPlus\Managers\UriManager::hasNoCacheParameter();
     
     // builds the uri
 		$uriBuilder = $this->controllerContext->getUriBuilder();

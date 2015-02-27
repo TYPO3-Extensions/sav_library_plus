@@ -1,4 +1,8 @@
 <?php
+namespace SAV\SavLibraryPlus\Queriers;
+
+use \TYPO3\CMS\Core\Utility\GeneralUtility;
+
 /***************************************************************
 *  Copyright notice
 *
@@ -28,7 +32,7 @@
  * @package SavLibraryPlus
  * @version $ID:$
  */
-class Tx_SavLibraryPlus_Queriers_PrintInSingleSelectQuerier extends Tx_SavLibraryPlus_Queriers_SingleSelectQuerier {
+class PrintInSingleSelectQuerier extends SingleSelectQuerier {
 
 }
 ?>

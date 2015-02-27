@@ -1,4 +1,8 @@
 <?php
+namespace SAV\SavLibraryPlus\Queriers;
+
+use \TYPO3\CMS\Core\Utility\GeneralUtility;
+
 /***************************************************************
 *  Copyright notice
 *
@@ -29,7 +33,7 @@
  * @version $ID:$
  */
 
-class Tx_SavLibraryPlus_Queriers_ExportSaveConfigurationSelectQuerier extends Tx_SavLibraryPlus_Queriers_ExportSelectQuerier {
+class ExportSaveConfigurationSelectQuerier extends ExportSelectQuerier {
 	
   /**
    * Executes the query
@@ -74,7 +78,7 @@ class Tx_SavLibraryPlus_Queriers_ExportSaveConfigurationSelectQuerier extends Tx
   			$name = $postVariables['configurationName'];
   			unset($postVariables['configurationName']);
   		} else {
-  			$name = Tx_SavLibraryPlus_Controller_FlashMessages::translate('general.new');
+  			$name = \SAV\SavLibraryPlus\Controller\FlashMessages::translate('general.new');
   		}
   		$fieldsToInsert = array_merge($fieldsToInsert, array('name' => $name));
   		

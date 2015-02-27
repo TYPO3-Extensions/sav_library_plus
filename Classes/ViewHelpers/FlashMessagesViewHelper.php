@@ -1,4 +1,7 @@
 <?php
+namespace SAV\SavLibraryPlus\ViewHelpers;
+
+use \TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "Fluid".                      *
@@ -62,7 +65,7 @@
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */
-class Tx_SavLibraryPlus_ViewHelpers_FlashMessagesViewHelper extends Tx_Fluid_ViewHelpers_FlashMessagesViewHelper {
+class FlashMessagesViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\FlashMessagesViewHelper {
 
 	/**
 	 * Render method.
@@ -74,7 +77,7 @@ class Tx_SavLibraryPlus_ViewHelpers_FlashMessagesViewHelper extends Tx_Fluid_Vie
 	 */
 	public function render($renderMode = self::RENDER_MODE_UL) {
 	
-		$flashMessages = Tx_SavLibraryPlus_Controller_FlashMessages::getAllMessagesAndFlush();
+		$flashMessages = \SAV\SavLibraryPlus\Controller\FlashMessages::getAllMessagesAndFlush();
 
 		if ($flashMessages === NULL || count($flashMessages) === 0) {
 			return '';
@@ -85,14 +88,14 @@ class Tx_SavLibraryPlus_ViewHelpers_FlashMessagesViewHelper extends Tx_Fluid_Vie
 			case self::RENDER_MODE_DIV:
 				return $this->renderDiv($flashMessages);
 			default:
-				throw new Tx_Fluid_Core_ViewHelper_Exception('Invalid render mode "' . $renderMode . '" passed to FlashMessageViewhelper', 1290697924);
+				throw new \TYPO3\CMS\Fluid\Core\ViewHelper\Exception('Invalid render mode "' . $renderMode . '" passed to FlashMessageViewhelper', 1290697924);
 		}
 	}
 	
 	/**
 	 * Renders the flash messages as unordered list
 	 *
-	 * @param array $flashMessages array<t3lib_FlashMessage>
+	 * @param array $flashMessages 
 	 * @return string
 	 */
 	protected function renderUl(array $flashMessages) {		
@@ -104,11 +107,11 @@ class Tx_SavLibraryPlus_ViewHelpers_FlashMessagesViewHelper extends Tx_Fluid_Vie
 		$tagContent = '';
 
 		$classes = array(
-			t3lib_FlashMessage::NOTICE =>  'notice',
-			t3lib_FlashMessage::INFO =>    'information',
-			t3lib_FlashMessage::OK =>      'message',
-			t3lib_FlashMessage::WARNING => 'warning',
-			t3lib_FlashMessage::ERROR =>   'error',
+			\TYPO3\CMS\Core\Messaging\FlashMessage::NOTICE =>  'notice',
+			\TYPO3\CMS\Core\Messaging\FlashMessage::INFO =>    'information',
+			\TYPO3\CMS\Core\Messaging\FlashMessage::OK =>      'message',
+			\TYPO3\CMS\Core\Messaging\FlashMessage::WARNING => 'warning',
+			\TYPO3\CMS\Core\Messaging\FlashMessage::ERROR =>   'error',
 		);		
 		
 		foreach ($flashMessages as $singleFlashMessage) {		

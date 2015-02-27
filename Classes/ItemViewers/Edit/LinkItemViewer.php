@@ -1,4 +1,8 @@
 <?php
+namespace SAV\SavLibraryPlus\ItemViewers\Edit;
+
+use \TYPO3\CMS\Core\Utility\GeneralUtility;
+
 /***************************************************************
 *  Copyright notice
 *
@@ -29,7 +33,7 @@
  * @version $ID:$
  */
  
-class Tx_SavLibraryPlus_ItemViewers_Edit_LinkItemViewer extends Tx_SavLibraryPlus_ItemViewers_Edit_AbstractItemViewer {
+class LinkItemViewer extends AbstractItemViewer {
 
   /**
    * Renders the item.
@@ -52,30 +56,30 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_LinkItemViewer extends Tx_SavLibraryPlu
   		$generateRtfButton = FALSE;
   		$generateRtfButtonCondition = $this->getItemConfiguration('generatertfbuttonif');
     	if (!empty($generateRtfButtonCondition)) {
-    		$fieldConfigurationManager = t3lib_div::makeInstance('Tx_SavLibraryPlus_Managers_FieldConfigurationManager');
+    		$fieldConfigurationManager = GeneralUtility::makeInstance('SAV\\SavLibraryPlus\\Managers\\FieldConfigurationManager');
     		$fieldConfigurationManager->injectController($this->getController());	
     		$fieldConfigurationManager->injectQuerier($this->getController()->getQuerier());	
     		$generateRtfButton = $fieldConfigurationManager->processFieldCondition($generateRtfButtonCondition);
 	    }	  	
 	    	
   		if (empty($generateRtfButtonCondition) || (!empty($generateRtfButtonCondition) && $generateRtfButton)) {
-			  $content = Tx_SavLibraryPlus_Utility_HtmlElements::htmlInputImageElement(
+			  $content = \SAV\SavLibraryPlus\Utility\HtmlElements::htmlInputImageElement(
 			    array(
-						Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('class', 'generateRtfButton'),
-			      Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('src', Tx_SavLibraryPlus_Managers_LibraryConfigurationManager::getIconPath('generateRtf')),
-		        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('name', Tx_SavLibraryPlus_Controller_AbstractController::getFormName() . '[formAction][saveAndGenerateRtf][' . $this->getCryptedFullFieldName() . ']'),	        
-			      Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('title', Tx_SavLibraryPlus_Controller_FlashMessages::translate('button.generateRtf')),
-			      Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('alt', Tx_SavLibraryPlus_Controller_FlashMessages::translate('button.generateRtf')),
-			      Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('onclick', 'return update(\'' . Tx_SavLibraryPlus_Controller_AbstractController::getFormName() . '\');'),
+						\SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('class', 'generateRtfButton'),
+			      \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('src', \SAV\SavLibraryPlus\Managers\LibraryConfigurationManager::getIconPath('generateRtf')),
+		        \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('name', \SAV\SavLibraryPlus\Controller\AbstractController::getFormName() . '[formAction][saveAndGenerateRtf][' . $this->getCryptedFullFieldName() . ']'),	        
+			      \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('title', \SAV\SavLibraryPlus\Controller\FlashMessages::translate('button.generateRtf')),
+			      \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('alt', \SAV\SavLibraryPlus\Controller\FlashMessages::translate('button.generateRtf')),
+			      \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('onclick', 'return update(\'' . \SAV\SavLibraryPlus\Controller\AbstractController::getFormName() . '\');'),
 			     )
 			  );    	
   		}
   		
     	// Adds the hidden input element
-    	$content .= Tx_SavLibraryPlus_Utility_HtmlElements::htmlInputHiddenElement(
+    	$content .= \SAV\SavLibraryPlus\Utility\HtmlElements::htmlInputHiddenElement(
       	array(
-        	Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('name', $this->getItemConfiguration('itemName')),
-        	Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('value', $value),
+        	\SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('name', $this->getItemConfiguration('itemName')),
+        	\SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('value', $value),
       	)
     	);		  
 		  
@@ -94,9 +98,9 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_LinkItemViewer extends Tx_SavLibraryPlu
 		  } 
 		        	
     	// Adds a DIV element
-			$content = Tx_SavLibraryPlus_Utility_HtmlElements::htmlDivElement(
+			$content = \SAV\SavLibraryPlus\Utility\HtmlElements::htmlDivElement(
         array(
-          Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('class', 'generateRtf'),
+          \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('class', 'generateRtf'),
         ),
         $content
       );    	
@@ -107,12 +111,12 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_LinkItemViewer extends Tx_SavLibraryPlu
 	    $size = ($this->getItemConfiguration('size') < 20 ? 40 : $this->getItemConfiguration('size'));
     	
       // Adds the Input text element
-      $content = Tx_SavLibraryPlus_Utility_HtmlElements::htmlInputTextElement(
+      $content = \SAV\SavLibraryPlus\Utility\HtmlElements::htmlInputTextElement(
         array(
-          Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('name', $this->getItemConfiguration('itemName')),
-          Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('value', stripslashes($value)),
-          Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('size', $size),
-          Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('onchange', 'document.changed=1;'),
+          \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('name', $this->getItemConfiguration('itemName')),
+          \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('value', stripslashes($value)),
+          \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('size', $size),
+          \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('onchange', 'document.changed=1;'),
         )
       );
     }

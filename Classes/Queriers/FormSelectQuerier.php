@@ -1,4 +1,8 @@
 <?php
+namespace SAV\SavLibraryPlus\Queriers;
+
+use \TYPO3\CMS\Core\Utility\GeneralUtility;
+
 /***************************************************************
 *  Copyright notice
 *
@@ -29,7 +33,7 @@
  * @version $ID:$
  */
  
-class Tx_SavLibraryPlus_Queriers_FormSelectQuerier extends Tx_SavLibraryPlus_Queriers_AbstractQuerier {
+class FormSelectQuerier extends AbstractQuerier {
 
 	/**
    * The saved row
@@ -87,7 +91,7 @@ class Tx_SavLibraryPlus_Queriers_FormSelectQuerier extends Tx_SavLibraryPlus_Que
     $unserializedData = unserialize($submittedData);
   
     // Gets the temporary data associated with the form if any
-    $shortFormName = Tx_SavLibraryPlus_Controller_AbstractController::getShortFormName();
+    $shortFormName = \SAV\SavLibraryPlus\Controller\AbstractController::getShortFormName();
     
     if (empty($unserializedData[$shortFormName]) === FALSE) {
     	$this->formUnserializedData = $unserializedData[$shortFormName];
@@ -147,17 +151,17 @@ class Tx_SavLibraryPlus_Queriers_FormSelectQuerier extends Tx_SavLibraryPlus_Que
     $whereClause = '1';
     
     // Adds the WHERE clause coming from the selected filter if any
-		$selectedFilterKey = Tx_SavLibraryPlus_Managers_SessionManager::getSelectedFilterKey();
+		$selectedFilterKey = \SAV\SavLibraryPlus\Managers\SessionManager::getSelectedFilterKey();
 		if (empty($selectedFilterKey) === FALSE) {
 			// Gets the addWhere
-		  $additionalWhereClause = Tx_SavLibraryPlus_Managers_SessionManager::getFilterField($selectedFilterKey, 'addWhere');
+		  $additionalWhereClause = \SAV\SavLibraryPlus\Managers\SessionManager::getFilterField($selectedFilterKey, 'addWhere');
 			$whereClause .= ' AND ' . (empty($additionalWhereClause) ? '0' : $additionalWhereClause);  
 			
 			// Gets the uid and modifies the compressed parameters
-			$uid = Tx_SavLibraryPlus_Managers_SessionManager::getFilterField($selectedFilterKey, 'uid');
-			$compressedParameters = Tx_SavLibraryPlus_Managers_UriManager::getCompressedParameters();
-			$compressedParameters = Tx_SavLibraryPlus_Controller_AbstractController::changeCompressedParameters($compressedParameters, 'uid', $uid);
-			Tx_SavLibraryPlus_Managers_UriManager::setCompressedParameters($compressedParameters);
+			$uid = \SAV\SavLibraryPlus\Managers\SessionManager::getFilterField($selectedFilterKey, 'uid');
+			$compressedParameters = \SAV\SavLibraryPlus\Managers\UriManager::getCompressedParameters();
+			$compressedParameters = \SAV\SavLibraryPlus\Controller\AbstractController::changeCompressedParameters($compressedParameters, 'uid', $uid);
+			\SAV\SavLibraryPlus\Managers\UriManager::setCompressedParameters($compressedParameters);
 		}
 				
     return $whereClause;

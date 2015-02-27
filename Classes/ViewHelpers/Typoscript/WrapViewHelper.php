@@ -1,4 +1,7 @@
 <?php
+namespace SAV\SavLibraryPlus\ViewHelpers\Typoscript;
+
+use \TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -20,7 +23,7 @@
  * @package SavLibraryMvc
  * @subpackage ViewHelpers
  */
-class Tx_SavLibraryPlus_ViewHelpers_Typoscript_WrapViewHelper extends Tx_Fluid_Core_ViewHelper_AbstractViewHelper {
+class WrapViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper {
 
 	/**
 	 * @param mixed $data the data to be used for rendering the cObject. Can be an object, array or string. If this argument is not set, child nodes will be used
@@ -33,7 +36,7 @@ class Tx_SavLibraryPlus_ViewHelpers_Typoscript_WrapViewHelper extends Tx_Fluid_C
 			$data = $this->renderChildren();
 		}
 
-    $contentObject = t3lib_div::makeInstance('tslib_cObj');
+    $contentObject = GeneralUtility::makeInstance('TYPO3\\CMS\\Frontend\\ContentObject\\ContentObjectRenderer');
     
     return $contentObject->dataWrap($data, $configuration);
 	}

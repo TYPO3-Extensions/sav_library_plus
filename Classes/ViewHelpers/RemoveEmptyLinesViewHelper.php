@@ -1,4 +1,8 @@
 <?php
+namespace SAV\SavLibraryPlus\ViewHelpers;
+
+use \TYPO3\CMS\Core\Utility\GeneralUtility;
+
 /*                                                                        *
  * This script belongs to the FLOW3 package "Kickstart".                  *
  *                                                                        *
@@ -19,7 +23,7 @@
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-class Tx_SavLibraryPlus_ViewHelpers_RemoveEmptyLinesViewHelper extends Tx_Fluid_Core_ViewHelper_AbstractViewHelper {
+class RemoveEmptyLinesViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper {
 
 	/**
 	 * Remove empty lines

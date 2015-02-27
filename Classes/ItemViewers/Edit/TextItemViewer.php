@@ -1,4 +1,8 @@
 <?php
+namespace SAV\SavLibraryPlus\ItemViewers\Edit;
+
+use \TYPO3\CMS\Core\Utility\GeneralUtility;
+
 /***************************************************************
 *  Copyright notice
 *
@@ -29,7 +33,7 @@
  * @version $ID:$
  */
  
-class Tx_SavLibraryPlus_ItemViewers_Edit_TextItemViewer extends Tx_SavLibraryPlus_ItemViewers_Edit_AbstractItemViewer {
+class TextItemViewer extends AbstractItemViewer {
 
   /**
    * Renders the item.
@@ -41,12 +45,12 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_TextItemViewer extends Tx_SavLibraryPlu
   protected function renderItem() {
   
     // Adds the textarea element
-    $content = Tx_SavLibraryPlus_Utility_HtmlElements::htmlTextareaElement(
+    $content = \SAV\SavLibraryPlus\Utility\HtmlElements::htmlTextareaElement(
       array(
-        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('name', $this->getItemConfiguration('itemName')),
-        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('cols', $this->getItemConfiguration('cols')),
-        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('rows', $this->getItemConfiguration('rows')),
-        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('onchange', 'document.changed=1;'),
+        \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('name', $this->getItemConfiguration('itemName')),
+        \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('cols', $this->getItemConfiguration('cols')),
+        \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('rows', $this->getItemConfiguration('rows')),
+        \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('onchange', 'document.changed=1;'),
       ),
       $this->getItemConfiguration('value')
     );

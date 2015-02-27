@@ -1,4 +1,8 @@
 <?php
+namespace SAV\SavLibraryPlus\Viewers;
+
+use \TYPO3\CMS\Core\Utility\GeneralUtility;
+
 /***************************************************************
 *  Copyright notice
 *
@@ -29,35 +33,15 @@
  * @version $ID:$
  */
  
-abstract class Tx_SavLibraryPlus_Viewers_AbstractViewer {
-
+abstract class AbstractViewer extends AbstractDefaultRootPath {
+  
   /**
    * The controller
    *
-   * @var Tx_SavLibraryPlus_Controller_Controller
+   * @var \SAV\SavLibraryPlus\Controller\Controller
    */
   private $controller;
-
-  /**
-   * The partial root directory
-   *
-   * @var string
-   */
-  protected $partialRootPath = 'EXT:sav_library_plus/Resources/Private/Partials';
-
-  /**
-   * The layout root directory
-   *
-   * @var string
-   */
-  protected $layoutRootPath = 'EXT:sav_library_plus/Resources/Private/Layouts';
-  
-  /**
-   * The default template root directory
-   *
-   * @var string
-   */
-  protected $defaultTemplateRootPath = 'EXT:sav_library_plus/Resources/Private/Templates/Default';  
+ 
 
   /**
    * The template root directory
@@ -85,7 +69,7 @@ abstract class Tx_SavLibraryPlus_Viewers_AbstractViewer {
    *
    * @var string
    */
-  protected $itemViewerDirectory = 'Default';  
+  protected $itemViewerDirectory = self::DEFAULT_ITEM_VIEWERS_DIRECTORY;  
   
   /**
    * The new view flag
@@ -97,14 +81,14 @@ abstract class Tx_SavLibraryPlus_Viewers_AbstractViewer {
   /**
    * The library configuration manager
    *
-   * @var Tx_SavLibraryPlus_Managers_LibraryConfigurationManager
+   * @var \SAV\SavLibraryPlus\Managers\LibraryConfigurationManager
    */
   protected $libraryConfigurationManager;	
 
   /**
    * The field configuration manager
    *
-   * @var Tx_SavLibraryPlus_Managers_FieldConfigurationManager
+   * @var \SAV\SavLibraryPlus\Managers\FieldConfigurationManager
    */
   protected $fieldConfigurationManager;	 
   
@@ -163,11 +147,14 @@ abstract class Tx_SavLibraryPlus_Viewers_AbstractViewer {
    * @var boolean
    */
   protected $richTextEditorIsInitialized = FALSE;
-  
+
+  protected static function test(){
+  }
+ 
 	/**
 	 * Injects the controller
 	 *
-	 * @param Tx_SavLibraryPlus_Controller_AbstractController $controller The controller
+	 * @param \SAV\SavLibraryPlus\Controller\AbstractController $controller The controller
 	 *
 	 * @return  array
 	 */
@@ -191,7 +178,7 @@ abstract class Tx_SavLibraryPlus_Viewers_AbstractViewer {
 	 *
 	 * @param none
 	 *
-	 * @return Tx_SavLibraryPlus_Controller_Controller
+	 * @return \SAV\SavLibraryPlus\Controller\Controller
 	 */
   public function getController() {
     return $this->controller;
@@ -202,7 +189,7 @@ abstract class Tx_SavLibraryPlus_Viewers_AbstractViewer {
 	 *
 	 * @param none
 	 *
-	 * @return Tx_SavLibraryPlus_Managers_LibraryConfigurationManager
+	 * @return \SAV\SavLibraryPlus\Managers\LibraryConfigurationManager
 	 */
   public function getLibraryConfigurationManager() {
     return $this->libraryConfigurationManager;
@@ -218,7 +205,18 @@ abstract class Tx_SavLibraryPlus_Viewers_AbstractViewer {
 	public function isNewView() {
 		return $this->isNewView;
 	}  
-  
+
+  /**
+	 * Sets the isNewView flag
+	 *
+	 * @param boolean $isNewview
+	 *
+	 * @return boolean
+	 */
+	public function setIsNewView($isNewview) {
+		$this->isNewView = $isNewview;
+	}  
+		
 	/**
 	 * Sets the library view configuration
 	 *
@@ -347,7 +345,7 @@ abstract class Tx_SavLibraryPlus_Viewers_AbstractViewer {
   		if (@is_file(PATH_site . $templateFile) === TRUE) {
   			return $templateFile;
   		} else {  
-				throw new Tx_SavLibraryPlus_Exception('The file "' . htmlspecialchars(PATH_site . $templateFile) . '" does not exist');  			
+				throw new \SAV\SavLibraryPlus\Exception('The file "' . htmlspecialchars(PATH_site . $templateFile) . '" does not exist');  			
   		}				
   	}
   }   
@@ -382,7 +380,7 @@ abstract class Tx_SavLibraryPlus_Viewers_AbstractViewer {
 	 * @return none
 	 */
   protected function createFieldConfigurationManager() {
-    $this->fieldConfigurationManager = t3lib_div::makeInstance('Tx_SavLibraryPlus_Managers_FieldConfigurationManager');
+    $this->fieldConfigurationManager = GeneralUtility::makeInstance('SAV\\SavLibraryPlus\\Managers\\FieldConfigurationManager');
     $this->fieldConfigurationManager->injectController($this->getController());
   }
 
@@ -391,7 +389,7 @@ abstract class Tx_SavLibraryPlus_Viewers_AbstractViewer {
 	 *
 	 * @param none
 	 *
-	 * @return Tx_SavLibraryPlus_Managers_FieldConfigurationManager
+	 * @return \SAV\SavLibraryPlus\Managers\FieldConfigurationManager
 	 */
   protected function getFieldConfigurationManager() {
   	return $this->fieldConfigurationManager;
@@ -492,7 +490,7 @@ abstract class Tx_SavLibraryPlus_Viewers_AbstractViewer {
   public function getFoldersConfiguration() {
     // Adds the folders configuration
     foreach($this->libraryViewConfiguration as $folderKey => $folder) {
-      if ($folderKey != Tx_SavLibraryPlus_Controller_AbstractController::cryptTag('0')) {
+      if ($folderKey != \SAV\SavLibraryPlus\Controller\AbstractController::cryptTag('0')) {
       	$fieldConfigurationManager = $this->getFieldConfigurationManager();
       	$fieldConfigurationManager->injectKickstarterFieldConfiguration($folder['config']);
       	if ($fieldConfigurationManager->cutIf() === FALSE) {
@@ -563,10 +561,10 @@ abstract class Tx_SavLibraryPlus_Viewers_AbstractViewer {
 
   	// Sets the link configuration
   	$this->setViewLinkConfigurationFromTypoScriptConfiguration();  	
-	
+
     // Creates the view
-    $view = t3lib_div::makeInstance('Tx_Fluid_View_StandaloneView');
-    
+    $view = GeneralUtility::makeInstance('SAV\\SavLibraryPlus\\Compatibility\\View\\StandaloneView');
+   
     // Sets the file template
     $view->setTemplatePathAndFilename($this->getTemplateFile());
     
@@ -580,12 +578,12 @@ abstract class Tx_SavLibraryPlus_Viewers_AbstractViewer {
     // Adds the short form name to the general configuration
     $this->addToViewConfiguration('general',
       array(
-        'shortFormName' => Tx_SavLibraryPlus_Controller_AbstractController::getShortFormName(),
+        'shortFormName' => \SAV\SavLibraryPlus\Controller\AbstractController::getShortFormName(),
         'contentIdentifier' => $this->getController()->getExtensionConfigurationManager()->getContentIdentifier(), 
-      	'additionalParams' => Tx_SavLibraryPlus_Controller_AbstractController::convertLinkAdditionalParametersToArray($linkConfiguration['additionalParams']),
+      	'additionalParams' => \SAV\SavLibraryPlus\Controller\AbstractController::convertLinkAdditionalParametersToArray($linkConfiguration['additionalParams']),
       )
     );    
-  
+ 
     // Assigns the view configuration
     $view->assign('configuration', $this->viewConfiguration);
     
@@ -643,16 +641,16 @@ abstract class Tx_SavLibraryPlus_Viewers_AbstractViewer {
       // The item configuration should not be empty.
     	if(empty($itemConfiguration)) {
     		// It occurs when ###fieldName### is used and "fieldName" is not in the main table
-    		Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.incorrectFieldKey');
+    		\SAV\SavLibraryPlus\Controller\FlashMessages::addError('error.incorrectFieldKey');
     		return '';
     	}  
 
 			// Changes the item viewer directory to Default if the attribute edit is set to zero
-      $itemViewerDirectory = ($itemConfiguration['edit'] === '0' ? 'Default' : $this->getItemViewerDirectory());
+      $itemViewerDirectory = ($itemConfiguration['edit'] === '0' ? self::DEFAULT_ITEM_VIEWERS_DIRECTORY : $this->getItemViewerDirectory());
         
       // Creates the item viewer
-      $className = 'Tx_SavLibraryPlus_ItemViewers_' . $itemViewerDirectory . '_' . $itemConfiguration['fieldType'] . 'ItemViewer';      
-      $itemViewer = t3lib_div::makeInstance($className);
+      $className = 'SAV\\SavLibraryPlus\\ItemViewers\\' . $itemViewerDirectory . '\\' . $itemConfiguration['fieldType'] . 'ItemViewer';      
+      $itemViewer = GeneralUtility::makeInstance($className);
       $itemViewer->injectController($this->getController());
       $itemViewer->injectItemConfiguration($itemConfiguration);
       
@@ -672,10 +670,10 @@ abstract class Tx_SavLibraryPlus_Viewers_AbstractViewer {
 	 */
   public function getDirectoryName($directoryName) {
   	
-  	$absoluteDirectoryName = t3lib_div::getFileAbsFileName($directoryName);
+  	$absoluteDirectoryName = GeneralUtility::getFileAbsFileName($directoryName);
   	// Checks if the directory exists
 		if (!@is_dir($absoluteDirectoryName)) {
-			throw new Tx_SavLibraryPlus_Exception(Tx_SavLibraryPlus_Controller_FlashMessages::translate('error.directoryDoesNotExist', array(htmlspecialchars($cascadingStyleSheetAbsoluteFileName))));
+			throw new \SAV\SavLibraryPlus\Exception(\SAV\SavLibraryPlus\Controller\FlashMessages::translate('error.directoryDoesNotExist', array(htmlspecialchars($cascadingStyleSheetAbsoluteFileName))));
 		} else {
 			return substr($absoluteDirectoryName, strlen(PATH_site));
 		}  	

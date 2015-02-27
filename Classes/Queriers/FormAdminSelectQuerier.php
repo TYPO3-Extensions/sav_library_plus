@@ -1,4 +1,8 @@
 <?php
+namespace SAV\SavLibraryPlus\Queriers;
+
+use \TYPO3\CMS\Core\Utility\GeneralUtility;
+
 /***************************************************************
 *  Copyright notice
 *
@@ -29,7 +33,7 @@
  * @version $ID:$
  */
  
-class Tx_SavLibraryPlus_Queriers_FormAdminSelectQuerier extends Tx_SavLibraryPlus_Queriers_FormSelectQuerier {
+class FormAdminSelectQuerier extends FormSelectQuerier {
 
   /**
    * Executes the query
@@ -42,7 +46,7 @@ class Tx_SavLibraryPlus_Queriers_FormAdminSelectQuerier extends Tx_SavLibraryPlu
 
     // Checks if the user is authenticated
     if($this->getController()->getUserManager()->userIsAllowedToInputData() === FALSE) {
-      Tx_SavLibraryPlus_Controller_FlashMessages::addError('fatal.notAllowedToEnterInFormAdministration');
+      \SAV\SavLibraryPlus\Controller\FlashMessages::addError('fatal.notAllowedToEnterInFormAdministration');
       return FALSE;
     }
 
@@ -77,7 +81,7 @@ class Tx_SavLibraryPlus_Queriers_FormAdminSelectQuerier extends Tx_SavLibraryPlu
   protected function buildWhereClause() {
   	
     // Gets the uid
-    $uid = Tx_SavLibraryPlus_Managers_UriManager::getUid();
+    $uid = \SAV\SavLibraryPlus\Managers\UriManager::getUid();
 
     // Builds the where clause
     $whereClause = '1 AND ';

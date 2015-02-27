@@ -1,4 +1,8 @@
 <?php
+namespace SAV\SavLibraryPlus\Queriers;
+
+use \TYPO3\CMS\Core\Utility\GeneralUtility;
+
 /***************************************************************
 *  Copyright notice
 *
@@ -29,7 +33,7 @@
  * @version $ID:$
  */
  
-class Tx_SavLibraryPlus_Queriers_DownInSubformQuerier extends Tx_SavLibraryPlus_Queriers_AbstractQuerier {
+class DownInSubformQuerier extends AbstractQuerier {
 
   /**
    * Executes the query
@@ -42,12 +46,12 @@ class Tx_SavLibraryPlus_Queriers_DownInSubformQuerier extends Tx_SavLibraryPlus_
   
     // Checks if the user is authenticated
     if ($this->getController()->getUserManager()->userIsAuthenticated() === FALSE) {
-      Tx_SavLibraryPlus_Controller_FlashMessages::addError('fatal.notAuthenticated');
+      \SAV\SavLibraryPlus\Controller\FlashMessages::addError('fatal.notAuthenticated');
       return;
     }
 
     // Gets the subform field key
-    $subformFieldKey = Tx_SavLibraryPlus_Managers_UriManager::getSubformFieldKey();
+    $subformFieldKey = \SAV\SavLibraryPlus\Managers\UriManager::getSubformFieldKey();
 
     // Gets the kickstarter configuration for the subform field key
     $viewIdentifier = $this->getController()->getLibraryConfigurationManager()->getViewIdentifier('EditView');    
@@ -55,16 +59,16 @@ class Tx_SavLibraryPlus_Queriers_DownInSubformQuerier extends Tx_SavLibraryPlus_
     $kickstarterFieldConfiguration = $this->getController()->getLibraryConfigurationManager()->searchFieldConfiguration($viewConfiguration, $subformFieldKey);
 
     // Creates the field configuration manager
-    $fieldConfigurationManager = t3lib_div::makeInstance('Tx_SavLibraryPlus_Managers_FieldConfigurationManager');
+    $fieldConfigurationManager = GeneralUtility::makeInstance('SAV\\SavLibraryPlus\\Managers\\FieldConfigurationManager');
     $fieldConfigurationManager->injectController($this->getController());
     $fieldConfigurationManager->injectKickstarterFieldConfiguration($kickstarterFieldConfiguration);
     $fieldConfiguration = $fieldConfigurationManager->getFieldConfiguration();
 
     // Gets the subform item foreign uid
-    $subformUidForeign = Tx_SavLibraryPlus_Managers_UriManager::getSubformUidForeign();
+    $subformUidForeign = \SAV\SavLibraryPlus\Managers\UriManager::getSubformUidForeign();
 
     // Gets the subform item local uid
-    $subformUidLocal = Tx_SavLibraryPlus_Managers_UriManager::getSubformUidLocal();
+    $subformUidLocal = \SAV\SavLibraryPlus\Managers\UriManager::getSubformUidLocal();
 
     // Gets the rows count
     $rowsCount = $this->getRowsCountInRelationManyToMany($fieldConfiguration['MM'], $subformUidLocal);

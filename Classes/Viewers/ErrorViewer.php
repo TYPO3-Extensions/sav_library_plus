@@ -1,4 +1,8 @@
 <?php
+namespace SAV\SavLibraryPlus\Viewers;
+
+use \TYPO3\CMS\Core\Utility\GeneralUtility;
+
 /***************************************************************
 *  Copyright notice
 *
@@ -29,7 +33,7 @@
  * @version $ID:$
  */
  
-class Tx_SavLibraryPlus_Viewers_ErrorViewer extends Tx_SavLibraryPlus_Viewers_AbstractViewer {
+class ErrorViewer extends AbstractViewer {
 
   
   /**

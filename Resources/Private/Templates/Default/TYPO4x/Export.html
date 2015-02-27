@@ -1,0 +1,230 @@
+{namespace sav=Tx_SavLibraryPlus_ViewHelpers}
+<f:layout name="Default.html" />
+
+<f:section name="content">
+  <div class="exportView view">
+  <sav:form name="{configuration.general.formName}" method="post" enctype="multipart/form-data" action="exportSubmit" additionalParams="{configuration.general.additionalParams}">
+    <f:render partial="TitleBars/ExportView/Default.html" arguments="{configuration:configuration}" />
+
+    <div class="items">
+    
+      <sav:comment><!-- Displays the configuration controls--></sav:comment>    
+      <div class="item">
+        <sav:comment><!-- Displays the configuration selector --></sav:comment>       
+        <div class="field">
+          <div class="label"><sav:translate key="itemviewer.configuration" /></div>
+          <div class="value">
+            <select name="{configuration.general.formName}[configuration]" >
+            <f:for each="{configuration.optionsConfiguration}" as="option" key="optionKey">
+              <option value="{optionKey}" {f:if(condition:'{optionKey} == {configuration.exportConfiguration.configuration}',then:'selected="selected"')}>{option}</option>
+            </f:for>
+            </select>
+          </div> 
+                 
+          <sav:comment><!-- Displays the load configuration button --></sav:comment>   
+          <sav:form.image name="formAction][exportLoadConfiguration" src="{sav:getIcon(fileName:'exportLoadConfiguration')}" alt="{sav:translate(key:'button.exportLoadConfiguration')}" title="{sav:translate(key:'button.exportLoadConfiguration')}" additionalAttributes="{onclick:'submit();'}" />
+      
+          <sav:comment><!-- Displays the save configuration button --></sav:comment>   
+          <sav:form.image name="formAction][exportSaveConfiguration" src="{sav:getIcon(fileName:'exportSaveConfiguration')}" alt="{sav:translate(key:'button.exportSaveConfiguration')}" title="{sav:translate(key:'button.exportSaveConfiguration')}" additionalAttributes="{onclick:'submit();'}" />
+      
+          <sav:comment><!-- Displays the delete configuration button --></sav:comment>   
+          <sav:form.image name="formAction][exportDeleteConfiguration" src="{sav:getIcon(fileName:'exportDeleteConfiguration')}" alt="{sav:translate(key:'button.exportDeleteConfiguration')}" title="{sav:translate(key:'button.exportDeleteConfiguration')}" additionalAttributes="{onclick:'submit();'}" />
+          
+          <sav:comment><!-- Displays the delete configuration button --></sav:comment>           
+          <input type="text" name="{configuration.general.formName}[configurationName]" value="{configuration.exportConfiguration.configurationName}" size="50" />
+
+          <sav:comment><!-- Displays the toggle display button --></sav:comment> 
+          <f:alias map="{label:'{f:if(condition:configuration.exportConfiguration.displaySelectedFields,then:\'button.exportToggleDisplayAllFields\',else:\'button.exportToggleDisplaySelectedFields\')}'}">  
+          <sav:form.image name="formAction][exportToggleDisplay" class="exportToggleMode" src="{sav:getIcon(fileName:'exportToggleDisplay')}" alt="{sav:translate(key:label)}" title="{sav:translate(key:label)}" additionalAttributes="{onclick:'submit();'}" />
+          <input type="hidden" value="{configuration.exportConfiguration.displaySelectedFields}" name="{configuration.general.formName}[displaySelectedFields]"/>         
+          </f:alias>
+          
+          <sav:comment><!-- Displays the query mode button --></sav:comment> 
+          <f:if condition="{configuration.general.userIsAllowedToExportDataWithQuery}">
+            <f:alias map="{label:'{f:if(condition:configuration.exportConfiguration.queryMode,then:\'button.exportQueryModeOn\',else:\'button.exportQueryModeOff\')}',
+            icon:'{f:if(condition:configuration.exportConfiguration.queryMode,then:\'queryModeOff\',else:\'queryModeOn\')}'}">  
+            <sav:form.image name="formAction][exportQueryMode" class="exportQueryMode" src="{sav:getIcon(fileName:icon)}" alt="{sav:translate(key:label)}" title="{sav:translate(key:label)}" additionalAttributes="{onclick:'submit();'}" />
+            <input type="hidden" value="{configuration.exportConfiguration.queryMode}" name="{configuration.general.formName}[queryMode]"/>         
+            </f:alias> 
+          </f:if>         
+        </div>
+      </div>
+
+      <sav:comment><!-- Displays the field group --></sav:comment>
+      <div class="item">
+        <div class="field">
+          <div class="label"><sav:translate key="itemviewer.configurationGroup" /></div>
+          <div class="value">
+            <select name="{configuration.general.formName}[configurationGroup]" >
+            <f:for each="{configuration.optionsGroup}" as="option" key="optionKey">
+              <option value="{optionKey}" {f:if(condition:'{optionKey} == {configuration.exportConfiguration.configurationGroup}',then:'selected="selected"')}>{option}</option>
+            </f:for>          
+            </select>
+          </div>
+        </div>
+        <sav:comment><!-- Generated file link --></sav:comment>
+        <f:if condition="{configuration.exportConfiguration.fileLink}">
+          <div class="field">
+            <div class="label"><sav:translate key="itemviewer.generatedFileLink" /></div>
+            <div class="value generatedFileLink"><sav:html>{configuration.exportConfiguration.fileLink}</sav:html>
+            </div> 
+          </div>              
+        </f:if>               
+      </div>  
+                                                    
+      <sav:comment><!-- Displays the field xmlFile --></sav:comment>
+      <div class="item">
+        <div class="field">
+          <div class="label"><sav:translate key="itemviewer.xmlFile" /></div>
+          <div class="value"><input type="text" class="xmlFile" name="{configuration.general.formName}[xmlFile]" value="{configuration.exportConfiguration.xmlFile}" /></div>
+        </div>    
+      </div>
+      
+      <sav:comment><!-- Displays the field xsltFile --></sav:comment>
+      <div class="item">
+        <div class="field">
+          <div class="label"><sav:translate key="itemviewer.xsltFile" /></div>
+          <div class="value"><input type="text" class="xsltFile" name="{configuration.general.formName}[xsltFile]" value="{configuration.exportConfiguration.xsltFile}" /></div>
+        </div>    
+      </div>      
+
+      <sav:comment><!-- Displays the field exec --></sav:comment>
+      <f:if condition="{configuration.general.execIsAllowed}">
+      <div class="item">
+        <div class="field">
+          <div class="label"><sav:translate key="itemviewer.exec" /></div>
+          <div class="value"><input type="text" class="exec" name="{configuration.general.formName}[exec]" value="{configuration.exportConfiguration.exec}" /></div>
+        </div>    
+      </div> 
+      </f:if> 
+      
+      <sav:comment><!-- Displays the fields  --></sav:comment> 
+      <div class="item">
+        <div class="field fields">   
+          <div class="label"><sav:translate key="itemviewer.fields" /></div>         
+          <div class="value">  
+          <f:for each="{configuration.exportConfiguration.fields}" as="field" key="fieldKey">
+	      	  <f:cycle values="{0: 'clearLeft', 1: ''}" as="clearLeft">
+            <div class="checkbox {clearLeft}">
+              <input type="hidden" value="0" name="{configuration.general.formName}[fields][{fieldKey}][selected]"/>
+              <input type="checkbox" value="1" name="{configuration.general.formName}[fields][{fieldKey}][selected]" {f:if(condition:'{field.selected}',then:'checked="checked"')}/>
+              <input type="hidden" value="0" name="{configuration.general.formName}[fields][{fieldKey}][render]"/>
+              <input type="checkbox" value="1" name="{configuration.general.formName}[fields][{fieldKey}][render]" {f:if(condition:'{field.render}',then:'checked="checked"')}/>
+              <span ondblclick="{configuration.general.formName}['{configuration.general.formName}[whereClause]'].value+='{fieldKey}'" class="checkbox">{fieldKey}</span>
+            </div>
+ 	      	  </f:cycle>
+ 	        </f:for> 
+          </div>
+        </div>
+      </div>
+      
+      <f:if condition="{configuration.exportConfiguration.queryMode}">  
+        <f:then>
+        <sav:comment><!-- Displays the query configuration --></sav:comment>
+        <div class="item">
+          <div class="field">
+            <div class="label"><sav:translate key="itemviewer.query" /></div>
+            <div class="value"><textarea class="query" name="{configuration.general.formName}[query]" onchange="document.changed=1;" />{configuration.exportConfiguration.query}</textarea></div>
+          </div>    
+        </div>
+        </f:then> 
+        <f:else>      
+        <sav:comment><!-- Displays the field whereClause --></sav:comment>
+        <div class="item">
+          <div class="field">
+            <div class="label"><sav:translate key="itemviewer.whereClause" /></div>
+            <div class="value"><textarea class="whereClause" name="{configuration.general.formName}[whereClause]" />{configuration.exportConfiguration.whereClause}</textarea></div>
+          </div>    
+        </div> 
+  
+        <sav:comment><!-- Displays the field orderByClause --></sav:comment>
+        <div class="item">
+          <div class="field">
+            <div class="label"><sav:translate key="itemviewer.orderByClause" /></div>
+            <div class="value"><input type="text" class="orderByClause" name="{configuration.general.formName}[orderByClause]" value="{configuration.exportConfiguration.orderByClause}" /></div>
+          </div>    
+        </div>  
+        
+        <sav:comment><!-- Displays the field additionalTables --></sav:comment>
+        <div class="item">
+          <div class="field">
+            <div class="label"><sav:translate key="itemviewer.additionalTables" /></div>
+            <div class="value"><textarea class="additionalTables" name="{configuration.general.formName}[additionalTables]">{configuration.exportConfiguration.additionalTables}</textarea></div>
+          </div>    
+        </div>        
+  
+        <sav:comment><!-- Displays the field additionalFields --></sav:comment>
+        <div class="item">
+          <div class="field">
+            <div class="label"><sav:translate key="itemviewer.additionalFields" /></div>
+            <div class="value"><textarea class="additionalFields" name="{configuration.general.formName}[additionalFields]">{configuration.exportConfiguration.additionalFields}</textarea></div>
+          </div>    
+        </div>   
+  
+        <sav:comment><!-- Displays the fields exportMM and groupByClause --></sav:comment> 
+        <div class="item">
+          <sav:comment><!-- Displays exportMM --></sav:comment>      
+          <div class="field">
+            <div class="label"><sav:translate key="itemviewer.exportMM" /></div>
+            <div class="value">
+              <div class="checkbox">
+                <input type="hidden" value="0" name="{configuration.general.formName}[exportMM]"/>
+                <input type="checkbox" value="1" name="{configuration.general.formName}[exportMM]" {f:if(condition:'{configuration.exportConfiguration.exportMM}',then:'checked="checked"')}/>
+              </div>
+            </div>
+          </div>        
+          <sav:comment><!-- Displays groupByClause --></sav:comment>      
+          <div class="field">
+            <div class="label"><sav:translate key="itemviewer.groupByClause" /></div>
+            <div class="value"><input type="text" class="groupByClause" name="{configuration.general.formName}[groupByClause]" value="{configuration.exportConfiguration.groupByClause}" /></div>
+          </div>    
+        </div> 
+        </f:else>
+      </f:if> 
+      
+      <sav:comment><!-- Displays the fields includeAllFields and exportFieldNames --></sav:comment> 
+      <div class="item">
+        <sav:comment><!-- Displays includeAllFields --></sav:comment>      
+        <div class="field">
+          <div class="label"><sav:translate key="itemviewer.includeAllFields" /></div>
+          <div class="value">
+            <div class="checkbox">
+              <input type="hidden" value="0" name="{configuration.general.formName}[includeAllFields]"/>
+              <input type="checkbox" value="1" name="{configuration.general.formName}[includeAllFields]" {f:if(condition:'{configuration.exportConfiguration.includeAllFields}',then:'checked="checked"')}/>
+            </div>
+          </div>
+        </div>        
+        <sav:comment><!-- Displays exportFieldNames --></sav:comment>      
+        <div class="field">
+          <div class="label"><sav:translate key="itemviewer.exportFieldNames" /></div>
+          <div class="value">
+            <div class="checkbox">
+              <input type="hidden" value="0" name="{configuration.general.formName}[exportFieldNames]"/>
+              <input type="checkbox" value="1" name="{configuration.general.formName}[exportFieldNames]" {f:if(condition:'{configuration.exportConfiguration.exportFieldNames}',then:'checked="checked"')}/>
+            </div>
+          </div>
+        </div>    
+      </div> 
+      
+      <sav:comment><!-- Displays the field orderedFieldList --></sav:comment>
+      <div class="item">
+        <div class="field">
+          <div class="label"><sav:translate key="itemviewer.orderedFieldList" /></div>
+          <div class="value"><textarea class="orderedFieldList" name="{configuration.general.formName}[orderedFieldList]" onchange="document.changed=1;" />{configuration.exportConfiguration.orderedFieldList}</textarea></div>
+        </div>    
+      </div> 
+
+      <sav:comment><!-- Displays the TypoScript Configuration --></sav:comment>
+      <div class="item">
+        <div class="field">
+          <div class="label"><sav:translate key="itemviewer.fieldsConfiguration" /></div>
+          <div class="value"><textarea class="fieldsConfiguration" name="{configuration.general.formName}[fieldsConfiguration]" onchange="document.changed=1;" />{configuration.exportConfiguration.fieldsConfiguration}</textarea></div>
+        </div>    
+      </div>
+
+                      
+    </div>
+    <f:render partial="Footers/EditView/Default.html" arguments="{configuration:configuration}" />
+  </sav:form>
+  </div>
+</f:section>

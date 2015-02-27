@@ -1,4 +1,8 @@
 <?php
+namespace SAV\SavLibraryPlus\Viewers;
+
+use \TYPO3\CMS\Core\Utility\GeneralUtility;
+
 /***************************************************************
 *  Copyright notice
 *
@@ -29,14 +33,14 @@
  * @version $ID:$
  */
  
-class Tx_SavLibraryPlus_Viewers_SingleViewer extends Tx_SavLibraryPlus_Viewers_AbstractViewer {
+class SingleViewer extends AbstractViewer {
 
   /**
    * Item viewer directory
    *
    * @var string
    */
-  protected $itemViewerDirectory = 'Default';
+  protected $itemViewerDirectory = self::DEFAULT_ITEM_VIEWERS_DIRECTORY;
 
   /**
    * The template file

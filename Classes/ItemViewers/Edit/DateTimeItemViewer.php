@@ -1,4 +1,8 @@
 <?php
+namespace SAV\SavLibraryPlus\ItemViewers\Edit;
+
+use \TYPO3\CMS\Core\Utility\GeneralUtility;
+
 /***************************************************************
 *  Copyright notice
 *
@@ -23,13 +27,13 @@
 ***************************************************************/
 
 /**
- * Default DateTime item Viewer.
+ * Edit DateTime item Viewer.
  * 
  * @package SavLibraryPlus
  * @version $ID:$
  */
  
-class Tx_SavLibraryPlus_ItemViewers_Edit_DateTimeItemViewer extends Tx_SavLibraryPlus_ItemViewers_Edit_AbstractItemViewer {
+class DateTimeItemViewer extends AbstractItemViewer {
 
   /**
    * Renders the item.
@@ -52,19 +56,19 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_DateTimeItemViewer extends Tx_SavLibrar
       ($this->getItemConfiguration('nodefault') ? '' : strftime($format))
     );
 
-    $htmlArray[] = Tx_SavLibraryPlus_Utility_HtmlElements::htmlInputTextElement(
+    $htmlArray[] = \SAV\SavLibraryPlus\Utility\HtmlElements::htmlInputTextElement(
       array(
-        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('name', $this->getItemConfiguration('itemName')),
-        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('id', 'input_' . strtr($this->getItemConfiguration('itemName'), '[]', '__')),
-        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttributeIfNotNull('class', $this->getItemConfiguration('classhtmltag')),
-        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttributeIfNotNull('style', $this->getItemConfiguration('stylehtmltag')),
-        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('value', $value),
-        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('onchange', 'document.changed=1;'),
+        \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('name', $this->getItemConfiguration('itemName')),
+        \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('id', 'input_' . strtr($this->getItemConfiguration('itemName'), '[]', '__')),
+        \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttributeIfNotNull('class', $this->getItemConfiguration('classhtmltag')),
+        \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttributeIfNotNull('style', $this->getItemConfiguration('stylehtmltag')),
+        \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('value', $value),
+        \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('onchange', 'document.changed=1;'),
       )
     );
 
     // Creates the date picker
-    $datePicker = t3lib_div::makeInstance('Tx_SavLibraryPlus_DatePicker_DatePicker');
+    $datePicker = GeneralUtility::makeInstance('SAV\\SavLibraryPlus\\DatePicker\\DatePicker');
   
     // Renders the date picker
     $htmlArray[] = $datePicker->render(
@@ -72,7 +76,7 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_DateTimeItemViewer extends Tx_SavLibrar
         'id' => strtr($this->getItemConfiguration('itemName'), '[]', '__'),
         'format' => $format,
         'showsTime' => TRUE,
-        'iconPath' => Tx_SavLibraryPlus_Managers_LibraryConfigurationManager::getIconPath('calendar'),
+        'iconPath' => \SAV\SavLibraryPlus\Managers\LibraryConfigurationManager::getIconPath('calendar'),
       )
     );
 

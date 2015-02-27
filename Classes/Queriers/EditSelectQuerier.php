@@ -1,4 +1,8 @@
 <?php
+namespace SAV\SavLibraryPlus\Queriers;
+
+use \TYPO3\CMS\Core\Utility\GeneralUtility;
+
 /***************************************************************
 *  Copyright notice
 *
@@ -29,7 +33,7 @@
  * @version $ID:$
  */
  
-class Tx_SavLibraryPlus_Queriers_EditSelectQuerier extends Tx_SavLibraryPlus_Queriers_AbstractQuerier {
+class EditSelectQuerier extends AbstractQuerier {
 
   /**
    * Executes the query
@@ -42,7 +46,7 @@ class Tx_SavLibraryPlus_Queriers_EditSelectQuerier extends Tx_SavLibraryPlus_Que
 
     // Checks if the user is authenticated
     if($this->getController()->getUserManager()->userIsAuthenticated() === FALSE) {
-      Tx_SavLibraryPlus_Controller_FlashMessages::addError('fatal.notAuthenticated');
+      \SAV\SavLibraryPlus\Controller\FlashMessages::addError('fatal.notAuthenticated');
       return FALSE;
     }
 
@@ -56,7 +60,6 @@ class Tx_SavLibraryPlus_Queriers_EditSelectQuerier extends Tx_SavLibraryPlus_Que
 
     // Sets the rows from the query
     $this->setRows();
-    
   }
 
   /**

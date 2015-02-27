@@ -1,4 +1,8 @@
 <?php
+namespace SAV\SavLibraryPlus\Queriers;
+
+use \TYPO3\CMS\Core\Utility\GeneralUtility;
+
 /***************************************************************
 *  Copyright notice
 *
@@ -29,7 +33,7 @@
  * @version $ID:$
  */
 
-class Tx_SavLibraryPlus_Queriers_ExportLoadConfigurationSelectQuerier extends Tx_SavLibraryPlus_Queriers_ExportSelectQuerier {
+class ExportLoadConfigurationSelectQuerier extends ExportSelectQuerier {
 	
   /**
    * Executes the query
@@ -87,7 +91,7 @@ class Tx_SavLibraryPlus_Queriers_ExportLoadConfigurationSelectQuerier extends Tx
     		unset($loadedExportConfiguration['fields'][$fieldKey]);
     	}
     }  
- 
+
     // Builds the export configuration
     foreach ($this->rows[0] as $rowKey => $row) {
     	

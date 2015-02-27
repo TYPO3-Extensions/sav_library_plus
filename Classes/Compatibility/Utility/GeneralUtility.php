@@ -1,4 +1,5 @@
 <?php
+namespace SAV\SavLibraryPlus\Compatibility\Utility;
 
 /***************************************************************
 *  Copyright notice
@@ -28,7 +29,7 @@
  *
  * @package SavLibraryPlus
  */
-class Tx_SavLibraryPlus_Compatibility_Utility_GeneralUtility {
+class GeneralUtility {
 
 	/**
 	 * Loads the $GLOBALS['TCA'] (Table Configuration Array) for the $table
@@ -44,9 +45,9 @@ class Tx_SavLibraryPlus_Compatibility_Utility_GeneralUtility {
 	 */
 	static public function loadTCA($table) {
     if (version_compare(TYPO3_version, '6.1', '<')) { 
-      t3lib_div::loadTCA($table);	
+      \TYPO3\CMS\Core\Utility\GeneralUtility::loadTCA($table);	
     }
 	}	
-	
 }
+	
 ?>

@@ -1,0 +1,15 @@
+{namespace sav=Tx_SavLibraryPlus_ViewHelpers}
+    <div class="titleBar">
+      <f:if condition="{configuration.general.title}">
+      <div class="titleLabel"><f:if condition="{configuration.general.titleNeedsFormat}"><f:then><sav:html>{configuration.general.title}</sav:html></f:then><f:else>{configuration.general.title}</f:else></f:if></div>
+      </f:if>
+      <div class="right"></div>
+	    <div class="titleIconRight">
+        <f:if condition="{configuration.general.userIsAllowedToExportData}">
+	       <sav:form.image class="exportExecute"  name="formAction][exportExecute" src="{sav:getIcon(fileName:'exportExecute')}" alt="{sav:translate(key:'button.exportExecute')}" title="{sav:translate(key:'button.exportExecute')}" additionalAttributes="{onclick:'submit();'}" />
+        </f:if>      
+        <sav:link.action action="close" additionalParams="{configuration.general.additionalParams}">
+          <f:image class="close" src="{sav:getIcon(fileName:'close')}" alt="{sav:translate(key:'button.close')}" title="{sav:translate(key:'button.close')}" />
+        </sav:link.action>      
+      </div>
+    </div>

@@ -1,4 +1,8 @@
 <?php
+namespace SAV\SavLibraryPlus\Queriers;
+
+use \TYPO3\CMS\Core\Utility\GeneralUtility;
+
 /***************************************************************
 *  Copyright notice
 *
@@ -29,7 +33,7 @@
  * @version $ID:$
  */
  
-class Tx_SavLibraryPlus_Queriers_FormAdminUpdateQuerier extends Tx_SavLibraryPlus_Queriers_UpdateQuerier {
+class FormAdminUpdateQuerier extends UpdateQuerier {
 
 	/**
    * The validation array
@@ -66,7 +70,7 @@ class Tx_SavLibraryPlus_Queriers_FormAdminUpdateQuerier extends Tx_SavLibraryPlu
     $activeFolder = $viewConfiguration[$activeFolderKey];
 
     // Creates the field configuration manager
-    $fieldConfigurationManager = t3lib_div::makeInstance('Tx_SavLibraryPlus_Managers_FieldConfigurationManager');
+    $fieldConfigurationManager = GeneralUtility::makeInstance('SAV\\SavLibraryPlus\\Managers\\FieldConfigurationManager');
     $fieldConfigurationManager->injectController($this->getController());
     
     // Gets the fields configuration for the folder
@@ -81,7 +85,7 @@ class Tx_SavLibraryPlus_Queriers_FormAdminUpdateQuerier extends Tx_SavLibraryPlu
    
     // Gets the main table
     $mainTable = $this->getQueryConfigurationManager()->getMainTable();
-		$mainTableUid = Tx_SavLibraryPlus_Managers_UriManager::getUid();
+		$mainTableUid = \SAV\SavLibraryPlus\Managers\UriManager::getUid();
 
 		// Initializes special marker array
 		$markerItemsManual = array();
@@ -123,8 +127,8 @@ class Tx_SavLibraryPlus_Queriers_FormAdminUpdateQuerier extends Tx_SavLibraryPlu
 					// Gets the rendered value 
 					$fieldConfiguration = $this->fieldConfiguration;
 					$fieldConfiguration['value'] = $value;
-	      	$className = 'Tx_SavLibraryPlus_ItemViewers_Default_' . $fieldConfiguration['fieldType'] . 'ItemViewer';
-	      	$itemViewer = t3lib_div::makeInstance($className);
+	      	$className = 'SAV\\SavLibraryPlus\\ItemViewers\\General\\' . $fieldConfiguration['fieldType'] . 'ItemViewer';
+	      	$itemViewer = GeneralUtility::makeInstance($className);
 	      	$itemViewer->injectController($this->getController());
 	      	$itemViewer->injectItemConfiguration($fieldConfiguration);
 	      	$renderedValue = $itemViewer->render();
@@ -183,11 +187,11 @@ class Tx_SavLibraryPlus_Queriers_FormAdminUpdateQuerier extends Tx_SavLibraryPlu
       }
     
       // Updates the _submitted_data_ field
-      $shortFormName = Tx_SavLibraryPlus_Controller_AbstractController::getShortFormName();
+      $shortFormName = \SAV\SavLibraryPlus\Controller\AbstractController::getShortFormName();
 			$variableToSerialize = $variableToSerialize + array('validation' => $this->validation);
 			$serializedVariable = serialize(array($shortFormName => array('temporary' => $variableToSerialize)));  
       $this->updateFields($mainTable, array('_submitted_data_' => $serializedVariable,'_validated_' => 1), $mainTableUid);   
-			Tx_SavLibraryPlus_Controller_FlashMessages::addMessage('message.dataSaved'); 			    	      
+			\SAV\SavLibraryPlus\Controller\FlashMessages::addMessage('message.dataSaved'); 			    	      
     }
 
     if (empty($this->postProcessingList) === FALSE) {
@@ -250,7 +254,7 @@ class Tx_SavLibraryPlus_Queriers_FormAdminUpdateQuerier extends Tx_SavLibraryPlu
 		// Checks if a required field is not empty
 		if ($this->isRequired() && empty($newValue)) {
 			self::$doNotUpdateOrInsert = TRUE;
-			Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.fieldRequired', array($this->fieldConfiguration['label']));		
+			\SAV\SavLibraryPlus\Controller\FlashMessages::addError('error.fieldRequired', array($this->fieldConfiguration['label']));		
 		}    
 		
     // Sets a post-processor for the email if any 
@@ -272,7 +276,7 @@ class Tx_SavLibraryPlus_Queriers_FormAdminUpdateQuerier extends Tx_SavLibraryPlu
     	if(!method_exists($this, $verifierMethod)) {
     		self::$doNotAddValueToUpdateOrInsert = TRUE;
     		self::$doNotUpdateOrInsert = TRUE;
-    		Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.verifierUnknown');
+    		\SAV\SavLibraryPlus\Controller\FlashMessages::addError('error.verifierUnknown');
     	} elseif ($this->$verifierMethod($newValue) !== TRUE) {
     		self::$doNotAddValueToUpdateOrInsert = TRUE;
     		self::$doNotUpdateOrInsert = TRUE;    		

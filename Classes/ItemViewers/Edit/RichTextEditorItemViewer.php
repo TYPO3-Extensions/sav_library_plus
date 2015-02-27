@@ -1,4 +1,8 @@
 <?php
+namespace SAV\SavLibraryPlus\ItemViewers\Edit;
+
+use \TYPO3\CMS\Core\Utility\GeneralUtility;
+
 /***************************************************************
 *  Copyright notice
 *
@@ -29,7 +33,7 @@
  * @package SavLibraryPlus
  * @version $ID:$
  */
-class Tx_SavLibraryPlus_ItemViewers_Edit_RichTextEditorItemViewer extends Tx_SavLibraryPlus_ItemViewers_Edit_AbstractItemViewer {
+class RichTextEditorItemViewer extends AbstractItemViewer {
 
 	public $RTEwindows = array();
 	public $formName = '';
@@ -49,10 +53,10 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_RichTextEditorItemViewer extends Tx_Sav
    */
   protected function renderItem() {
     $htmlArray = array();
-    $richTextEditor = t3lib_div::makeInstance('tx_rtehtmlarea_pi2');
+    $richTextEditor = GeneralUtility::makeInstance('TYPO3\\CMS\\Rtehtmlarea\\Controller\\FrontendRteController');
     
     // Sets the page typoScript configuration
-		$pageTypoScriptConfiguration = t3lib_BEfunc::getPagesTSconfig($GLOBALS['TSFE']->id);
+		$pageTypoScriptConfiguration = \TYPO3\CMS\Backend\Utility\BackendUtility::getPagesTSconfig($GLOBALS['TSFE']->id);
 		$typoScriptConfiguration = array_merge(
       $pageTypoScriptConfiguration['RTE.']['default.']['FE.'],
       array(
@@ -141,8 +145,8 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_RichTextEditorItemViewer extends Tx_Sav
  
     // Adds the javaScript for the rich text editor update
     $editorNumber = preg_replace('/[^a-zA-Z0-9_:.-]/', '_', $properties['itemFormElName']) . '_' . $this->RTEcounter;
-    Tx_SavLibraryPlus_Managers_AdditionalHeaderManager::addJavaScript('checkIfRteChanged', 'checkIfRteChanged(\'' . $editorNumber . '\');');
-    Tx_SavLibraryPlus_Managers_AdditionalHeaderManager::addJavaScript('rteUpdate', $this->additionalJS_submit[0]);
+    \SAV\SavLibraryPlus\Managers\AdditionalHeaderManager::addJavaScript('checkIfRteChanged', 'checkIfRteChanged(\'' . $editorNumber . '\');');
+    \SAV\SavLibraryPlus\Managers\AdditionalHeaderManager::addJavaScript('rteUpdate', $this->additionalJS_submit[0]);
 
     return $this->arrayToHTML($htmlArray);
   }
@@ -163,7 +167,7 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_RichTextEditorItemViewer extends Tx_Sav
     $javaScriptCode .= '</script>';
 
 		// Adds the javaScript  
-		Tx_SavLibraryPlus_Managers_AdditionalHeaderManager::addJavaScriptInlineCode('RichTextEditor', $javaScriptCode);
+		\SAV\SavLibraryPlus\Managers\AdditionalHeaderManager::addJavaScriptInlineCode('RichTextEditor', $javaScriptCode);
   }
 
 }

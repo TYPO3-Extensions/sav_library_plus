@@ -1,4 +1,8 @@
 <?php
+namespace SAV\SavLibraryPlus\Viewers;
+
+use \TYPO3\CMS\Core\Utility\GeneralUtility;
+
 /***************************************************************
 *  Copyright notice
 *
@@ -29,7 +33,7 @@
  * @version $ID:$
  */
  
-class Tx_SavLibraryPlus_Viewers_PrintInListViewer extends Tx_SavLibraryPlus_Viewers_ListViewer {
+class PrintInListViewer extends ListViewer {
 
   /**
    * The template file
@@ -41,7 +45,7 @@ class Tx_SavLibraryPlus_Viewers_PrintInListViewer extends Tx_SavLibraryPlus_View
   /**
    * The template configuration manager
    *
-   * @var Tx_SavLibraryPlus_Managers_TemplateConfigurationManager
+   * @var \SAV\SavLibraryPlus\Managers\TemplateConfigurationManager
    */
   protected $templateConfigurationManager;	  
 
@@ -61,7 +65,7 @@ class Tx_SavLibraryPlus_Viewers_PrintInListViewer extends Tx_SavLibraryPlus_View
    */
   protected function getItemTemplate() {
     // Creates the template configuration manager
-    $this->templateConfigurationManager = t3lib_div::makeInstance('Tx_SavLibraryPlus_Managers_TemplateConfigurationManager');
+    $this->templateConfigurationManager = GeneralUtility::makeInstance('SAV\\SavLibraryPlus\\Managers\\TemplateConfigurationManager');
     $this->templateConfigurationManager->injectTemplateConfiguration($this->getLibraryConfigurationManager()->getSpecialViewTemplateConfiguration());
 
     // Retuns the item template

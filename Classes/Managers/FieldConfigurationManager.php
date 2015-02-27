@@ -1,4 +1,8 @@
 <?php
+namespace SAV\SavLibraryPlus\Managers;
+
+use \TYPO3\CMS\Core\Utility\GeneralUtility;
+
 /***************************************************************
  *  Copyright notice
  *
@@ -31,7 +35,7 @@
  * @version $ID:$
  */
  
-class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
+class FieldConfigurationManager {
 
   /**
    * Pattern for the cutter
@@ -41,7 +45,7 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
     (?:
       (?:
         \s+
-        (?P<connector>[\|&]|or|and)
+        (?P<connector>[\|&]|or|and|OR|AND)
         \s+
       )?
       (?P<expression>
@@ -67,7 +71,7 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
   /**
    * The controller
    *
-   * @var Tx_SavLibraryPlus_Controller_Controller
+   * @var \SAV\SavLibraryPlus\Controller\Controller
    */
   protected $controller;
   
@@ -102,14 +106,14 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
   /**
    * The local querier
    *
-   * @var Tx_SavLibraryPlus_Queriers_AbstractQuerier
+   * @var \SAV\SavLibraryPlus\Queriers\AbstractQuerier
    */
   protected $querier = NULL;
     
 	/**
 	 * Injects the controller
 	 * 
-	 * @param Tx_SavLibraryPlus_Controller_AbstractController $controller
+	 * @param \SAV\SavLibraryPlus\Controller\AbstractController $controller
 	 * 
 	 * @return none
 	 */
@@ -122,7 +126,7 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
 	 * 
 	 * @param none
 	 * 
-	 * @return Tx_SavLibraryPlus_Controller_AbstractController
+	 * @return \SAV\SavLibraryPlus\Controller\AbstractController
 	 */
   public function getController() {
     return $this->controller;
@@ -131,7 +135,7 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
 	/**
 	 * Injects the local querier
 	 * 
-	 * @param Tx_SavLibraryPlus_Queriers_AbstractQuerier $querier
+	 * @param \SAV\SavLibraryPlus\Queriers\AbstractQuerier $querier
 	 * 
 	 * @return none
 	 */
@@ -144,7 +148,7 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
 	 * 
 	 * @param none
 	 * 
-	 * @return Tx_SavLibraryPlus_Queriers_AbstractQuerier
+	 * @return \SAV\SavLibraryPlus\Queriers\AbstractQuerier
 	 */
   public function getQuerier() {
   	if ($this->querier === NULL) {
@@ -297,7 +301,7 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
     $fieldConfiguration = array();
 
     // Adds the tca config field
-    $fieldConfiguration = array_merge($fieldConfiguration, Tx_SavLibraryPlus_Managers_TcaConfigurationManager::getTcaConfigField($tableName, $fieldName));
+    $fieldConfiguration = array_merge($fieldConfiguration, \SAV\SavLibraryPlus\Managers\TcaConfigurationManager::getTcaConfigField($tableName, $fieldName));
 
     // Adds external tca configuration for existing tables, if any
     $externalTcaConfiguration = $this->getController()->getLibraryConfigurationManager()->getExternalTcaConfiguration();
@@ -396,7 +400,12 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
       $fieldConfiguration['wrapItem'] = $querier->parseLocalizationTags($this->kickstarterFieldConfiguration['wrapitem']);
       $fieldConfiguration['wrapItem'] = $querier->parseFieldTags($fieldConfiguration['wrapItem']);
     }
-
+    
+    // Adds the TODO if any
+		if (!empty($this->kickstarterFieldConfiguration['todo'])) {
+			\SAV\SavLibraryPlus\Controller\FlashMessages::addError('error.todo', array($fullFieldName, $this->kickstarterFieldConfiguration['todo']));
+		}
+	
     return $fieldConfiguration;
   }
 
@@ -413,11 +422,11 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
 			$tableName = $this->kickstarterFieldConfiguration['tableName'];
     	$fieldName = $this->kickstarterFieldConfiguration['fieldName'];
     	// Tries to find the label in the extension resource locallang_db file
-    	$labelKey = 'LLL:EXT:' . Tx_SavLibraryPlus_Managers_ExtensionConfigurationManager::getExtensionKey() . '/Resources/Private/Language/locallang_db.xml:' .$tableName . '.' . $fieldName;
+    	$labelKey = 'LLL:EXT:' . \SAV\SavLibraryPlus\Managers\ExtensionConfigurationManager::getExtensionKey() . '/Resources/Private/Language/locallang_db.xml:' .$tableName . '.' . $fieldName;
     	$label = $GLOBALS['TSFE']->sL($labelKey);   
     	if (empty($label)) {
     		// tries to find the lable from the TCA
-				$label = Tx_SavLibraryPlus_Managers_TcaConfigurationManager::getTcaFieldLabel($tableName, $fieldName);
+				$label = \SAV\SavLibraryPlus\Managers\TcaConfigurationManager::getTcaFieldLabel($tableName, $fieldName);
     	}	
 		}
 		return $label;
@@ -496,7 +505,7 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
     	$configuration = $this->kickstarterFieldConfiguration['stdwrapvalue'];
     }
 
-    $TSparser = t3lib_div::makeInstance('t3lib_TSparser');
+    $TSparser = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\TypoScript\\Parser\\TypoScriptParser');
     $TSparser->parse($configuration);
     $contentObject = $this->getController()->getExtensionConfigurationManager()->getExtensionContentObject();
     $value = $contentObject->stdWrap($value, $TSparser->setup);
@@ -515,7 +524,7 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
 
 		// Checks if the typoscript properties exist
 		if (empty($this->kickstarterFieldConfiguration['tsproperties'])) {
-			Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.noAttributeInField', array('tsProperties', $this->kickstarterFieldConfiguration['fieldName']));
+			\SAV\SavLibraryPlus\Controller\FlashMessages::addError('error.noAttributeInField', array('tsProperties', $this->kickstarterFieldConfiguration['fieldName']));
 			return '';
 		}
 
@@ -527,7 +536,7 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
     } else {
     	$configuration = $this->kickstarterFieldConfiguration['tsproperties'];
     }  
-    $TSparser = t3lib_div::makeInstance('t3lib_TSparser');
+    $TSparser = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\TypoScript\\Parser\\TypoScriptParser');
     $TSparser->parse($configuration);
 
     $contentObject = $this->getController()->getExtensionConfigurationManager()->getExtensionContentObject();        
@@ -557,13 +566,13 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
 
     // Checks if the query is a select query
     if (!$querier->isSelectQuery($query)) {
-    	Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.onlySelectQueryAllowed', array($this->kickstarterFieldConfiguration['fieldName']));
+    	\SAV\SavLibraryPlus\Controller\FlashMessages::addError('error.onlySelectQueryAllowed', array($this->kickstarterFieldConfiguration['fieldName']));
     	return '';
     }
 		// Executes the query
 		$resource = $GLOBALS['TYPO3_DB']->sql_query($query);
 		if ($resource === FALSE) {
-    	Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.incorrectQueryInReqValue', array($this->kickstarterFieldConfiguration['fieldName']));
+    	\SAV\SavLibraryPlus\Controller\FlashMessages::addError('error.incorrectQueryInReqValue', array($this->kickstarterFieldConfiguration['fieldName']));
 		}
 
 		// Sets the separator
@@ -573,7 +582,7 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
   	}
  
   	// Creates an item viewer for the processing of the func attribute
-  	$itemViewer = t3lib_div::makeInstance('Tx_SavLibraryPlus_ItemViewers_Default_StringItemViewer');
+  	$itemViewer = GeneralUtility::makeInstance('SAV\\SavLibraryPlus\\ItemViewers\\General\\StringItemViewer');
   	$itemViewer->injectController($this->getController());
   	$itemViewer->injectItemConfiguration($this->kickstarterFieldConfiguration);
   	
@@ -594,7 +603,7 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
 
         $value .= ($value ? $separator : '') . $valueFromRow;
       } else {
-      	Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.aliasValueMissingInReqValue', array($this->kickstarterFieldConfiguration['fieldName']));
+      	\SAV\SavLibraryPlus\Controller\FlashMessages::addError('error.aliasValueMissingInReqValue', array($this->kickstarterFieldConfiguration['fieldName']));
 				return '';
     	}
 		}	
@@ -683,13 +692,13 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
 	 * @return boolean
 	 */	
 	protected function getErrorFlag() {	
-	  $querier = $this->getQuerier();
+	  $querier = $this->getQuerier(); 
     if (empty($querier)) {	
 			return FALSE;
-    } elseif ($querier->errorDuringUpdate() === TRUE) {
+    } elseif ($querier->errorDuringUpdate() === TRUE) {  
     	$fieldName = $this->getFullFieldName();		
 			$errorCode = $querier->getFieldErrorCodeFromProcessedPostVariables($fieldName);
-    	return $errorCode != Tx_SavLibraryPlus_Queriers_UpdateQuerier::ERROR_NONE;
+    	return $errorCode != \SAV\SavLibraryPlus\Queriers\UpdateQuerier::ERROR_NONE;
     } else {
     	return FALSE;
     }
@@ -869,7 +878,7 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
           	if ($querier->fieldExistsInCurrentRow($fullFieldName) === TRUE) {
       				$lhsValue = $querier->getFieldValueFromCurrentRow($fullFieldName);
           	} else {
-          		return Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.unknownFieldName', array($fullFieldName));
+          		return \SAV\SavLibraryPlus\Controller\FlashMessages::addError('error.unknownFieldName', array($fullFieldName));
           	}
     			} else {
     				return FALSE;
@@ -888,7 +897,7 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
           	if ($querier->fieldExistsInCurrentRow($fullFieldName) === TRUE) {
       				$lhsValue = $querier->getFieldValueFromCurrentRow($fullFieldName);
           	} else {
-          		return Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.unknownFieldName', array($fullFieldName));
+          		return \SAV\SavLibraryPlus\Controller\FlashMessages::addError('error.unknownFieldName', array($fullFieldName));
           	}          	
     			} else {
     				return FALSE;
@@ -967,28 +976,28 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
           if ($isGroupCondition !== TRUE) {
             $condition = $lhsValue >= $rhsValue;
           } else {
-          	return Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.operatorNotAllowed', array($operator));
+          	return \SAV\SavLibraryPlus\Controller\FlashMessages::addError('error.operatorNotAllowed', array($operator));
           }          	
           break;          	
         case '<=':
           if ($isGroupCondition !== TRUE) {
             $condition = $lhsValue <= $rhsValue;
           } else {
-          	return Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.operatorNotAllowed', array($operator));
+          	return \SAV\SavLibraryPlus\Controller\FlashMessages::addError('error.operatorNotAllowed', array($operator));
           }          	
           break;          	
         case '>':
           if ($isGroupCondition !== TRUE) {
             $condition = $lhsValue > $rhsValue;
           } else {
-          	return Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.operatorNotAllowed', array($operator));
+          	return \SAV\SavLibraryPlus\Controller\FlashMessages::addError('error.operatorNotAllowed', array($operator));
           }          	
           break;          	
         case '<':
           if ($isGroupCondition !== TRUE) {
             $condition = $lhsValue < $rhsValue;
           } else {
-          	return Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.operatorNotAllowed', array($operator));
+          	return \SAV\SavLibraryPlus\Controller\FlashMessages::addError('error.operatorNotAllowed', array($operator));
           }          	
           break;                           
       }
@@ -998,10 +1007,12 @@ class Tx_SavLibraryPlus_Managers_FieldConfigurationManager {
       switch ($connector) {
         case '|':
         case 'or':
+        case 'OR':
           $result = ($result === NULL ? $condition : $result || $condition);
           break;
         case '&':
         case 'and':
+        case 'AND':
           $result = ($result === NULL ? $condition : $result && $condition);
           break;
         case '':

@@ -1,4 +1,8 @@
 <?php
+namespace SAV\SavLibraryPlus\Viewers;
+
+use \TYPO3\CMS\Core\Utility\GeneralUtility;
+
 /***************************************************************
 *  Copyright notice
 *
@@ -29,14 +33,14 @@
  * @version $ID:$
  */
  
-class Tx_SavLibraryPlus_Viewers_ListViewer extends Tx_SavLibraryPlus_Viewers_AbstractViewer {
+class ListViewer extends AbstractViewer {
 
   /**
    * Item viewer directory
    *
    * @var string
    */
-  protected $itemViewerDirectory = 'Default';
+  protected $itemViewerDirectory = self::DEFAULT_ITEM_VIEWERS_DIRECTORY;
   
   /**
    * Edit mode flag
@@ -84,7 +88,7 @@ class Tx_SavLibraryPlus_Viewers_ListViewer extends Tx_SavLibraryPlus_Viewers_Abs
     // Gets the item template
     $itemTemplate = $this->getItemTemplate();    
 		if (empty($itemTemplate)) {
-			Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.itemTemplateMissingInListView');
+			\SAV\SavLibraryPlus\Controller\FlashMessages::addError('error.itemTemplateMissingInListView');
 			return $this->renderView();
 		}
     
@@ -113,10 +117,10 @@ class Tx_SavLibraryPlus_Viewers_ListViewer extends Tx_SavLibraryPlus_Viewers_Abs
       
       $this->previousFolderFieldsConfiguration = $this->folderFieldsConfiguration;
     }
-   
+  
     // Adds the fields configuration
     $this->addToViewConfiguration('fields', $fields);
-    
+   
     // Adds information to the view configuration
     $this->addToViewConfiguration('general',
       array(
@@ -134,7 +138,7 @@ class Tx_SavLibraryPlus_Viewers_ListViewer extends Tx_SavLibraryPlus_Viewers_Abs
 
     // Additional view configuration if no rows are returned by the querier
     $this->additionalViewConfigurationIfNoRows();
-    
+   
     // Additional view configuration
     $this->additionalViewConfiguration();
 
@@ -150,7 +154,7 @@ class Tx_SavLibraryPlus_Viewers_ListViewer extends Tx_SavLibraryPlus_Viewers_Abs
    */
   protected function getItemTemplate() {
     // Creates the template configuration manager
-    $templateConfigurationManager = t3lib_div::makeInstance('Tx_SavLibraryPlus_Managers_TemplateConfigurationManager');
+    $templateConfigurationManager = GeneralUtility::makeInstance('SAV\\SavLibraryPlus\\Managers\\TemplateConfigurationManager');
     $templateConfigurationManager->injectTemplateConfiguration($this->getLibraryConfigurationManager()->getListViewTemplateConfiguration());
     $itemTemplate = $templateConfigurationManager->getItemTemplate(); 
     
@@ -165,7 +169,7 @@ class Tx_SavLibraryPlus_Viewers_ListViewer extends Tx_SavLibraryPlus_Viewers_Abs
    * @return integer
    */
   protected function getCurrentPage() {
-    $currentPage = Tx_SavLibraryPlus_Managers_UriManager::getPage();  	
+    $currentPage = \SAV\SavLibraryPlus\Managers\UriManager::getPage();  	
     return $currentPage;    
   }    
 
@@ -254,11 +258,11 @@ class Tx_SavLibraryPlus_Viewers_ListViewer extends Tx_SavLibraryPlus_Viewers_Abs
 	
       // Gets the crypted full field name
       $fullFieldName =  $this->getController()->getQuerier()->buildFullFieldName($matches['fullFieldName'][$matchKey]);  
-      $cryptedFullFieldName = Tx_SavLibraryPlus_Controller_AbstractController::cryptTag($fullFieldName);
+      $cryptedFullFieldName = \SAV\SavLibraryPlus\Controller\AbstractController::cryptTag($fullFieldName);
 
 			// Checks if the configuration exists for the field name
 			if (is_null($this->folderFieldsConfiguration[$cryptedFullFieldName])) {
-				Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.unknownFieldName', array($fullFieldName));
+				\SAV\SavLibraryPlus\Controller\FlashMessages::addError('error.unknownFieldName', array($fullFieldName));
 			}
    
       // Checks if the value must be cut 
@@ -298,7 +302,7 @@ class Tx_SavLibraryPlus_Viewers_ListViewer extends Tx_SavLibraryPlus_Viewers_Abs
     }
 
     // Creates a view for more fluid processings of the template
-    $view = t3lib_div::makeInstance('Tx_Fluid_View_StandaloneView');
+    $view = GeneralUtility::makeInstance('SAV\\SavLibraryPlus\\Compatibility\\View\\StandaloneView');
     $view->setTemplateSource($itemTemplate);
 
     // Assigns the field configuration and renders the view
@@ -337,7 +341,7 @@ class Tx_SavLibraryPlus_Viewers_ListViewer extends Tx_SavLibraryPlus_Viewers_Abs
     		$extensionKey = $this->getController()->getExtensionConfigurationManager()->getExtensionKey();
       	
     		// Gets the label
-				$label = Tx_Extbase_Utility_Localization::translate($matches['fullFieldName'][$matchKey], $extensionKey);
+				$label = \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($matches['fullFieldName'][$matchKey], $extensionKey);
       	if (empty($label)) {
       		$label = $matches['fullFieldName'][$matchKey];
       	}  
@@ -354,7 +358,7 @@ class Tx_SavLibraryPlus_Viewers_ListViewer extends Tx_SavLibraryPlus_Viewers_Abs
       } else {
 	      // Gets the crypted full field name
 	      $fullFieldName =  $this->getController()->getQuerier()->buildFullFieldName($matches['fullFieldName'][$matchKey]);  
-	      $cryptedFullFieldName = Tx_SavLibraryPlus_Controller_AbstractController::cryptTag($fullFieldName);      	
+	      $cryptedFullFieldName = \SAV\SavLibraryPlus\Controller\AbstractController::cryptTag($fullFieldName);      	
       	
 	      // Gets the field configuration
       	$fieldConfiguration = $this->folderFieldsConfiguration[$cryptedFullFieldName];         
@@ -394,25 +398,25 @@ class Tx_SavLibraryPlus_Viewers_ListViewer extends Tx_SavLibraryPlus_Viewers_Abs
   		
     // Gets the ascending whereTag Key
 		$order = ($fieldConfiguration['linkwithnoordering'] ? '' : '+');
-		$whereTagAscendingOrderKey = Tx_SavLibraryPlus_Controller_AbstractController::cryptTag($fullFieldName . $order);
+		$whereTagAscendingOrderKey = \SAV\SavLibraryPlus\Controller\AbstractController::cryptTag($fullFieldName . $order);
 		if ($queryConfigurationManager->getWhereTag($whereTagAscendingOrderKey) == NULL) {
 			$fieldName = trim($fieldNameParts[0]);
 			$fieldConfiguration['labelAsc'] = $fieldName;
-			$whereTagAscendingOrderKey = Tx_SavLibraryPlus_Controller_AbstractController::cryptTag($fieldName . $order);
+			$whereTagAscendingOrderKey = \SAV\SavLibraryPlus\Controller\AbstractController::cryptTag($fieldName . $order);
 		}
 		if ($queryConfigurationManager->getWhereTag($whereTagAscendingOrderKey) == NULL) {
-			Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.noWhereTag', array($fullFieldName . $order, $fieldName . $order));
+			\SAV\SavLibraryPlus\Controller\FlashMessages::addError('error.noWhereTag', array($fullFieldName . $order, $fieldName . $order));
 		}
 		// Gets the descending whereTag Key
 		$order = ($fieldConfiguration['linkwithnoordering'] ? '' : '-');        
-		$whereTagDescendingOrderKey = Tx_SavLibraryPlus_Controller_AbstractController::cryptTag($fullFieldName . $order);
+		$whereTagDescendingOrderKey = \SAV\SavLibraryPlus\Controller\AbstractController::cryptTag($fullFieldName . $order);
 		if ($queryConfigurationManager->getWhereTag($whereTagDescendingOrderKey) == NULL) {
 			$fieldName = (empty($fieldNameParts[1]) ? trim($fieldNameParts[0]) : trim($fieldNameParts[1]));
 			$fieldConfiguration['labelDesc'] = $fieldName;			
-			$whereTagDescendingOrderKey = Tx_SavLibraryPlus_Controller_AbstractController::cryptTag($fieldName . $order);
+			$whereTagDescendingOrderKey = \SAV\SavLibraryPlus\Controller\AbstractController::cryptTag($fieldName . $order);
 		}
 		if ($queryConfigurationManager->getWhereTag($whereTagDescendingOrderKey) == NULL) {
-			Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.noWhereTag', array($fullFieldName . $order, $fieldName . $order));
+			\SAV\SavLibraryPlus\Controller\FlashMessages::addError('error.noWhereTag', array($fullFieldName . $order, $fieldName . $order));
 		}
         
 		// Sets the default pattern for the display
@@ -421,11 +425,11 @@ class Tx_SavLibraryPlus_Viewers_ListViewer extends Tx_SavLibraryPlus_Viewers_Abs
 		}
 		$orderLinksInTitle = explode(':', $fieldConfiguration['orderlinkintitlesetup']);
 
-		foreach($orderLinksInTitle as $orderLinkInTitle) {
+		foreach($orderLinksInTitle as $orderLinkInTitle) {   
 			if($orderLinkInTitle) {
 
 				// Creates the view
-				$view = t3lib_div::makeInstance('Tx_Fluid_View_StandaloneView');
+				$view = GeneralUtility::makeInstance('SAV\\SavLibraryPlus\\Compatibility\\View\\StandaloneView');
 				$view->setTemplatePathAndFilename($this->getPartialRootPath() . '/TitleBars/OrderLinks/'. ucfirst($orderLinkInTitle) . '.html');
 
 				// Assigns the view configuration
@@ -435,7 +439,7 @@ class Tx_SavLibraryPlus_Viewers_ListViewer extends Tx_SavLibraryPlus_Viewers_Abs
 					'valueDesc' => $fieldConfiguration['labelDesc'],			
 					'whereTagAscendingOrderKey' => $whereTagAscendingOrderKey,
 					'whereTagDescendingOrderKey' => $whereTagDescendingOrderKey,
-					'whereTagKey' => Tx_SavLibraryPlus_Managers_UriManager::getWhereTagKey(),
+					'whereTagKey' => \SAV\SavLibraryPlus\Managers\UriManager::getWhereTagKey(),
 					'inEditMode' => ($this->inEditMode ? 'InEditMode' : ''),
 					)
 				);
@@ -444,12 +448,12 @@ class Tx_SavLibraryPlus_Viewers_ListViewer extends Tx_SavLibraryPlus_Viewers_Abs
     		$linkConfiguration = $this->getLinkConfiguration();				
 				$view->assign('configuration', array(
 					'general' => array(
-	      		'additionalParams' => Tx_SavLibraryPlus_Controller_AbstractController::convertLinkAdditionalParametersToArray($linkConfiguration['additionalParams']),
+	      		'additionalParams' => \SAV\SavLibraryPlus\Controller\AbstractController::convertLinkAdditionalParametersToArray($linkConfiguration['additionalParams']),
 	      		)	
 	      	)
     		);
     		
-				$replacementString .= $view->render();	
+				$replacementString .= $view->render();	  
 			}  
     }
     return $replacementString;
@@ -470,13 +474,13 @@ class Tx_SavLibraryPlus_Viewers_ListViewer extends Tx_SavLibraryPlus_Viewers_Abs
   	// Builds the message when the rows count is equal to zero
   	if ($rowsCount == 0) {
   		switch($this->getController()->getExtensionConfigurationManager()->getShowNoAvailableInformation()) {
-  			case Tx_SavLibraryPlus_Managers_ExtensionConfigurationManager::SHOW_MESSAGE:
+  			case \SAV\SavLibraryPlus\Managers\ExtensionConfigurationManager::SHOW_MESSAGE:
   				$this->addToViewConfiguration('general', array(
-  					'message' => Tx_SavLibraryPlus_Controller_FlashMessages::translate('general.noAvailableInformation'),
+  					'message' => \SAV\SavLibraryPlus\Controller\FlashMessages::translate('general.noAvailableInformation'),
   					)
   				);
   				break;
-  			case Tx_SavLibraryPlus_Managers_ExtensionConfigurationManager::DO_NOT_SHOW_EXTENSION:
+  			case \SAV\SavLibraryPlus\Managers\ExtensionConfigurationManager::DO_NOT_SHOW_EXTENSION:
   				$this->addToViewConfiguration('general', array(
   					'hideExtension' => TRUE,
   					)

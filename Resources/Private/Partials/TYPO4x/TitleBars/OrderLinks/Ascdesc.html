@@ -1,0 +1,23 @@
+{namespace sav=Tx_SavLibraryPlus_ViewHelpers}
+<div class="orderAscDesc">
+<f:if condition="{field.whereTagKey} == {field.whereTagAscendingOrderKey}" >
+  <f:then>
+  <f:image class="orderAscAbove" src="{sav:getIcon(fileName:'orderAscSelected')}" alt="{sav:translate(key:'button.orderAsc')}" title="{sav:translate(key:'button.orderAsc')}" />
+  </f:then>
+  <f:else>
+  <sav:link.action action="list{field.inEditMode}" additionalParams="{configuration.general.additionalParams}" arguments="{whereTagKey:field.whereTagAscendingOrderKey}">
+    <f:image class="orderAscAbove" src="{sav:getIcon(fileName:'orderAsc')}" alt="{sav:translate(key:'button.orderAsc')}" title="{sav:translate(key:'button.orderAsc')}" />
+  </sav:link.action>
+  </f:else>
+</f:if>
+<f:if condition="{field.whereTagKey} == {field.whereTagDescendingOrderKey}" >
+  <f:then>
+  <f:image class="orderDescBelow" src="{sav:getIcon(fileName:'orderDescSelected')}" alt="{sav:translate(key:'button.orderDesc')}" title="{sav:translate(key:'button.orderDesc')}" />
+  </f:then>
+  <f:else>
+  <sav:link.action action="list{field.inEditMode}" additionalParams="{configuration.general.additionalParams}" arguments="{whereTagKey:field.whereTagDescendingOrderKey}">
+    <f:image class="orderDescBelow" src="{sav:getIcon(fileName:'orderDesc')}" alt="{sav:translate(key:'button.orderDesc')}" title="{sav:translate(key:'button.orderDesc')}" />
+  </sav:link.action>
+  </f:else>
+</f:if>
+</div>

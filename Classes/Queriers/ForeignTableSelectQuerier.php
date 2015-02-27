@@ -1,4 +1,8 @@
 <?php
+namespace SAV\SavLibraryPlus\Queriers;
+
+use \TYPO3\CMS\Core\Utility\GeneralUtility;
+
 /***************************************************************
 *  Copyright notice
 *
@@ -29,7 +33,7 @@
  * @version $ID:$
  */
  
-class Tx_SavLibraryPlus_Queriers_ForeignTableSelectQuerier extends Tx_SavLibraryPlus_Queriers_AbstractQuerier {
+class ForeignTableSelectQuerier extends AbstractQuerier {
 	
 	/**
    * If TRUE the query is not processed
@@ -52,7 +56,7 @@ class Tx_SavLibraryPlus_Queriers_ForeignTableSelectQuerier extends Tx_SavLibrary
     if ($this->doNotProcessQuery) {
     	return;
     }
-    
+
     // Selects the items
 		$this->resource = $GLOBALS['TYPO3_DB']->exec_SELECTquery(
 			/* SELECT   */	$this->buildSelectClause(),
@@ -137,9 +141,6 @@ class Tx_SavLibraryPlus_Queriers_ForeignTableSelectQuerier extends Tx_SavLibrary
       ' AND ' . $fieldConfiguration['foreign_table'] . '.pid IN (' . $contentObject->data['pages'] . ')' :
       ''
     );
-     
-    // Processes the tags
-    $whereClause = $this->processWhereClauseTags($whereClause);
    
     return $whereClause;
   }
@@ -152,7 +153,7 @@ class Tx_SavLibraryPlus_Queriers_ForeignTableSelectQuerier extends Tx_SavLibrary
    * @return none
    */ 
 	public function buildQueryConfigurationForOneToManyRelation(&$fieldConfiguration) {
-		
+	
 		$this->doNotProcessQuery = FALSE;
 
     // Builds the where clause
@@ -166,18 +167,20 @@ class Tx_SavLibraryPlus_Queriers_ForeignTableSelectQuerier extends Tx_SavLibrary
     );
      
     // Processes the tags
-    $whereClause = $this->processWhereClauseTags($whereClause);    
+    $whereClause = $this->processWhereClauseTags($whereClause);      
+  	$whereClause = $this->parseLocalizationTags($whereClause);
+  	$whereClause = $this->parseFieldTags($whereClause);    
 
     // Prepares the query configuration
     $this->queryConfiguration = array (
       'mainTable' => $fieldConfiguration['foreign_table'],
       'aliases' => $fieldConfiguration['aliasselect'],
       'foreignTables' =>
-          ($fieldConfiguration['additionaltableselect'] ?
-          ',' . $fieldConfiguration['additionaltableselect'] :
-          '') .
           ($fieldConfiguration['additionaljointableselect'] ?
           ' ' . $fieldConfiguration['additionaljointableselect'] :
+          '') .          
+          ($fieldConfiguration['additionaltableselect'] ?
+          ',' . $fieldConfiguration['additionaltableselect'] :
           ''),
       'whereClause' => $whereClause
         . ' AND ' . $fieldConfiguration['foreign_table'] . '.uid = ' . intval($fieldConfiguration['value']),
@@ -207,22 +210,24 @@ class Tx_SavLibraryPlus_Queriers_ForeignTableSelectQuerier extends Tx_SavLibrary
      
     // Processes the tags
     $whereClause = $this->processWhereClauseTags($whereClause);      
-    
+  	$whereClause = $this->parseLocalizationTags($whereClause);
+  	$whereClause = $this->parseFieldTags($whereClause);        
+   
     if (empty($fieldConfiguration['uidLocal'])) {
     	$this->doNotProcessQuery = TRUE;
     }
-    
+   
     // Prepares the query configuration
     $this->queryConfiguration = array (
       'mainTable' => $fieldConfiguration['foreign_table'],
       'aliases' => $fieldConfiguration['aliasselect'],
       'foreignTables' =>
-          ',' . $fieldConfiguration['MM'] .
-          ($fieldConfiguration['additionaltableselect'] ?
-          ',' . $fieldConfiguration['additionaltableselect'] :
-          '') .
+          ',' . $fieldConfiguration['MM'] .    
           ($fieldConfiguration['additionaljointableselect'] ?
           ' ' . $fieldConfiguration['additionaljointableselect'] :
+          '') .          
+          ($fieldConfiguration['additionaltableselect'] ?
+          ',' . $fieldConfiguration['additionaltableselect'] :
           ''),
       'whereClause' => $whereClause
         . ' AND ' . $fieldConfiguration['MM'] . '.uid_foreign = ' . $fieldConfiguration['foreign_table'] . '.uid'
@@ -256,7 +261,9 @@ class Tx_SavLibraryPlus_Queriers_ForeignTableSelectQuerier extends Tx_SavLibrary
     );
      
     // Processes the tags
-    $whereClause = $this->processWhereClauseTags($whereClause);       
+    $whereClause = $this->processWhereClauseTags($whereClause);      
+  	$whereClause = $this->parseLocalizationTags($whereClause);
+  	$whereClause = $this->parseFieldTags($whereClause);       
     
     // Prepares the query configuration
     $this->queryConfiguration = array (
@@ -277,7 +284,7 @@ class Tx_SavLibraryPlus_Queriers_ForeignTableSelectQuerier extends Tx_SavLibrary
    * @return none
    */  
   public function buildQueryConfigurationForCommaListManyToManyRelation(&$fieldConfiguration) {
-
+  	
 		$this->doNotProcessQuery = FALSE;
   	
     // Builds the where clause
@@ -292,17 +299,19 @@ class Tx_SavLibraryPlus_Queriers_ForeignTableSelectQuerier extends Tx_SavLibrary
      
     // Processes the tags
     $whereClause = $this->processWhereClauseTags($whereClause);      
+  	$whereClause = $this->parseLocalizationTags($whereClause);
+  	$whereClause = $this->parseFieldTags($whereClause);     
 
     // Prepares the query configuration
     $this->queryConfiguration = array (
       'mainTable' => $fieldConfiguration['foreign_table'],
       'aliases' => $fieldConfiguration['aliasselect'],
       'foreignTables' =>
-          ($fieldConfiguration['additionaltableselect'] ?
-          ',' . $fieldConfiguration['additionaltableselect'] :
-          '') .
           ($fieldConfiguration['additionaljointableselect'] ?
           ' ' . $fieldConfiguration['additionaljointableselect'] :
+          '') .          
+          ($fieldConfiguration['additionaltableselect'] ?
+          ',' . $fieldConfiguration['additionaltableselect'] :
           ''),
       'whereClause' => $whereClause
         . ' AND (FIND_IN_SET(' .$fieldConfiguration['foreign_table'] . '.uid, \'' . $fieldConfiguration['value']. '\')>0)',
@@ -319,7 +328,7 @@ class Tx_SavLibraryPlus_Queriers_ForeignTableSelectQuerier extends Tx_SavLibrary
    * @return none
    */ 
   public function buildQueryConfigurationForForeignTable(&$fieldConfiguration) {
-	
+
 		$this->doNotProcessQuery = FALSE;  	
 
     // Builds the where clause
@@ -336,7 +345,9 @@ class Tx_SavLibraryPlus_Queriers_ForeignTableSelectQuerier extends Tx_SavLibrary
     );
      
     // Processes the tags
-    $whereClause = $this->processWhereClauseTags($whereClause);   
+    $whereClause = $this->processWhereClauseTags($whereClause);      
+  	$whereClause = $this->parseLocalizationTags($whereClause);
+  	$whereClause = $this->parseFieldTags($whereClause);    
 
     // Builds the ORDER BY clause
     $orderByClause = (
@@ -351,17 +362,16 @@ class Tx_SavLibraryPlus_Queriers_ForeignTableSelectQuerier extends Tx_SavLibrary
     	'selectClause' => $fieldConfiguration['selectclause'],
       'aliases' => $fieldConfiguration['aliasselect'],
       'foreignTables' =>
-          ($fieldConfiguration['additionaltableselect'] ?
-          ',' . $fieldConfiguration['additionaltableselect'] :
-          '') .
           ($fieldConfiguration['additionaljointableselect'] ?
           ' ' . $fieldConfiguration['additionaljointableselect'] :
+          '') .          
+          ($fieldConfiguration['additionaltableselect'] ?
+          ',' . $fieldConfiguration['additionaltableselect'] :
           ''),
       'whereClause' => $whereClause,
       'groupByClause' => $fieldConfiguration['groupbyselect'],
       'orderByClause' => $orderByClause,
     );
-    
   }
   
 }

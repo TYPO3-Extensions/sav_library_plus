@@ -1,4 +1,8 @@
 <?php
+namespace SAV\SavLibraryPlus\ItemViewers\Edit;
+
+use \TYPO3\CMS\Core\Utility\GeneralUtility;
+
 /***************************************************************
 *  Copyright notice
 *
@@ -29,7 +33,7 @@
  * @version $ID:$
  */
  
-class Tx_SavLibraryPlus_ItemViewers_Edit_FilesItemViewer extends Tx_SavLibraryPlus_ItemViewers_Edit_AbstractItemViewer {
+class FilesItemViewer extends AbstractItemViewer {
 
   /**
    * Renders the item.
@@ -56,23 +60,23 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_FilesItemViewer extends Tx_SavLibraryPl
       $fileName = ($fileNames[$counter] ? $fileNames[$counter] : '');
       
       // Adds the text element
-      $content = Tx_SavLibraryPlus_Utility_HtmlElements::htmlInputTextElement(
+      $content = \SAV\SavLibraryPlus\Utility\HtmlElements::htmlInputTextElement(
         array(
-          Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('name', $this->getItemConfiguration('itemName') . '[' . $counter . ']'),
-          Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('class', 'fileText'),
-          Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('value', $fileName),
-          Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('size', $size),
+          \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('name', $this->getItemConfiguration('itemName') . '[' . $counter . ']'),
+          \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('class', 'fileText'),
+          \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('value', $fileName),
+          \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('size', $size),
         )
       );
 
       // Adds the file element
-      $content .= Tx_SavLibraryPlus_Utility_HtmlElements::htmlInputFileElement(
+      $content .= \SAV\SavLibraryPlus\Utility\HtmlElements::htmlInputFileElement(
         array(
-          Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('name', $this->getItemConfiguration('itemName') . '[' . $counter . ']'),
-          Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('class', 'fileInput'),
-          Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('value', ''),
-          Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('size', $size),
-          Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('onchange', 'document.changed=1;'),
+          \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('name', $this->getItemConfiguration('itemName') . '[' . $counter . ']'),
+          \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('class', 'fileInput'),
+          \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('value', ''),
+          \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('size', $size),
+          \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('onchange', 'document.changed=1;'),
         )
       );
       
@@ -91,19 +95,19 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_FilesItemViewer extends Tx_SavLibraryPl
     		$contentObject = $this->getController()->getExtensionConfigurationManager()->getExtensionContentObject();
    
    			// Builds the content  
-   			$message = Tx_SavLibraryPlus_Controller_FlashMessages::translate('general.clickHereToOpenInNewWindow');
-      	$content .= Tx_SavLibraryPlus_Utility_HtmlElements::htmlSpanElement(
+   			$message = \SAV\SavLibraryPlus\Controller\FlashMessages::translate('general.clickHereToOpenInNewWindow');
+      	$content .= \SAV\SavLibraryPlus\Utility\HtmlElements::htmlSpanElement(
       		array(
-      			Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('class', 'fileLink'),
+      			\SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('class', 'fileLink'),
       		),
       		$contentObject->typolink($message, $typoScriptConfiguration)
       	);
       }
       
       // Adds the DIV elements
-      $htmlArray[] = Tx_SavLibraryPlus_Utility_HtmlElements::htmlDivElement(
+      $htmlArray[] = \SAV\SavLibraryPlus\Utility\HtmlElements::htmlDivElement(
         array(
-          Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('class', 'file item' . $counter),
+          \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('class', 'file item' . $counter),
         ),
         $content
       );

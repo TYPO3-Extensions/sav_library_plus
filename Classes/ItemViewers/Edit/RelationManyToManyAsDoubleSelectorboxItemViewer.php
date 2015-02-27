@@ -1,4 +1,8 @@
 <?php
+namespace SAV\SavLibraryPlus\ItemViewers\Edit;
+
+use \TYPO3\CMS\Core\Utility\GeneralUtility;
+
 /***************************************************************
 *  Copyright notice
 *
@@ -29,7 +33,7 @@
  * @version $ID:$
  */
  
-class Tx_SavLibraryPlus_ItemViewers_Edit_RelationManyToManyAsDoubleSelectorboxItemViewer extends Tx_SavLibraryPlus_ItemViewers_Edit_AbstractItemViewer {
+class RelationManyToManyAsDoubleSelectorboxItemViewer extends AbstractItemViewer {
 
   /**
    * The selected items
@@ -41,7 +45,7 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_RelationManyToManyAsDoubleSelectorboxIt
 	/**
    * The Foreign Table Select Querier
    *
-   * @var Tx_SavLibraryPlus_Queriers_ForeignTableSelectQuerier
+   * @var \SAV\SavLibraryPlus\Queriers\ForeignTableSelectQuerier
    */
   protected $foreignTableSelectQuerier;  	
 	
@@ -81,8 +85,8 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_RelationManyToManyAsDoubleSelectorboxIt
    */
   protected function setForeignTableSelectQuerier($buildQueryConfigurationMethod) {
 
-    $querierClassName = 'Tx_SavLibraryPlus_Queriers_ForeignTableSelectQuerier';
-    $this->foreignTableSelectQuerier = t3lib_div::makeInstance($querierClassName);
+    $querierClassName = 'SAV\\SavLibraryPlus\\Queriers\\ForeignTableSelectQuerier';
+    $this->foreignTableSelectQuerier = GeneralUtility::makeInstance($querierClassName);
     $this->foreignTableSelectQuerier->injectController($this->getController());
     
     $this->itemConfiguration['uidLocal'] = $this->itemConfiguration['uid'];
@@ -148,8 +152,8 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_RelationManyToManyAsDoubleSelectorboxIt
     $htmlArray[] = $this->buildSourceSelectorBox();
 
     // Adds the javaScript for the selectorboxes
-    Tx_SavLibraryPlus_Managers_AdditionalHeaderManager::addJavaScript('selectAll', 
-    	'if (x == \'' . Tx_SavLibraryPlus_Controller_AbstractController::getFormName() . '\')	selectAll(x, \'' . $this->getItemConfiguration('itemName') . '[]\');');
+    \SAV\SavLibraryPlus\Managers\AdditionalHeaderManager::addJavaScript('selectAll', 
+    	'if (x == \'' . \SAV\SavLibraryPlus\Controller\AbstractController::getFormName() . '\')	selectAll(x, \'' . $this->getItemConfiguration('itemName') . '[]\');');
 
     return $this->arrayToHTML($htmlArray);
   }
@@ -181,10 +185,10 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_RelationManyToManyAsDoubleSelectorboxIt
 		// Checks if the emptyItem attribute is set
   	if ($this->getItemConfiguration('emptyitem')) {
 			// Adds the Option element
-			$htmlOptionArray[] = Tx_SavLibraryPlus_Utility_HtmlElements::htmlOptionElement(
+			$htmlOptionArray[] = \SAV\SavLibraryPlus\Utility\HtmlElements::htmlOptionElement(
         array(
-          Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('class', 'item0'),
-          Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('value', '0'),
+          \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('class', 'item0'),
+          \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('value', '0'),
         ),
         ''
       );
@@ -198,31 +202,31 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_RelationManyToManyAsDoubleSelectorboxIt
 				$label = $this->getItemConfiguration('foreign_table') . '.' . $label;
 			}
 		} else {
-			$label = $this->getItemConfiguration('foreign_table') . '.' . Tx_SavLibraryPlus_Managers_TcaConfigurationManager::getTcaCtrlField($this->getItemConfiguration('foreign_table'), 'label');	
+			$label = $this->getItemConfiguration('foreign_table') . '.' . \SAV\SavLibraryPlus\Managers\TcaConfigurationManager::getTcaCtrlField($this->getItemConfiguration('foreign_table'), 'label');	
 		}
 
     // Adds the option elements
     foreach ($rows as $rowKey => $row) {   
       $selected = (in_array($row['uid'], $this->selectedItems) === TRUE ? 'selected ' : '');
 			// Adds the Option element
-			$htmlOptionArray[] = Tx_SavLibraryPlus_Utility_HtmlElements::htmlOptionElement(
+			$htmlOptionArray[] = \SAV\SavLibraryPlus\Utility\HtmlElements::htmlOptionElement(
 	       array(
-	         Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('class', 'item' . $row['uid']),
-	         Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('value', $row['uid']),
-	         Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttributeIfNotNull('selected', $selected),
+	         \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('class', 'item' . $row['uid']),
+	         \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('value', $row['uid']),
+	         \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttributeIfNotNull('selected', $selected),
 	         ),
 	       stripslashes($row[$label])
 	    );
     }
     
     // Adds the select element
-		$htmlArray[] = Tx_SavLibraryPlus_Utility_HtmlElements::htmlSelectElement(
+		$htmlArray[] = \SAV\SavLibraryPlus\Utility\HtmlElements::htmlSelectElement(
       array(
-        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('multiple', 'multiple'),
-        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('class', 'multiple'),
-        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('name', $this->getItemConfiguration('itemName') . '[]'),
-        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('size', $this->getItemConfiguration('size')),
-        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('onchange', 'document.changed=1;'),
+        \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('multiple', 'multiple'),
+        \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('class', 'multiple'),
+        \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('name', $this->getItemConfiguration('itemName') . '[]'),
+        \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('size', $this->getItemConfiguration('size')),
+        \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('onchange', 'document.changed=1;'),
       ),
       $this->arrayToHTML($htmlOptionArray)
     );
@@ -255,17 +259,17 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_RelationManyToManyAsDoubleSelectorboxIt
 				$label = $this->getItemConfiguration('foreign_table') . '.' . $label;
 			}
 		} else {
-			$label = $this->getItemConfiguration('foreign_table') . '.' . Tx_SavLibraryPlus_Managers_TcaConfigurationManager::getTcaCtrlField($this->getItemConfiguration('foreign_table'), 'label');	
+			$label = $this->getItemConfiguration('foreign_table') . '.' . \SAV\SavLibraryPlus\Managers\TcaConfigurationManager::getTcaCtrlField($this->getItemConfiguration('foreign_table'), 'label');	
 		}
 
     // Adds the option elements
     foreach ($rows as $rowKey => $row) {    
       if (in_array($row['uid'], $this->selectedItems) === TRUE) {
 				// Adds the Option element
-				$htmlOptionArray[] = Tx_SavLibraryPlus_Utility_HtmlElements::htmlOptionElement(
+				$htmlOptionArray[] = \SAV\SavLibraryPlus\Utility\HtmlElements::htmlOptionElement(
 	        array(
-	          Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('class', 'item' . $row['uid']),
-	          Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('value', $row['uid']),
+	          \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('class', 'item' . $row['uid']),
+	          \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('value', $row['uid']),
 	        ),
 	        stripslashes($row[$label])
 	      );
@@ -274,15 +278,15 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_RelationManyToManyAsDoubleSelectorboxIt
     
     // Adds the select element
     $sort = ($this->getItemConfiguration('orderselect') ? 1 : 0);
-		$htmlArray[] = Tx_SavLibraryPlus_Utility_HtmlElements::htmlSelectElement(
+		$htmlArray[] = \SAV\SavLibraryPlus\Utility\HtmlElements::htmlSelectElement(
       array(
-        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('multiple', 'multiple'),
-        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('class', 'multiple'),
-        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('name', $this->getItemConfiguration('itemName') . '[]'),
-        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('size', $this->getItemConfiguration('size')),
-        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('onchange', 'document.changed=1;'),
-        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('ondblclick',
-          'move(\'' . Tx_SavLibraryPlus_Controller_AbstractController::getFormName() . '\', \'' .
+        \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('multiple', 'multiple'),
+        \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('class', 'multiple'),
+        \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('name', $this->getItemConfiguration('itemName') . '[]'),
+        \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('size', $this->getItemConfiguration('size')),
+        \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('onchange', 'document.changed=1;'),
+        \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('ondblclick',
+          'move(\'' . \SAV\SavLibraryPlus\Controller\AbstractController::getFormName() . '\', \'' .
           $this->getItemConfiguration('itemName') . '[]\', \'' . 'source_' . $this->getItemConfiguration('itemName') . '\',' . $sort . ');'
         ),
       ),
@@ -315,7 +319,7 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_RelationManyToManyAsDoubleSelectorboxIt
 				$label = $this->getItemConfiguration('foreign_table') . '.' . $label;
 			}
 		} else {
-			$label = $this->getItemConfiguration('foreign_table') . '.' . Tx_SavLibraryPlus_Managers_TcaConfigurationManager::getTcaCtrlField($this->getItemConfiguration('foreign_table'), 'label');	
+			$label = $this->getItemConfiguration('foreign_table') . '.' . \SAV\SavLibraryPlus\Managers\TcaConfigurationManager::getTcaCtrlField($this->getItemConfiguration('foreign_table'), 'label');	
 		}
 
     // Adds the option elements
@@ -323,10 +327,10 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_RelationManyToManyAsDoubleSelectorboxIt
 
       if (in_array($row['uid'], $this->selectedItems) === FALSE) {
 			// Adds the Option element
-			$htmlOptionArray[] = Tx_SavLibraryPlus_Utility_HtmlElements::htmlOptionElement(
+			$htmlOptionArray[] = \SAV\SavLibraryPlus\Utility\HtmlElements::htmlOptionElement(
         array(
-          Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('class', 'item' . $row['uid']),
-          Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('value', $row['uid']),
+          \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('class', 'item' . $row['uid']),
+          \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('value', $row['uid']),
         ),
         stripslashes($row[$label])
       );
@@ -335,15 +339,15 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_RelationManyToManyAsDoubleSelectorboxIt
 
     // Adds the select element
     $sort = ($this->getItemConfiguration('orderselect') ? 1 : 0);
-		$htmlArray[] = Tx_SavLibraryPlus_Utility_HtmlElements::htmlSelectElement(
+		$htmlArray[] = \SAV\SavLibraryPlus\Utility\HtmlElements::htmlSelectElement(
       array(
-        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('multiple', 'multiple'),
-        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('class', 'multiple'),
-        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('name', 'source_' . $this->getItemConfiguration('itemName')),
-        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('size', $this->getItemConfiguration('size')),
-        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('onchange', 'document.changed=1;'),
-        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('ondblclick',
-          'move(\'' . Tx_SavLibraryPlus_Controller_AbstractController::getFormName() . '\', \'' .
+        \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('multiple', 'multiple'),
+        \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('class', 'multiple'),
+        \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('name', 'source_' . $this->getItemConfiguration('itemName')),
+        \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('size', $this->getItemConfiguration('size')),
+        \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('onchange', 'document.changed=1;'),
+        \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('ondblclick',
+          'move(\'' . \SAV\SavLibraryPlus\Controller\AbstractController::getFormName() . '\', \'' .
           'source_' . $this->getItemConfiguration('itemName') . '\', \'' .  $this->getItemConfiguration('itemName') . '[]\',' . $sort . ');'
         ),
       ),

@@ -1,4 +1,8 @@
 <?php
+namespace SAV\SavLibraryPlus\ItemViewers\Edit;
+
+use \TYPO3\CMS\Core\Utility\GeneralUtility;
+
 /***************************************************************
 *  Copyright notice
 *
@@ -29,7 +33,7 @@
  * @version $ID:$
  */
  
-class Tx_SavLibraryPlus_ItemViewers_Edit_RelationOneToManyAsSelectorboxItemViewer extends Tx_SavLibraryPlus_ItemViewers_Edit_AbstractItemViewer {
+class RelationOneToManyAsSelectorboxItemViewer extends AbstractItemViewer {
 
   /**
    * Renders the item.
@@ -58,7 +62,7 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_RelationOneToManyAsSelectorboxItemViewe
     	}
     } else {
     	// Gets the label from the TCA
-    	$label =  $this->getItemConfiguration('foreign_table') . '.' . Tx_SavLibraryPlus_Managers_TcaConfigurationManager::getTcaCtrlField($this->getItemConfiguration('foreign_table'), 'label');
+    	$label =  $this->getItemConfiguration('foreign_table') . '.' . \SAV\SavLibraryPlus\Managers\TcaConfigurationManager::getTcaCtrlField($this->getItemConfiguration('foreign_table'), 'label');
 			$labelSelect = ',' . $label;
     }    
    
@@ -66,8 +70,8 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_RelationOneToManyAsSelectorboxItemViewe
 		$this->itemConfiguration['selectclause'] = $this->getItemConfiguration('foreign_table') . '.uid' . $labelSelect;
 	
     // Builds the querier
-    $querierClassName = 'Tx_SavLibraryPlus_Queriers_ForeignTableSelectQuerier';
-    $querier = t3lib_div::makeInstance($querierClassName);
+    $querierClassName = 'SAV\\SavLibraryPlus\\Queriers\\ForeignTableSelectQuerier';
+    $querier = GeneralUtility::makeInstance($querierClassName);
     $querier->injectController($this->getController());
     $querier->buildQueryConfigurationForForeignTable($this->itemConfiguration);
     $querier->injectQueryConfiguration();
@@ -84,9 +88,9 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_RelationOneToManyAsSelectorboxItemViewe
     $items = $this->getItemConfiguration('items');
 		if (isset($items[0]) || $this->getItemConfiguration('emptyitem')) {
 			// Adds the Option element
-			$htmlOptionArray[] = Tx_SavLibraryPlus_Utility_HtmlElements::htmlOptionElement(
+			$htmlOptionArray[] = \SAV\SavLibraryPlus\Utility\HtmlElements::htmlOptionElement(
         array(
-          Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('value', '0'),
+          \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('value', '0'),
         ),
         ''
       );
@@ -104,22 +108,22 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_RelationOneToManyAsSelectorboxItemViewe
 			$value = $this->getItemConfiguration('value');
       $selected = ($row['uid'] == $value || (empty($value) && $row['uid'] == $this->getItemConfiguration('default')) ? 'selected' : ''); 
 			// Adds the Option element
-			$htmlOptionArray[] = Tx_SavLibraryPlus_Utility_HtmlElements::htmlOptionElement(
+			$htmlOptionArray[] = \SAV\SavLibraryPlus\Utility\HtmlElements::htmlOptionElement(
         array(
-          Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('class', 'item' . $row['uid']),
-          Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttributeIfNotNull('selected', $selected),
-          Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('value', $row['uid']),
+          \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('class', 'item' . $row['uid']),
+          \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttributeIfNotNull('selected', $selected),
+          \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('value', $row['uid']),
         ),
         stripslashes($option)
       );
     }
 
     // Adds the select element
-		$htmlArray[] = Tx_SavLibraryPlus_Utility_HtmlElements::htmlSelectElement(
+		$htmlArray[] = \SAV\SavLibraryPlus\Utility\HtmlElements::htmlSelectElement(
       array(
-        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('name', $this->getItemConfiguration('itemName')),
-        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('size', $this->getItemConfiguration('size')),
-        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('onchange', 'document.changed=1;'),
+        \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('name', $this->getItemConfiguration('itemName')),
+        \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('size', $this->getItemConfiguration('size')),
+        \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('onchange', 'document.changed=1;'),
       ),
       $this->arrayToHTML($htmlOptionArray)
     );

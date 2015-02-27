@@ -112,6 +112,7 @@
 			<label index="error.savJpGraphTemplateNotSet">A graph template must be set using the attribute "graphTemplate".</label>
 			<label index="error.savJpGraphTemplateUnknown">The graph template "%s" is unknown.</label>
 			<label index="error.templateNeeded">A template file is needed and the defaut template was not found. Please contact the WebMaster.</label>
+			<label index="error.todo">TODO in %s: %s.</label>
 			<label index="error.underMaintenance">This service is temporarily unavailable due to maintenance - please come back later.</label>
 			<label index="error.unknownFormName">Please contact the Webmaster. The form type "%s" is unknown or undefined.</label>
 			<label index="error.unknownConfigurationFile">The configuration file "%s" is unknown.</label>
@@ -136,6 +137,7 @@
 			<label index="fatal.incorrectTCA">Fatal error. The main table has an incorrect TCA. You may not have not used the correct name in the "Main table" field of the query associated with your form.</label>
 			<label index="fatal.notAuthenticated">Fatal error. You must be authenticated to save these data.</label>
 			<label index="fatal.notAllowedToEnterInFormAdministration">Fatal error. You are not allowed to enter in the form administration.</label>
+			<label index="fatal.notAllowedToUseQueryInExport">Fatal error. You are not allowed to use queries in export view.</label>
 			
 			<label index="button.edit">Edit</label>
 			<label index="button.save">Save</label>
@@ -174,6 +176,8 @@
 			<label index="button.exportDeleteConfiguration">Delete export configuration</label>
 			<label index="button.exportToggleDisplayAllFields">Display all fields</label>
 			<label index="button.exportToggleDisplaySelectedFields">Display only selected fields</label>
+			<label index="button.exportQueryModeOff">Query mode off</label>
+			<label index="button.exportQueryModeOn">Query mode on</label>
 			
 			<label index="icon.required">Required field</label>
 			<label index="icon.new">New</label>
@@ -190,6 +194,7 @@
 			<label index="itemviewer.generatedFileLink">Generated File</label>
 			<label index="itemviewer.xmlFile">XML file</label>
 			<label index="itemviewer.xsltFile">XSLT file</label>
+			<label index="itemviewer.query">Query</label>
 			<label index="itemviewer.fields">Fields</label>
 			<label index="itemviewer.exec">Exec</label>
 			<label index="itemviewer.whereClause">Where clause</label>

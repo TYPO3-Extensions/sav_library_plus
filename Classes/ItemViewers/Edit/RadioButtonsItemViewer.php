@@ -1,4 +1,8 @@
 <?php
+namespace SAV\SavLibraryPlus\ItemViewers\Edit;
+
+use \TYPO3\CMS\Core\Utility\GeneralUtility;
+
 /***************************************************************
 *  Copyright notice
 *
@@ -29,7 +33,7 @@
  * @package SavLibraryPlus
  * @version $ID:$
  */
-class Tx_SavLibraryPlus_ItemViewers_Edit_RadioButtonsItemViewer extends Tx_SavLibraryPlus_ItemViewers_Edit_AbstractItemViewer {
+class RadioButtonsItemViewer extends AbstractItemViewer {
 
   /**
    * Renders the item.
@@ -59,20 +63,20 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_RadioButtonsItemViewer extends Tx_SavLi
       $checked = ($item[1] == $value ? 'checked' : '');
 
       // Adds the radio input element
-      $htmlItem = Tx_SavLibraryPlus_Utility_HtmlElements::htmlInputRadioElement(
+      $htmlItem = \SAV\SavLibraryPlus\Utility\HtmlElements::htmlInputRadioElement(
         array(
-          Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('name', $this->getItemConfiguration('itemName')),
-          Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('value', $item[1]),
-          Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttributeIfNotNull('checked', $checked),
-          Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('onchange', 'document.changed=1;'),
+          \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('name', $this->getItemConfiguration('itemName')),
+          \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('value', $item[1]),
+          \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttributeIfNotNull('checked', $checked),
+          \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('onchange', 'document.changed=1;'),
         )
       );
       
       // Adds the span element
-      $htmlItem .= Tx_SavLibraryPlus_Utility_HtmlElements::htmlSpanElement(
+      $htmlItem .= \SAV\SavLibraryPlus\Utility\HtmlElements::htmlSpanElement(
         array(
         ),
-        stripslashes(Tx_SavLibraryPlus_Controller_FlashMessages::translate($item[0]))
+        stripslashes(\SAV\SavLibraryPlus\Controller\FlashMessages::translate($item[0]))
       );
 
       // Sets the class for the item
@@ -89,9 +93,9 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_RadioButtonsItemViewer extends Tx_SavLi
       $counter++;
       
       // Adds the Div element
-      $htmlArray[] = Tx_SavLibraryPlus_Utility_HtmlElements::htmlDivElement(
+      $htmlArray[] = \SAV\SavLibraryPlus\Utility\HtmlElements::htmlDivElement(
         array(
-          Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('class', $class),
+          \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('class', $class),
           $this->getItemConfiguration('addattributes'),
         ),
         $htmlItem

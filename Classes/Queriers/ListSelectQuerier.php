@@ -1,4 +1,8 @@
 <?php
+namespace SAV\SavLibraryPlus\Queriers;
+
+use \TYPO3\CMS\Core\Utility\GeneralUtility;
+
 /***************************************************************
 *  Copyright notice
 *
@@ -28,7 +32,7 @@
  * @package SavLibraryPlus
  * @version $ID:$
  */
-class Tx_SavLibraryPlus_Queriers_ListSelectQuerier extends Tx_SavLibraryPlus_Queriers_AbstractQuerier {
+class ListSelectQuerier extends AbstractQuerier {
 
   /**
    * Processes the total rows count query
@@ -40,15 +44,16 @@ class Tx_SavLibraryPlus_Queriers_ListSelectQuerier extends Tx_SavLibraryPlus_Que
   public function processTotalRowsCountQuery() {
     
     // Select the item count
-		$this->resource = $GLOBALS['TYPO3_DB']->exec_SELECTquery(
-			/* SELECT   */	'count(' . ($this->buildGroupByClause() ? 'DISTINCT ' . $this->buildGroupByClause() : '*') . ') as itemCount',
-			/* FROM     */	$this->buildFromClause(),
- 			/* WHERE    */	$this->buildWhereClause()
-		);
+	$this->resource = $GLOBALS['TYPO3_DB']->exec_SELECTquery(
+		/* SELECT   */	'count(' . ($this->buildGroupByClause() ? 'DISTINCT ' . $this->buildGroupByClause() : '*') . ') as itemCount',
+		/* FROM     */	$this->buildFromClause(),
+ 		/* WHERE    */	$this->buildWhereClause()
+	);
 
     // Gets the row and the item count
     $row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($this->resource);
-	  $this->setTotalRowsCount($row['itemCount']);
+
+	$this->setTotalRowsCount($row['itemCount']);
   }
   
 	/**
@@ -62,9 +67,9 @@ class Tx_SavLibraryPlus_Queriers_ListSelectQuerier extends Tx_SavLibraryPlus_Que
    
     // Sets the rows count
     $this->processTotalRowsCountQuery();
-		
-    // Executes the select query
-		$this->resource = $GLOBALS['TYPO3_DB']->exec_SELECTquery(
+
+    // Executes the select query   
+	  $this->resource = $GLOBALS['TYPO3_DB']->exec_SELECTquery(
 			/* SELECT   */	$this->buildSelectClause(),
 			/* FROM     */	$this->buildFromClause(),
  			/* WHERE    */	$this->buildWhereClause(),
@@ -87,14 +92,12 @@ class Tx_SavLibraryPlus_Queriers_ListSelectQuerier extends Tx_SavLibraryPlus_Que
    * @return string
    */ 
   protected function buildSelectClause() {
-    $selectClause = '*';
-    $aliases = $this->queryConfigurationManager->getAliases();
-    $selectClause .= $this->replaceTableNames($aliases ? ', ' . $aliases : '');
+    $selectClause = parent::buildSelectClause();
 
 		// Checks if a field name alias comes from the filter
-		$selectedFilterKey = Tx_SavLibraryPlus_Managers_SessionManager::getSelectedFilterKey();
+		$selectedFilterKey = \SAV\SavLibraryPlus\Managers\SessionManager::getSelectedFilterKey();
 		if (empty($selectedFilterKey) === FALSE) {
-		  $fieldName = Tx_SavLibraryPlus_Managers_SessionManager::getFilterField($selectedFilterKey, 'fieldName');    
+		  $fieldName = \SAV\SavLibraryPlus\Managers\SessionManager::getFilterField($selectedFilterKey, 'fieldName');    
 			$selectClause .= (empty($fieldName)=== FALSE ? ', ' . $fieldName . ' as fieldname' : '');
 		}
 
@@ -117,11 +120,10 @@ class Tx_SavLibraryPlus_Queriers_ListSelectQuerier extends Tx_SavLibraryPlus_Que
     $whereClause = $this->queryConfigurationManager->getWhereClause();
    
     // Adds the WHERE clause coming from the selected filter if any
-		$selectedFilterKey = Tx_SavLibraryPlus_Managers_SessionManager::getSelectedFilterKey();
-
+		$selectedFilterKey = \SAV\SavLibraryPlus\Managers\SessionManager::getSelectedFilterKey();
 		if (empty($selectedFilterKey) === FALSE) {
-		  $additionalWhereClause = Tx_SavLibraryPlus_Managers_SessionManager::getFilterField($selectedFilterKey, 'addWhere');  	  
-		  $searchRequestFromFilter = Tx_SavLibraryPlus_Managers_SessionManager::getFilterField($selectedFilterKey, 'search');	  
+		  $additionalWhereClause = \SAV\SavLibraryPlus\Managers\SessionManager::getFilterField($selectedFilterKey, 'addWhere');  	  
+		  $searchRequestFromFilter = \SAV\SavLibraryPlus\Managers\SessionManager::getFilterField($selectedFilterKey, 'search');	  
 		  if (empty($searchRequestFromFilter) === FALSE) {
 		  	// The WHERE clause coming from the filter replaces the default WHERE Clause
 		  	$whereClause = (empty($additionalWhereClause) ? '0' : $additionalWhereClause);
@@ -140,8 +142,8 @@ class Tx_SavLibraryPlus_Queriers_ListSelectQuerier extends Tx_SavLibraryPlus_Que
     // Adds the enable fields conditions for the main table
     $mainTable = $this->queryConfigurationManager->getMainTable();
     $whereClause .= $extensionConfigurationManager->getExtensionContentObject()->enableFields($mainTable);
-    
-		// Adds the allowed pages condition
+
+    // Adds the allowed pages condition
     $whereClause .= $this->getAllowedPages($mainTable);		
 		
 		// Adds the permanent filter if any
@@ -165,7 +167,7 @@ class Tx_SavLibraryPlus_Queriers_ListSelectQuerier extends Tx_SavLibraryPlus_Que
    */ 
   protected function buildLimitClause() {
     $maxItems = $this->getController()->getExtensionConfigurationManager()->getMaxItems();
-		return ($maxItems ?	($maxItems *	Tx_SavLibraryPlus_Managers_UriManager::getPage()) . ',' . ($maxItems) : '');
+		return ($maxItems ?	($maxItems *	\SAV\SavLibraryPlus\Managers\UriManager::getPage()) . ',' . ($maxItems) : '');
   }
   
 }

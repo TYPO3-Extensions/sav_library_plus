@@ -1,4 +1,8 @@
 <?php
+namespace SAV\SavLibraryPlus\ItemViewers\Edit;
+
+use \TYPO3\CMS\Core\Utility\GeneralUtility;
+
 /***************************************************************
 *  Copyright notice
 *
@@ -23,13 +27,13 @@
 ***************************************************************/
 
 /**
- * Default Checkbox item Viewer.
+ * Edit Checkbox item Viewer.
  * 
  * @package SavLibraryPlus
  * @version $ID:$
  */
  
-class Tx_SavLibraryPlus_ItemViewers_Edit_CheckboxItemViewer extends Tx_SavLibraryPlus_ItemViewers_Edit_AbstractItemViewer {
+class CheckboxItemViewer extends AbstractItemViewer {
 
   /**
    * Renders the item.
@@ -48,9 +52,9 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_CheckboxItemViewer extends Tx_SavLibrar
     }
     
     // Adds a DIV element
-		$content = Tx_SavLibraryPlus_Utility_HtmlElements::htmlDivElement(
+		$content = \SAV\SavLibraryPlus\Utility\HtmlElements::htmlDivElement(
         array(
-          Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('class', 'checkbox'),
+          \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('class', 'checkbox'),
         ),
         $content
       );
@@ -91,20 +95,20 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_CheckboxItemViewer extends Tx_SavLibrar
     $content = '';
     
     // Adds the hidden input element
-    $content .= Tx_SavLibraryPlus_Utility_HtmlElements::htmlInputHiddenElement(
+    $content .= \SAV\SavLibraryPlus\Utility\HtmlElements::htmlInputHiddenElement(
       array(
-        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('name', $this->getItemConfiguration('itemName')),
-        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('value', '0'),
+        \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('name', $this->getItemConfiguration('itemName')),
+        \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('value', '0'),
       )
     );
 
     // Adds the checkbox input element
-    $content .= Tx_SavLibraryPlus_Utility_HtmlElements::htmlInputCheckBoxElement(
+    $content .= \SAV\SavLibraryPlus\Utility\HtmlElements::htmlInputCheckBoxElement(
       array(
-        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('name', $this->getItemConfiguration('itemName')),
-        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('value', '1'),
-        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttributeIfNotNull('checked', $this->getCheckedAttribute()),
-        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('onchange', 'document.changed=1;'),
+        \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('name', $this->getItemConfiguration('itemName')),
+        \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('value', '1'),
+        \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttributeIfNotNull('checked', $this->getCheckedAttribute()),
+        \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('onchange', 'document.changed=1;'),
       )
     );
 
@@ -123,7 +127,7 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_CheckboxItemViewer extends Tx_SavLibrar
   	// Gets the value to check for mail
   	$fieldForCheckMail = $this->getItemConfiguration('fieldforcheckmail');
   	if (empty($fieldForCheckMail) === TRUE) {
-  		Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.noAttributeInField', array('fieldForCheckMail', $this->getItemConfiguration('fieldName')));
+  		\SAV\SavLibraryPlus\Controller\FlashMessages::addError('error.noAttributeInField', array('fieldForCheckMail', $this->getItemConfiguration('fieldName')));
   		return '';
   	}
   	
@@ -135,34 +139,34 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_CheckboxItemViewer extends Tx_SavLibrar
   	if (empty($valueForChecking) === FALSE) {	
   		if ($this->getItemConfiguration('value')) {
   			// Adds an image element
-		    $content = Tx_SavLibraryPlus_Utility_HtmlElements::htmlImgElement(
+		    $content = \SAV\SavLibraryPlus\Utility\HtmlElements::htmlImgElement(
 		      array(
-		        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('class', 'mailButton'),
-		        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('src', Tx_SavLibraryPlus_Managers_LibraryConfigurationManager::getIconPath('newMailOff')),
-		        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('title', Tx_SavLibraryPlus_Controller_FlashMessages::translate('button.mail')),
-		        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('alt', Tx_SavLibraryPlus_Controller_FlashMessages::translate('button.mail')),
+		        \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('class', 'mailButton'),
+		        \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('src', \SAV\SavLibraryPlus\Managers\LibraryConfigurationManager::getIconPath('newMailOff')),
+		        \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('title', \SAV\SavLibraryPlus\Controller\FlashMessages::translate('button.mail')),
+		        \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('alt', \SAV\SavLibraryPlus\Controller\FlashMessages::translate('button.mail')),
 		      )
 		    );  			
   		} else {
   			// Adds an input image element
-		    $content = Tx_SavLibraryPlus_Utility_HtmlElements::htmlInputImageElement(
+		    $content = \SAV\SavLibraryPlus\Utility\HtmlElements::htmlInputImageElement(
 		      array(
-		        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('class', 'mailButton'),
-		        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('src', Tx_SavLibraryPlus_Managers_LibraryConfigurationManager::getIconPath('newMail')),
-	        	Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('name', Tx_SavLibraryPlus_Controller_AbstractController::getFormName() . '[formAction][saveAndSendMail][' . $this->getCryptedFullFieldName() . ']'),	        
-		        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('title', Tx_SavLibraryPlus_Controller_FlashMessages::translate('button.mail')),
-		        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('alt', Tx_SavLibraryPlus_Controller_FlashMessages::translate('button.mail')),
-		        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('onclick', 'return update(\'' . Tx_SavLibraryPlus_Controller_AbstractController::getFormName() . '\');'),
+		        \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('class', 'mailButton'),
+		        \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('src', \SAV\SavLibraryPlus\Managers\LibraryConfigurationManager::getIconPath('newMail')),
+	        	\SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('name', \SAV\SavLibraryPlus\Controller\AbstractController::getFormName() . '[formAction][saveAndSendMail][' . $this->getCryptedFullFieldName() . ']'),	        
+		        \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('title', \SAV\SavLibraryPlus\Controller\FlashMessages::translate('button.mail')),
+		        \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('alt', \SAV\SavLibraryPlus\Controller\FlashMessages::translate('button.mail')),
+		        \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('onclick', 'return update(\'' . \SAV\SavLibraryPlus\Controller\AbstractController::getFormName() . '\');'),
 		      )
 		    );
   		}    		
   	} else {
-	    $content = Tx_SavLibraryPlus_Utility_HtmlElements::htmlImgElement(
+	    $content = \SAV\SavLibraryPlus\Utility\HtmlElements::htmlImgElement(
 	      array(
-	        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('class', 'mailButton'),
-	        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('src', Tx_SavLibraryPlus_Managers_LibraryConfigurationManager::getIconPath('newMailOff')),
-	        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('title', Tx_SavLibraryPlus_Controller_FlashMessages::translate('button.mail')),
-	        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('alt', Tx_SavLibraryPlus_Controller_FlashMessages::translate('button.mail')),
+	        \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('class', 'mailButton'),
+	        \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('src', \SAV\SavLibraryPlus\Managers\LibraryConfigurationManager::getIconPath('newMailOff')),
+	        \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('title', \SAV\SavLibraryPlus\Controller\FlashMessages::translate('button.mail')),
+	        \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('alt', \SAV\SavLibraryPlus\Controller\FlashMessages::translate('button.mail')),
 	      )
 	    );            
   	}

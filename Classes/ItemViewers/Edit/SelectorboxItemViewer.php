@@ -1,4 +1,8 @@
 <?php
+namespace SAV\SavLibraryPlus\ItemViewers\Edit;
+
+use \TYPO3\CMS\Core\Utility\GeneralUtility;
+
 /***************************************************************
 *  Copyright notice
 *
@@ -29,7 +33,7 @@
  * @version $ID:$
  */
  
-class Tx_SavLibraryPlus_ItemViewers_Edit_SelectorboxItemViewer extends Tx_SavLibraryPlus_ItemViewers_Edit_AbstractItemViewer {
+class SelectorboxItemViewer extends AbstractItemViewer {
 
   /**
    * Renders the item.
@@ -49,9 +53,9 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_SelectorboxItemViewer extends Tx_SavLib
     // Adds the empty item option if any
 		if ($this->getItemConfiguration('emptyitem')) {
 			// Adds the Option element
-			$htmlOptionArray[] = Tx_SavLibraryPlus_Utility_HtmlElements::htmlOptionElement(
+			$htmlOptionArray[] = \SAV\SavLibraryPlus\Utility\HtmlElements::htmlOptionElement(
         array(
-          Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('value', '0'),
+          \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('value', '0'),
         ),
         ''
       );
@@ -63,22 +67,22 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_SelectorboxItemViewer extends Tx_SavLib
     foreach ($items as $itemKey => $item) {
       $selected = ($item[1] == $value ? 'selected' : '');
 			// Adds the Option element
-			$htmlOptionArray[] = Tx_SavLibraryPlus_Utility_HtmlElements::htmlOptionElement(
+			$htmlOptionArray[] = \SAV\SavLibraryPlus\Utility\HtmlElements::htmlOptionElement(
         array(
-          Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('class', 'item' . $itemKey),
-          Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttributeIfNotNull('selected', $selected),
-          Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('value', $item[1]),
+          \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('class', 'item' . $itemKey),
+          \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttributeIfNotNull('selected', $selected),
+          \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('value', $item[1]),
         ),
-        stripslashes(Tx_SavLibraryPlus_Controller_FlashMessages::translate($item[0]))
+        stripslashes(\SAV\SavLibraryPlus\Controller\FlashMessages::translate($item[0]))
       );
     }
 
     // Adds the select element
-		$htmlArray[] = Tx_SavLibraryPlus_Utility_HtmlElements::htmlSelectElement(
+		$htmlArray[] = \SAV\SavLibraryPlus\Utility\HtmlElements::htmlSelectElement(
       array(
-        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('name', $this->getItemConfiguration('itemName')),
-        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('size', $this->getItemConfiguration('size')),
-        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('onchange', 'document.changed=1;'),
+        \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('name', $this->getItemConfiguration('itemName')),
+        \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('size', $this->getItemConfiguration('size')),
+        \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('onchange', 'document.changed=1;'),
       ),
       $this->arrayToHTML($htmlOptionArray)
     );

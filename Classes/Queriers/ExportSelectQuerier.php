@@ -1,4 +1,8 @@
 <?php
+namespace SAV\SavLibraryPlus\Queriers;
+
+use \TYPO3\CMS\Core\Utility\GeneralUtility;
+
 /***************************************************************
 *  Copyright notice
 *
@@ -29,7 +33,7 @@
  * @version $ID:$
  */
 
-class Tx_SavLibraryPlus_Queriers_ExportSelectQuerier extends Tx_SavLibraryPlus_Queriers_AbstractQuerier {
+class ExportSelectQuerier extends AbstractQuerier {
 
 	/**
 	 * The export table name
@@ -112,10 +116,12 @@ class Tx_SavLibraryPlus_Queriers_ExportSelectQuerier extends Tx_SavLibraryPlus_Q
   public function getExportConfiguration() {
   	
   	// Unsets fileds which should not be displayed
-  	foreach ($this->exportConfiguration['fields'] as $fieldKey => $field) {
-  		if ($this->isFieldToExclude($fieldKey) && empty($this->exportConfiguration['includeAllFields'])) {
-  			unset($this->exportConfiguration['fields'][$fieldKey]);
-  		}
+  	if (is_array($this->exportConfiguration['fields'])) {
+	  	foreach ($this->exportConfiguration['fields'] as $fieldKey => $field) {
+	  		if ($this->isFieldToExclude($fieldKey) && empty($this->exportConfiguration['includeAllFields'])) {
+	  			unset($this->exportConfiguration['fields'][$fieldKey]);
+	  		}
+	  	}
   	}
     return $this->exportConfiguration;  	
   } 

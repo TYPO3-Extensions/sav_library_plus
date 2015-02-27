@@ -1,4 +1,8 @@
 <?php
+namespace SAV\SavLibraryPlus\Queriers;
+
+use \TYPO3\CMS\Core\Utility\GeneralUtility;
+
 /***************************************************************
 *  Copyright notice
 *
@@ -29,7 +33,7 @@
  * @version $ID:$
  */
  
-class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Queriers_AbstractQuerier {
+class UpdateQuerier extends AbstractQuerier {
 
   // Error constants
   const ERROR_NONE = 0;
@@ -40,7 +44,6 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
   	
 	/**
 	 * The POST variables
-	 * 
 	 * 
 	 * @var array
 	 */  
@@ -96,7 +99,14 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
   protected $postProcessingList;
   
 	/**
-	 * Searches recursively a configuration if an aray, given à key
+	 * Querier which is used to retreive data
+	 * 
+	 * @var string
+	 */
+	protected $editQuerierClassName = 'SAV\\SavLibraryPlus\\Queriers\\EditSelectQuerier';  
+  
+	/**
+	 * Searches recursively a configuration if an aray, given a key
 	 *  
 	 * @param array $arrayToSearchIn
 	 * @param string $key
@@ -193,7 +203,7 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
 
     // Checks if the user is authenticated
     if($this->getController()->getUserManager()->userIsAuthenticated() === FALSE) {
-      return Tx_SavLibraryPlus_Controller_FlashMessages::addError('fatal.notAuthenticated');
+      return \SAV\SavLibraryPlus\Controller\FlashMessages::addError('fatal.notAuthenticated');
     }
  
     // Gets the POST variables
@@ -208,10 +218,10 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
     $libraryConfigurationManager = $this->getController()->getLibraryConfigurationManager();
 
     // Gets the view configuration
-    $viewConfiguration = $libraryConfigurationManager->getViewConfiguration(Tx_SavLibraryPlus_Managers_UriManager::getViewId());
+    $viewConfiguration = $libraryConfigurationManager->getViewConfiguration(\SAV\SavLibraryPlus\Managers\UriManager::getViewId());
     
     // Gets the active folder key
-    $activeFolderKey = Tx_SavLibraryPlus_Managers_UriManager::getFolderKey();
+    $activeFolderKey = \SAV\SavLibraryPlus\Managers\UriManager::getFolderKey();
     if($activeFolderKey === NULL || empty($viewConfiguration[$activeFolderKey])) {
       reset($viewConfiguration);
       $activeFolderKey = key($viewConfiguration);
@@ -221,7 +231,7 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
     $activeFolder = $viewConfiguration[$activeFolderKey];
 
     // Creates the field configuration manager
-    $fieldConfigurationManager = t3lib_div::makeInstance('Tx_SavLibraryPlus_Managers_FieldConfigurationManager');
+    $fieldConfigurationManager = GeneralUtility::makeInstance('SAV\\SavLibraryPlus\\Managers\\FieldConfigurationManager');
     $fieldConfigurationManager->injectController($this->getController());
     
     // Gets the fields configuration for the folder
@@ -253,11 +263,11 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
         // Makes pre-processings.
         self::$doNotAddValueToUpdateOrInsert = FALSE;
         $value = $this->preProcessor($value);    
-        
+      
         // Sets the processed Post variables to retrieve for error processing if any
-        $fullFieldName = $tableName . '.' . $fieldName;
+        $fullFieldName = $tableName . '.' . $fieldName;        
         $this->processedPostVariables[$fullFieldName][$uid] = array('value' => $value, 'errorCode' => self::$errorCode);
-        
+       
         // Adds the variables        
         if (self::$doNotAddValueToUpdateOrInsert === FALSE) {
 		      $variablesToUpdateOrInsert[$tableName][$uid][$fieldName] = $value;
@@ -267,7 +277,7 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
 
 		// Checks if error exists
 		if (self::$doNotUpdateOrInsert === TRUE) {
-			Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.dataNotSaved'); 	
+			\SAV\SavLibraryPlus\Controller\FlashMessages::addError('error.dataNotSaved'); 	
 			return FALSE;
 		}	else {	
 			// No error, inserts or updates the data
@@ -335,7 +345,7 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
 		if ($this->isRequired() && empty($newValue)) {
 			self::$doNotUpdateOrInsert = TRUE;
 			self::$errorCode = self::ERROR_FIELD_REQUIRED;
-			Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.fieldRequired', array($this->fieldConfiguration['label']));		
+			\SAV\SavLibraryPlus\Controller\FlashMessages::addError('error.fieldRequired', array($this->fieldConfiguration['label']));		
 		}  
 
     // Sets a post-processor for query attribute if any
@@ -377,7 +387,7 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
     	if (!method_exists($this, $verifierMethod)) {
     		self::$doNotAddValueToUpdateOrInsert = TRUE;
     		self::$doNotUpdateOrInsert = TRUE;
-    		Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.verifierUnknown');
+    		\SAV\SavLibraryPlus\Controller\FlashMessages::addError('error.verifierUnknown');
     	} elseif ($this->$verifierMethod($newValue) !== TRUE) {
     		self::$doNotAddValueToUpdateOrInsert = TRUE;
     		self::$doNotUpdateOrInsert = TRUE;    		
@@ -654,7 +664,7 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
 			// Gets the current row in the edit view after insert or update
 			$this->rows['after'] = $this->getCurrentRowInEditView();		
 			foreach($this->rows['after'] as $fieldKey => $field) {
-				if (array_key_exists(Tx_SavLibraryPlus_Controller_AbstractController::cryptTag($fieldKey), $this->postVariables) && $field != $this->rows['before'][$fieldKey]) {
+				if (array_key_exists(\SAV\SavLibraryPlus\Controller\AbstractController::cryptTag($fieldKey), $this->postVariables) && $field != $this->rows['before'][$fieldKey]) {
 					$mailCanBeSent = TRUE;
 				}
 			}				
@@ -691,8 +701,7 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
 	  		$mailIf = $this->getFieldConfigurationAttribute('mailif');
 	  		if(!empty($mailIf)) {
 					// Creates the querier
-	    		$querierClassName = 'Tx_SavLibraryPlus_Queriers_EditSelectQuerier';
-	    		$querier = t3lib_div::makeInstance($querierClassName);
+	    		$querier = GeneralUtility::makeInstance($this->editQuerierClassName);
 	    		$querier->injectController($this->getController());
 	    		$querier->injectQueryConfiguration();
 	    		if ($this->isSubformField()) {
@@ -703,7 +712,7 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
 	    		$querier->processQuery();		
 
 	    		// Creates the field configuration manager
-	  			$fieldConfigurationManager = t3lib_div::makeInstance('Tx_SavLibraryPlus_Managers_FieldConfigurationManager');
+	  			$fieldConfigurationManager = GeneralUtility::makeInstance('SAV\\SavLibraryPlus\\Managers\\FieldConfigurationManager');
     			$fieldConfigurationManager->injectController($this->getController());	
     			$fieldConfigurationManager->injectQuerier($querier);	
     			$mailCanBeSent = $fieldConfigurationManager->processFieldCondition($mailIf);	
@@ -762,8 +771,7 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
 
 		if ($generateRtfFieldKey == $this->getFieldConfigurationAttribute('cryptedFullFieldName') || $this->getFieldConfigurationAttribute('generatertfonsave')) {		
 			// Creates the querier
-	    $querierClassName = 'Tx_SavLibraryPlus_Queriers_EditSelectQuerier';
-	    $querier = t3lib_div::makeInstance($querierClassName);
+	    $querier = GeneralUtility::makeInstance($this->editQuerierClassName);
 	    $querier->injectController($this->getController());
 	    $querier->injectQueryConfiguration();
 	    if ($this->isSubformField()) {
@@ -776,14 +784,14 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
 	    // Checks if there is a condition for the generation
 	    $generateCondition = $this->getFieldConfigurationAttribute('generatertfif');
 	    if (!empty($generateCondition)) {
-    		$fieldConfigurationManager = t3lib_div::makeInstance('Tx_SavLibraryPlus_Managers_FieldConfigurationManager');
+    		$fieldConfigurationManager = GeneralUtility::makeInstance('SAV\\SavLibraryPlus\\Managers\\FieldConfigurationManager');
     		$fieldConfigurationManager->injectController($this->getController());	
     		$fieldConfigurationManager->injectQuerier($querier);	
     		if (!$fieldConfigurationManager->processFieldCondition($generateCondition)) {
     			return TRUE;
     		}
 	    }	
-    		
+  		
 	    // Checks if there exist replacement strings for fields
 	    foreach($this->fieldConfiguration as $fieldKey => $field) {
 	    	if (preg_match('/^(?<tableName>[^\.]+)\.(?<fieldName>.+)$/', $fieldKey, $matchFieldKey) && preg_match('/^(?<source>[^-]+)->(?<destination>.+)$/', $field, $matchField)) {
@@ -808,19 +816,19 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
 			// Gets the template
 			$templateRtf = $querier->parseFieldTags($this->getFieldConfigurationAttribute('templatertf'));			
 			if (empty($templateRtf)) {
-				return Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.incorrectRTFTemplateFileConfig');
+				return \SAV\SavLibraryPlus\Controller\FlashMessages::addError('error.incorrectRTFTemplateFileConfig');
 			}
 
 			// Checks the rtf extension
 			$pathParts = pathinfo($templateRtf);
 			if ($pathParts['extension'] != 'rtf') {
-				return Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.incorrectRTFTemplateFileExtension');			
+				return \SAV\SavLibraryPlus\Controller\FlashMessages::addError('error.incorrectRTFTemplateFileExtension');			
 			}
 			
 			// Reads the file template
 			$file = @file_get_contents(PATH_site . $templateRtf);
 			if (empty($file)) {
-				return Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.incorrectRTFTemplateFileName');			
+				return \SAV\SavLibraryPlus\Controller\FlashMessages::addError('error.incorrectRTFTemplateFileName');			
 			}
 			
 			// Cleans the file content
@@ -845,7 +853,7 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
         $path .= $directory;
     		if (!is_dir($path)) {
           if(!mkdir($path)) {
-						return Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.mkdirIncorrect');          	
+						return \SAV\SavLibraryPlus\Controller\FlashMessages::addError('error.mkdirIncorrect');          	
           }
     		}
     		$path .= '/';
@@ -880,7 +888,7 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
 
   	// Checks if query are allowed
   	if (!$extensionConfigurationManager->getAllowQueryProperty()) {
-  		return Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.queryPropertyNotAllowed');
+  		return \SAV\SavLibraryPlus\Controller\FlashMessages::addError('error.queryPropertyNotAllowed');
   	}
 
   	// Gets the content object
@@ -900,7 +908,7 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
   		$queryForeachAttribute = $this->getFieldConfigurationAttribute('queryforeach');  	
   			 
   		if (empty($queryForeachAttribute) === FALSE) {
-  			$foreachCryptedFieldName = Tx_SavLibraryPlus_Controller_AbstractController::cryptTag($this->buildFullFieldName($queryForeachAttribute));
+  			$foreachCryptedFieldName = \SAV\SavLibraryPlus\Controller\AbstractController::cryptTag($this->buildFullFieldName($queryForeachAttribute));
   			$foreachValues = current($this->postVariables[$foreachCryptedFieldName]);
   		  foreach($foreachValues as $foreachValue) {
 					$markers['###' . $queryForeachAttribute . '###'] = $foreachValue;
@@ -909,7 +917,7 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
           foreach($queryStrings as $queryString) {         	
             $resource = $GLOBALS['TYPO3_DB']->sql_query($queryString);
             if ($GLOBALS['TYPO3_DB']->sql_error($resource)) {
-            	Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.incorrectQueryInQueryProperty');
+            	\SAV\SavLibraryPlus\Controller\FlashMessages::addError('error.incorrectQueryInQueryProperty');
               break;
             }
           }
@@ -917,10 +925,11 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
   		} else {
       	$temporaryQueryStrings = $contentObject->substituteMarkerArrayCached($this->getFieldConfigurationAttribute('query'), $markers, array(), array());
         $queryStrings = explode(';', $temporaryQueryStrings);
+
         foreach($queryStrings as $queryString) {
           $resource = $GLOBALS['TYPO3_DB']->sql_query($queryString);            
           if ($GLOBALS['TYPO3_DB']->sql_error($resource)) {
-          	Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.incorrectQueryInQueryProperty');
+          	\SAV\SavLibraryPlus\Controller\FlashMessages::addError('error.incorrectQueryInQueryProperty');
             break;
           }
         }
@@ -954,7 +963,7 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
 	 */
   protected function verifierForInteger($value) {
     if (!empty($value) && preg_match('/^[-]?\d+$/', $value) == 0) {
-      return Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.isNotValidInteger', array($value));
+      return \SAV\SavLibraryPlus\Controller\FlashMessages::addError('error.isNotValidInteger', array($value));
     } else {
       return TRUE;
     }
@@ -969,7 +978,7 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
 	 */
   protected function verifierForCurrency($value) {
     if (!empty($value) && preg_match('/^[-]?[0-9]{1,9}(?:\.[0-9]{1,2})?$/', $value) == 0) {
-      return Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.isNotValidCurrency', array($value));
+      return \SAV\SavLibraryPlus\Controller\FlashMessages::addError('error.isNotValidCurrency', array($value));
     } else {
       return TRUE;
     }
@@ -985,7 +994,7 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
 	protected function isValidPattern($value) {
 		$verifierParameter = $this->getFieldConfigurationAttribute('verifierparam');
 		if (!preg_match($verifierParameter, $value)) {
-      return Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.isValidPattern', array($value));
+      return \SAV\SavLibraryPlus\Controller\FlashMessages::addError('error.isValidPattern', array($value));
     } else {
       return TRUE;
     }			
@@ -1016,7 +1025,7 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
   protected function isValidLength($value) {
 		$verifierParameter = $this->getFieldConfigurationAttribute('verifierparam');  	
     if (strlen($value) > $verifierParameter) {
-      return Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.isValidLength', array($value));
+      return \SAV\SavLibraryPlus\Controller\FlashMessages::addError('error.isValidLength', array($value));
     } else {
       return TRUE;
     }	   	
@@ -1032,11 +1041,11 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
   protected function isValidInterval($value) {
  		$verifierParameter = $this->getFieldConfigurationAttribute('verifierparam');  	 	
     if (!preg_match('/\[([\d]+),\s*([\d]+)\]/', $verifierParameter, $matches)) {
-      return Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.verifierInvalidIntervalParameter', array($value)); 
+      return \SAV\SavLibraryPlus\Controller\FlashMessages::addError('error.verifierInvalidIntervalParameter', array($value)); 
     }
     
     if ((int)$value < (int)$matches[1] || (int)$value > (int)$matches[2]) {
-      return Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.isValidInterval', array($value));
+      return \SAV\SavLibraryPlus\Controller\FlashMessages::addError('error.isValidInterval', array($value));
     } else {
       return TRUE;
     }	      	
@@ -1057,13 +1066,13 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
 
     // Checks if the query is a SELECT query and for errors
     if (!$this->isSelectQuery($query)) {
-      return Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.onlySelectQueryAllowed');
+      return \SAV\SavLibraryPlus\Controller\FlashMessages::addError('error.onlySelectQueryAllowed');
     } elseif (!($resource = $GLOBALS['TYPO3_DB']->sql_query($query))) {
-      return Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.incorrectQueryInContent');
+      return \SAV\SavLibraryPlus\Controller\FlashMessages::addError('error.incorrectQueryInContent');
     } else {
       $row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($resource);
       if (!current($row)) {
-      	return Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.isValidQuery');      	
+      	return \SAV\SavLibraryPlus\Controller\FlashMessages::addError('error.isValidQuery');      	
       } else {
       	return TRUE;
       }
@@ -1111,9 +1120,9 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
     // Processes the insert query and sets the uid
     $newInsertedUid = parent::insertFields($tableName, $fields);
     if($tableName == $this->getQueryConfigurationManager()->getMainTable()) {
-      Tx_SavLibraryPlus_Managers_UriManager::setCompressedParameters(
-        Tx_SavLibraryPlus_Controller_AbstractController::changeCompressedParameters(
-          Tx_SavLibraryPlus_Managers_UriManager::getCompressedParameters(), 'uid', $newInsertedUid
+      \SAV\SavLibraryPlus\Managers\UriManager::setCompressedParameters(
+        \SAV\SavLibraryPlus\Controller\AbstractController::changeCompressedParameters(
+          \SAV\SavLibraryPlus\Managers\UriManager::getCompressedParameters(), 'uid', $newInsertedUid
         )
       );
     }
@@ -1129,8 +1138,7 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
 	 */
 	public function getCurrentRowInEditView() {
  	  // Creates the querier
-	  $querierClassName = 'Tx_SavLibraryPlus_Queriers_EditSelectQuerier';
-	  $querier = t3lib_div::makeInstance($querierClassName);
+	  $querier = GeneralUtility::makeInstance($this->editQuerierClassName);
 	  $querier->injectController($this->getController());
 	  $querier->injectQueryConfiguration();  
 	  $querier->processQuery();	
@@ -1187,7 +1195,7 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
     if ($date) {
 
       if(!preg_match($exp, $date, $matchesDate)) {
-        Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.incorrectDateFormat');
+        \SAV\SavLibraryPlus\Controller\FlashMessages::addError('error.incorrectDateFormat');
         self::$doNotAddValueToUpdateOrInsert = TRUE;
   			return $date;
       } else {
@@ -1202,7 +1210,7 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
         if(array_key_exists($key, $var)) {
           $$var[$key]['type'] = $val;
 			  } else {
-          Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.incorrectDateOption');
+          \SAV\SavLibraryPlus\Controller\FlashMessages::addError('error.incorrectDateOption');
           self::$doNotAddValueToUpdateOrInsert = TRUE;
           return '';
         }
@@ -1230,7 +1238,7 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
     $uploadedFiles = array();
 
     // Gets the file array
-    $formName = Tx_SavLibraryPlus_Controller_AbstractController::getFormName();
+    $formName = \SAV\SavLibraryPlus\Controller\AbstractController::getFormName();
     $files = $GLOBALS['_FILES'][$formName];
 
     // Gets the crypted full field name
@@ -1240,10 +1248,10 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
     $uploadFolder = $this->getFieldConfigurationAttribute('uploadfolder');
     $uploadFolder .= ($this->getFieldConfigurationAttribute('addToUploadFolder') ? '/' . $this->getFieldConfigurationAttribute('addToUploadFolder') : '');
 
-    $error = t3lib_div::mkdir_deep(PATH_site, $uploadFolder);
+    $error = GeneralUtility::mkdir_deep(PATH_site, $uploadFolder);
     if ($error) {
       self::$doNotAddValueToUpdateOrInsert = TRUE;
-      return Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.cannotCreateDirectoryInUpload', array($uploadFolder));
+      return \SAV\SavLibraryPlus\Controller\FlashMessages::addError('error.cannotCreateDirectoryInUpload', array($uploadFolder));
     }
       
     // Processes the file array
@@ -1257,7 +1265,7 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
         // Checks the size
         if ($files['size'][$cryptedFullFieldName][$uid][$fileNameKey] > $this->getFieldConfigurationAttribute('max_size') * 1024) {
           self::$doNotAddValueToUpdateOrInsert = TRUE;
-          return Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.maxFileSizeExceededInUpload');
+          return \SAV\SavLibraryPlus\Controller\FlashMessages::addError('error.maxFileSizeExceededInUpload');
         }
 
         // Checks the extension
@@ -1266,18 +1274,18 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
         $allowed = $this->getFieldConfigurationAttribute('allowed');        
         if ($allowed && in_array($fileExtension, explode(',', $allowed)) === FALSE) {
           self::$doNotAddValueToUpdateOrInsert = TRUE;
-          return Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.forbiddenFileTypeInUpload', array($fileExtension));
+          return \SAV\SavLibraryPlus\Controller\FlashMessages::addError('error.forbiddenFileTypeInUpload', array($fileExtension));
         }
         
         if (empty($allowed) && in_array($fileExtension, explode(',', $this->getFieldConfigurationAttribute('disallowed'))) === TRUE) {   
           self::$doNotAddValueToUpdateOrInsert = TRUE;
-          return Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.forbiddenFileTypeInUpload', array($fileExtension));
+          return \SAV\SavLibraryPlus\Controller\FlashMessages::addError('error.forbiddenFileTypeInUpload', array($fileExtension));
         }
 
         // Uploads the file
     		if (move_uploaded_file($files['tmp_name'][$cryptedFullFieldName][$uid][$fileNameKey], $uploadFolder . '/' . $files['name'][$cryptedFullFieldName][$uid][$fileNameKey]) === FALSE) {
           self::$doNotAddValueToUpdateOrInsert = TRUE;
-          return Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.uploadAborted');
+          return \SAV\SavLibraryPlus\Controller\FlashMessages::addError('error.uploadAborted');
     		}
     		$uploadedFiles[$fileNameKey] = $files['name'][$cryptedFullFieldName][$uid][$fileNameKey];
   		}
@@ -1295,8 +1303,7 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
 	 */
   public function sendEmail() {
   	// Calls the querier
-    $querierClassName = 'Tx_SavLibraryPlus_Queriers_EditSelectQuerier';
-    $querier = t3lib_div::makeInstance($querierClassName);
+    $querier = GeneralUtility::makeInstance($this->editQuerierClassName);
     $querier->injectController($this->getController());
     $querier->injectQueryConfiguration();  
     // Special processing if the field is in a subform
@@ -1330,9 +1337,9 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
 
       // Checks if the query is a SELECT query and for errors
       if ($this->isSelectQuery($mailReceiverFromQuery) === FALSE) {
-        return Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.onlySelectQueryAllowed', array($this->getFieldConfigurationAttribute('fieldName')));            
+        return \SAV\SavLibraryPlus\Controller\FlashMessages::addError('error.onlySelectQueryAllowed', array($this->getFieldConfigurationAttribute('fieldName')));            
       } elseif (!($resource = $GLOBALS['TYPO3_DB']->sql_query($mailReceiverFromQuery))) {
-        return Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.incorrectQueryInContent', array($this->getFieldConfigurationAttribute('fieldName')));
+        return \SAV\SavLibraryPlus\Controller\FlashMessages::addError('error.incorrectQueryInContent', array($this->getFieldConfigurationAttribute('fieldName')));
       } 
      	// Processes the query
       $row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($resource);
@@ -1349,7 +1356,7 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
     } elseif ($this->getFieldConfigurationAttribute('mailreceiver')) {
       $mailReceiver = $this->getFieldConfigurationAttribute('mailreceiver');
     } else {
-       return Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.noEmailReceiver');    	
+       return \SAV\SavLibraryPlus\Controller\FlashMessages::addError('error.noEmailReceiver');    	
     }
 	
     // Checks if a language configuration is set for the message
@@ -1404,7 +1411,7 @@ class Tx_SavLibraryPlus_Queriers_UpdateQuerier extends Tx_SavLibraryPlus_Querier
     if (mb_check_encoding($mailMessage, 'utf-8')) {
     	$mailMessage = utf8_decode($mailMessage);
     }
-    $mailMessage = '<head><base href="' . t3lib_div::getIndpEnv('TYPO3_SITE_URL') . '" /></head><html>' . nl2br($mailMessage) . '</html>';
+    $mailMessage = '<head><base href="' . GeneralUtility::getIndpEnv('TYPO3_SITE_URL') . '" /></head><html>' . nl2br($mailMessage) . '</html>';
 
     // Builds the header
     $charset = mb_detect_encoding($mailMessage);

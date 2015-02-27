@@ -1,4 +1,8 @@
 <?php
+namespace SAV\SavLibraryPlus\Compatibility\Database;
+
+use \TYPO3\CMS\Core\Utility\GeneralUtility;
+
 /***************************************************************
 *  Copyright notice
 *
@@ -27,7 +31,7 @@
  *
  * @package SavLibraryPlus
  */
-class Tx_SavLibraryPlus_Compatibility_Database_DatabaseConnection {
+class DatabaseConnection {
 
 	/**
 	 * 

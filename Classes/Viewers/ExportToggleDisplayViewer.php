@@ -1,4 +1,8 @@
 <?php
+namespace SAV\SavLibraryPlus\Viewers;
+
+use \TYPO3\CMS\Core\Utility\GeneralUtility;
+
 /***************************************************************
 *  Copyright notice
 *
@@ -29,7 +33,7 @@
  * @version $ID:$
  */
  
-class Tx_SavLibraryPlus_Viewers_ExportToggleDisplayViewer extends Tx_SavLibraryPlus_Viewers_ExportViewer {
+class ExportToggleDisplayViewer extends ExportViewer {
 
 }
 ?>

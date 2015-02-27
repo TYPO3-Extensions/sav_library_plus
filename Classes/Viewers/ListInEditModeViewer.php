@@ -1,4 +1,8 @@
 <?php
+namespace SAV\SavLibraryPlus\Viewers;
+
+use \TYPO3\CMS\Core\Utility\GeneralUtility;
+
 /***************************************************************
 *  Copyright notice
 *
@@ -29,7 +33,7 @@
  * @version $ID:$
  */
  
-class Tx_SavLibraryPlus_Viewers_ListInEditModeViewer extends Tx_SavLibraryPlus_Viewers_ListViewer {
+class ListInEditModeViewer extends ListViewer {
 
   /**
    * The template file
@@ -84,6 +88,7 @@ class Tx_SavLibraryPlus_Viewers_ListInEditModeViewer extends Tx_SavLibraryPlus_V
     $this->addToViewConfiguration('general',
       array(
         'newButtonIsAllowed' => !$noNewButton,
+      	'showFirstLastButtons' => TRUE,
       )
     );
   }

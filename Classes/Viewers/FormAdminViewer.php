@@ -1,4 +1,8 @@
 <?php
+namespace SAV\SavLibraryPlus\Viewers;
+
+use \TYPO3\CMS\Core\Utility\GeneralUtility;
+
 /***************************************************************
 *  Copyright notice
 *
@@ -29,7 +33,7 @@
  * @version $ID:$
  */
  
-class Tx_SavLibraryPlus_Viewers_FormAdminViewer extends Tx_SavLibraryPlus_Viewers_FormViewer {
+class FormAdminViewer extends FormViewer {
  
   /**
    * The template file
@@ -54,7 +58,7 @@ class Tx_SavLibraryPlus_Viewers_FormAdminViewer extends Tx_SavLibraryPlus_Viewer
     	// Gets the full field name
 			$querier = $this->getController()->getQuerier();
 			$fullFieldName =  $querier->buildFullFieldName($matches['fieldName'][$matchKey]);		
-      $cryptedFullFieldName = Tx_SavLibraryPlus_Controller_AbstractController::cryptTag($fullFieldName);
+      $cryptedFullFieldName = \SAV\SavLibraryPlus\Controller\AbstractController::cryptTag($fullFieldName);
           	
 			if ($matches['separator'][$matchKey]) {
 	

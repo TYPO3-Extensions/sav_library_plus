@@ -135,13 +135,15 @@
 .savLibraryPlus IMG.checkboxNotSelected {padding:0px;}
 .savLibraryPlus IMG.printButton {width:18px; height:16px;}
 .savLibraryPlus INPUT.exportokButton {float:left;padding-right:5px;}
+.savLibraryPlus INPUT.exportQueryMode {float:left;padding-left:3px;}
+.savLibraryPlus INPUT.exportToggleMode {float:left;padding-left:3px;}
 .savLibraryPlus INPUT.submitButton {font-size:9px;margin-top:1px;}
 .savLibraryPlus IMG.rightArrowButtonSubForm {float:none; padding-left:2px;margin:0px;}
 .savLibraryPlus IMG.leftArrowButtonSubForm {float:none; padding-left:2px;margin:0px;}
 .savLibraryPlus DIV.itemIconLeft IMG.deleteItemButton {float:left;padding:1px 0px 1px 0px;margin:0px;}
 .savLibraryPlus DIV.itemIconLeft IMG.upButton {float:left;padding:1px 0px 1px 1px;margin:0px;}
 .savLibraryPlus DIV.itemIconLeft IMG.downButton {float:left;padding:1px 1px 1px 0px;margin:0px;}
-.savLibraryPlus DIV.itemIconLeft INPUT.saveButton {float:left;padding:1px 0px 1px 0px;margin:0px;}
+.savLibraryPlus DIV.itemIconLeft INPUT.saveButton {float:left;padding:1px 0px 1px 0px;margin:0px;}     
 
 	/**
 	 * Special tags 
@@ -437,7 +439,7 @@
 }
 .savLibraryPlus DIV.formView .column3 SPAN, .savLibraryPlus .formAdminView .column3 SPAN{
 	font-size:12px;
-	margin:-3px 0 0 3px;	
+	margin:-3px 2px 2px 3px;	
 }
 .savLibraryPlus .formView DIV.column4, .savLibraryPlus .formAdminView DIV.column4Different{
 	float:right;
@@ -818,7 +820,11 @@
 .savLibraryPlus .exportView .field INPUT.exec{
 	width:500px;
 }
-.savLibraryPlus .exportView DIV.fields {
+.savLibraryPlus .exportView .field TEXTAREA.query{
+	width:500px;
+	height:300px;
+}
+.savLibraryPlus .exportView DIV.fields{
 	width:100%;
 }  	     
 .savLibraryPlus .exportView .fields DIV.value{

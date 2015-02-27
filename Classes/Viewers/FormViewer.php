@@ -1,4 +1,8 @@
 <?php
+namespace SAV\SavLibraryPlus\Viewers;
+
+use \TYPO3\CMS\Core\Utility\GeneralUtility;
+
 /***************************************************************
 *  Copyright notice
 *
@@ -29,7 +33,7 @@
  * @version $ID:$
  */
  
-class Tx_SavLibraryPlus_Viewers_FormViewer extends Tx_SavLibraryPlus_Viewers_AbstractViewer {
+class FormViewer extends AbstractViewer {
 
   /**
    * Item viewer directory
@@ -62,7 +66,7 @@ class Tx_SavLibraryPlus_Viewers_FormViewer extends Tx_SavLibraryPlus_Viewers_Abs
   /**
    * The query configuration manager
    *
-   * @var Tx_SavLibraryPlus_Managers_QueryConfigurationManager
+   * @var \SAV\SavLibraryPlus\Managers\QueryConfigurationManager
    */
   protected $queryConfigurationManager;
   
@@ -89,7 +93,7 @@ class Tx_SavLibraryPlus_Viewers_FormViewer extends Tx_SavLibraryPlus_Viewers_Abs
     $this->setActiveFolderKey();
 
     // Creates the template configuration manager
-    $templateConfigurationManager = t3lib_div::makeInstance('Tx_SavLibraryPlus_Managers_TemplateConfigurationManager');
+    $templateConfigurationManager = GeneralUtility::makeInstance('SAV\\SavLibraryPlus\\Managers\\TemplateConfigurationManager');
     $templateConfigurationManager->injectTemplateConfiguration($this->getLibraryConfigurationManager()->getFormViewTemplateConfiguration());
 
     // Creates the field configuration manager
@@ -126,8 +130,8 @@ class Tx_SavLibraryPlus_Viewers_FormViewer extends Tx_SavLibraryPlus_Viewers_Abs
         'extensionKey' => $this->getController()->getExtensionConfigurationManager()->getExtensionKey(),
         'helpPage' => $this->getController()->getExtensionConfigurationManager()->getHelpPageForListView(),
         'addPrintIcon' => $this->getActiveFolderField('addPrintIcon'),
-        'formName' => Tx_SavLibraryPlus_Controller_AbstractController::getFormName(),   
-      	'uid' => Tx_SavLibraryPlus_Managers_UriManager::getUid(),
+        'formName' => \SAV\SavLibraryPlus\Controller\AbstractController::getFormName(),   
+      	'uid' => \SAV\SavLibraryPlus\Managers\UriManager::getUid(),
         'title' => $this->processTitle($this->parseTitle($this->getActiveFolderTitle())),
       )
     );
@@ -184,7 +188,7 @@ class Tx_SavLibraryPlus_Viewers_FormViewer extends Tx_SavLibraryPlus_Viewers_Abs
 
     	// Gets the crypted full field name
       $fullFieldName =  $this->getController()->getQuerier()->buildFullFieldName($matches['fieldName'][$matchKey]);  
-      $cryptedFullFieldName = Tx_SavLibraryPlus_Controller_AbstractController::cryptTag($fullFieldName);
+      $cryptedFullFieldName = \SAV\SavLibraryPlus\Controller\AbstractController::cryptTag($fullFieldName);
 
       // Removes the field if not in admin mode
       if ($this->folderFieldsConfiguration[$cryptedFullFieldName]['addeditifadmin'] && !$this->getController()->getUserManager()->userIsAllowedToChangeData('+')) {
@@ -263,10 +267,10 @@ class Tx_SavLibraryPlus_Viewers_FormViewer extends Tx_SavLibraryPlus_Viewers_Abs
    	
       // Builds the crypted full field name
       $fullFieldName =  $this->getController()->getQuerier()->buildFullFieldName($matches['fieldName'][$matchKey]);
-      $cryptedFullFieldName = Tx_SavLibraryPlus_Controller_AbstractController::cryptTag($fullFieldName);
+      $cryptedFullFieldName = \SAV\SavLibraryPlus\Controller\AbstractController::cryptTag($fullFieldName);
       
       if (empty($this->folderFieldsConfiguration[$cryptedFullFieldName])) {
-        Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.unknownFieldName', array($fullFieldName));
+        \SAV\SavLibraryPlus\Controller\FlashMessages::addError('error.unknownFieldName', array($fullFieldName));
       	continue;
       }
 
@@ -276,7 +280,7 @@ class Tx_SavLibraryPlus_Viewers_FormViewer extends Tx_SavLibraryPlus_Viewers_Abs
       } else {
       	$uid = $this->getController()->getQuerier()->getFieldValueFromCurrentRow('uid');
       }
-      $itemName = Tx_SavLibraryPlus_Controller_AbstractController::getFormName() . '[' . $cryptedFullFieldName . '][' . intval($uid) . ']';
+      $itemName = \SAV\SavLibraryPlus\Controller\AbstractController::getFormName() . '[' . $cryptedFullFieldName . '][' . intval($uid) . ']';
       $this->folderFieldsConfiguration[$cryptedFullFieldName]['itemName'] = $itemName;
       
       // Sets the default rendering
@@ -309,11 +313,11 @@ class Tx_SavLibraryPlus_Viewers_FormViewer extends Tx_SavLibraryPlus_Viewers_Abs
 				case 'Validation':
 					// If a validation is forced and addEdit is not set, adds a hidden field such that the configuration can be processed when saving 
 					if ($this->folderFieldsConfiguration[$cryptedFullFieldName]['addvalidationifadmin'] && (!$this->folderFieldsConfiguration[$cryptedFullFieldName]['addedit'] || !$this->folderFieldsConfiguration[$cryptedFullFieldName]['addeditifadmin'])) {
-	      		$checkboxName = Tx_SavLibraryPlus_Controller_AbstractController::getFormName() . '[' . $cryptedFullFieldName . '][' . $uid . ']';
-	    			$hiddenElement = Tx_SavLibraryPlus_Utility_HtmlElements::htmlInputHiddenElement(
+	      		$checkboxName = \SAV\SavLibraryPlus\Controller\AbstractController::getFormName() . '[' . $cryptedFullFieldName . '][' . $uid . ']';
+	    			$hiddenElement = \SAV\SavLibraryPlus\Utility\HtmlElements::htmlInputHiddenElement(
 	      			array(
-	        			Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('name', $checkboxName),
-	        			Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('value', '0'),
+	        			\SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('name', $checkboxName),
+	        			\SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('value', '0'),
 	      			)
 	    			);
 					} else {
@@ -321,11 +325,11 @@ class Tx_SavLibraryPlus_Viewers_FormViewer extends Tx_SavLibraryPlus_Viewers_Abs
 					}
 										
       		// Adds the hidden element for validation
-      		$checkboxName = Tx_SavLibraryPlus_Controller_AbstractController::getFormName() . '[validation][' . $cryptedFullFieldName . ']';
-    			$hiddenElement .= Tx_SavLibraryPlus_Utility_HtmlElements::htmlInputHiddenElement(
+      		$checkboxName = \SAV\SavLibraryPlus\Controller\AbstractController::getFormName() . '[validation][' . $cryptedFullFieldName . ']';
+    			$hiddenElement .= \SAV\SavLibraryPlus\Utility\HtmlElements::htmlInputHiddenElement(
       			array(
-        			Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('name', $checkboxName),
-        			Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('value', '0'),
+        			\SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('name', $checkboxName),
+        			\SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('value', '0'),
       			)
     			);
 
@@ -338,11 +342,11 @@ class Tx_SavLibraryPlus_Viewers_FormViewer extends Tx_SavLibraryPlus_Viewers_Abs
     			}
     			
     			// Adds the checkbox element
-    			$checkboxElement = Tx_SavLibraryPlus_Utility_HtmlElements::htmlInputCheckBoxElement(
+    			$checkboxElement = \SAV\SavLibraryPlus\Utility\HtmlElements::htmlInputCheckBoxElement(
       			array(
-        			Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('name', $checkboxName),
-        			Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('value', '1'),
-        			Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttributeIfNotNull('checked', $checked),
+        			\SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('name', $checkboxName),
+        			\SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('value', '1'),
+        			\SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttributeIfNotNull('checked', $checked),
       			)
     			);	
 					$replacementString = $hiddenElement . $checkboxElement;
@@ -372,23 +376,23 @@ class Tx_SavLibraryPlus_Viewers_FormViewer extends Tx_SavLibraryPlus_Viewers_Abs
     foreach($matches[0] as $matchKey => $match) {
     	// Checks if labelRequired is set
     	if ($matches[1][$matchKey]) {
-      	$template = str_replace($matches[0][$matchKey], str_replace('labelRequired', 'label', $matches[0][$matchKey]) . Tx_SavLibraryPlus_Utility_HtmlElements::htmlSpanElement(
+      	$template = str_replace($matches[0][$matchKey], str_replace('labelRequired', 'label', $matches[0][$matchKey]) . \SAV\SavLibraryPlus\Utility\HtmlElements::htmlSpanElement(
            array(
-             Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('class', 'required'),
+             \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('class', 'required'),
            ),
-           Tx_SavLibraryPlus_Controller_FlashMessages::translate('formView.required')
+           \SAV\SavLibraryPlus\Controller\FlashMessages::translate('formView.required')
 				), $template);    		
     	}	else {
 	      // Builds the crypted full field name
 	      $fullFieldName =  $this->getController()->getQuerier()->buildFullFieldName($matches[2][$matchKey]);
-	      $cryptedFullFieldName = Tx_SavLibraryPlus_Controller_AbstractController::cryptTag($fullFieldName);
+	      $cryptedFullFieldName = \SAV\SavLibraryPlus\Controller\AbstractController::cryptTag($fullFieldName);
 	     
 	      if ($this->folderFieldsConfiguration[$cryptedFullFieldName]['required']) {
-	      	$template = str_replace($matches[0][$matchKey], $matches[0][$matchKey] . Tx_SavLibraryPlus_Utility_HtmlElements::htmlSpanElement(
+	      	$template = str_replace($matches[0][$matchKey], $matches[0][$matchKey] . \SAV\SavLibraryPlus\Utility\HtmlElements::htmlSpanElement(
 	            array(
-	              Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('class', 'required'),
+	              \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('class', 'required'),
 	            ),
-	            Tx_SavLibraryPlus_Controller_FlashMessages::translate('formView.required')
+	            \SAV\SavLibraryPlus\Controller\FlashMessages::translate('formView.required')
 	          ), $template);
 	      } 
     	}
@@ -414,11 +418,11 @@ class Tx_SavLibraryPlus_Viewers_FormViewer extends Tx_SavLibraryPlus_Viewers_Abs
 	 */
 	protected function submitButton() {
 	
-    $content = Tx_SavLibraryPlus_Utility_HtmlElements::htmlInputSubmitElement(
+    $content = \SAV\SavLibraryPlus\Utility\HtmlElements::htmlInputSubmitElement(
       array(
-        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('class', 'submitButton'),      
-        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('value', Tx_SavLibraryPlus_Controller_FlashMessages::translate('button.submit')),
-        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('onclick', 'update(\'' . Tx_SavLibraryPlus_Controller_AbstractController::getFormName() . '\');'),       
+        \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('class', 'submitButton'),      
+        \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('value', \SAV\SavLibraryPlus\Controller\FlashMessages::translate('button.submit')),
+        \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('onclick', 'update(\'' . \SAV\SavLibraryPlus\Controller\AbstractController::getFormName() . '\');'),       
       )
     );
     

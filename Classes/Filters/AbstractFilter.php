@@ -1,4 +1,7 @@
 <?php
+namespace SAV\SavLibraryPlus\Filters;
+
+use \TYPO3\CMS\Core\Utility\GeneralUtility;
 /***************************************************************
 *  Copyright notice
 *
@@ -29,7 +32,7 @@
  *
  */   
 
-abstract class Tx_SavLibraryPlus_Filters_AbstractFilter extends tslib_pibase {
+abstract class AbstractFilter extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin {
 
   abstract protected function SetSessionField_addWhere();
 
@@ -105,7 +108,7 @@ abstract class Tx_SavLibraryPlus_Filters_AbstractFilter extends tslib_pibase {
     $this->sessionFilter[$this->extKeyWithId]['tstamp'] = time();    
 
     // Recovers the piVars in the session
-    if (!count($this->piVars) && (t3lib_div::_GP('sav_library') || t3lib_div::_GP('sav_library_plus')) && isset($this->sessionFilter[$this->extKeyWithId]['piVars'])) {    
+    if (!count($this->piVars) && (GeneralUtility::_GP('sav_library') || GeneralUtility::_GP('sav_library_plus')) && isset($this->sessionFilter[$this->extKeyWithId]['piVars'])) {    
       $this->piVars = $this->sessionFilter[$this->extKeyWithId]['piVars'];   
 		  $this->sessionFilterSelected = $this->extKeyWithId;  
       $this->piVarsReloaded = TRUE;  
@@ -115,7 +118,7 @@ abstract class Tx_SavLibraryPlus_Filters_AbstractFilter extends tslib_pibase {
     } elseif ($this->piVars['logoutReloadPage']) {
       unset($this->sessionFilter[$this->extKeyWithId]);
       unset($this->sessionAuth[$this->extKeyWithId]);
-  		header('Location: ' . t3lib_div::locationHeaderUrl($this->pi_getPageLink($GLOBALS['TSFE']->id)));           
+  		header('Location: ' . GeneralUtility::locationHeaderUrl($this->pi_getPageLink($GLOBALS['TSFE']->id)));           
     } elseif ($this->sessionAuth[$this->extKeyWithId]['authenticated']) {
       if ($this->sessionFilter[$this->extKeyWithId]['piVars']) {
         $this->piVars = $this->sessionFilter[$this->extKeyWithId]['piVars'];
@@ -144,10 +147,10 @@ abstract class Tx_SavLibraryPlus_Filters_AbstractFilter extends tslib_pibase {
     // Includes the default style sheet if none was provided. 
     // stylesheet is the new configuration attribute, fileCSS is kept for compatibility.
 		if (!$this->conf['fileCSS'] && !$this->conf['stylesheet']) {
-			if (file_exists(t3lib_extMgm::siteRelPath($this->extKey) . 'res/' . $this->extKey . '.css')) {
-				$cascadingStyleSheet = t3lib_extMgm::siteRelPath($this->extKey) . 'res/' . $this->extKey . '.css';
-      } elseif (file_exists(t3lib_extMgm::siteRelPath($this->extKey) . 'Resources/Private/Styles/' . $this->extKey . '.css')) {
-		    $cascadingStyleSheet = t3lib_extMgm::siteRelPath($this->extKey) . 'Resources/Private/Styles/' . $this->extKey . '.css';        	
+			if (file_exists(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::siteRelPath($this->extKey) . 'res/' . $this->extKey . '.css')) {
+				$cascadingStyleSheet = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::siteRelPath($this->extKey) . 'res/' . $this->extKey . '.css';
+      } elseif (file_exists(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::siteRelPath($this->extKey) . 'Resources/Private/Styles/' . $this->extKey . '.css')) {
+		    $cascadingStyleSheet = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::siteRelPath($this->extKey) . 'Resources/Private/Styles/' . $this->extKey . '.css';        	
       } else {
         $this->addError('error.incorrectCSS');
         return FALSE;        	
@@ -161,7 +164,7 @@ abstract class Tx_SavLibraryPlus_Filters_AbstractFilter extends tslib_pibase {
       $this->addError('error.incorrectCSS');
       return FALSE;
     } 
-		Tx_SavLibraryPlus_Managers_AdditionalHeaderManager::addCascadingStyleSheet($cascadingStyleSheet);
+		\SAV\SavLibraryPlus\Managers\AdditionalHeaderManager::addCascadingStyleSheet($cascadingStyleSheet);
 			
 		// Sets the icon root path if any
 		if (empty($this->conf['iconRootPath']) === FALSE) {

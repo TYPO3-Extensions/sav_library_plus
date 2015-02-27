@@ -1,4 +1,8 @@
 <?php
+namespace SAV\SavLibraryPlus\Viewers;
+
+use \TYPO3\CMS\Core\Utility\GeneralUtility;
+
 /***************************************************************
 *  Copyright notice
 *
@@ -29,7 +33,7 @@
  * @version $ID:$
  */
  
-class Tx_SavLibraryPlus_Viewers_EditViewer extends Tx_SavLibraryPlus_Viewers_AbstractViewer {
+class EditViewer extends AbstractViewer {
 
   /**
    * Item viewer directory
@@ -80,7 +84,7 @@ class Tx_SavLibraryPlus_Viewers_EditViewer extends Tx_SavLibraryPlus_Viewers_Abs
     foreach ($this->folderFieldsConfiguration as $fieldConfigurationKey => $fieldConfiguration) {
       // Adds the item name
       $uid = $this->getController()->getQuerier()->getFieldValueFromCurrentRow('uid');
-      $itemName = Tx_SavLibraryPlus_Controller_AbstractController::getFormName() . '[' . $fieldConfigurationKey . '][' . intval($uid) . ']';
+      $itemName = \SAV\SavLibraryPlus\Controller\AbstractController::getFormName() . '[' . $fieldConfigurationKey . '][' . intval($uid) . ']';
       $this->folderFieldsConfiguration[$fieldConfigurationKey]['itemName'] = $itemName;
 
       // Processes the field
@@ -100,7 +104,7 @@ class Tx_SavLibraryPlus_Viewers_EditViewer extends Tx_SavLibraryPlus_Viewers_Abs
         'hideExtension' => 0,
         'helpPage' => $this->getController()->getExtensionConfigurationManager()->getHelpPageForEditView(),
         'activeFolderKey' => $this->getActiveFolderKey(),
-        'formName' => Tx_SavLibraryPlus_Controller_AbstractController::getFormName(),
+        'formName' => \SAV\SavLibraryPlus\Controller\AbstractController::getFormName(),
         'title' => $this->processTitle($this->getActiveFolderTitle()),
       	'saveAndNew' => array_key_exists($this->getController()->getQuerier()->getQueryConfigurationManager()->getMainTable(), $this->getController()->getLibraryConfigurationManager()->getGeneralConfigurationField('saveAndNew')),
 				'isNewView' => $this->isNewView,
@@ -125,7 +129,7 @@ class Tx_SavLibraryPlus_Viewers_EditViewer extends Tx_SavLibraryPlus_Viewers_Abs
   	} else {
   		$javaScript = '';
   	}
-  	Tx_SavLibraryPlus_Managers_AdditionalHeaderManager::addJavaScript('documentChanged', $javaScript);
+  	\SAV\SavLibraryPlus\Managers\AdditionalHeaderManager::addJavaScript('documentChanged', $javaScript);
   	  	
 	}
   

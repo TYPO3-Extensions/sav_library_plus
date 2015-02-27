@@ -1,4 +1,4 @@
-{namespace sav=Tx_SavLibraryPlus_ViewHelpers}
+{namespace sav=SAV\SavLibraryPlus\ViewHelpers}
 <f:if condition="{field.whereTagKey} == {field.whereTagAscendingOrderKey}" >
 <f:then>
 <sav:link.action action="list{field.inEditMode}" additionalParams="{configuration.general.additionalParams}" class="orderAsc" arguments="{whereTagKey:field.whereTagDescendingOrderKey}">

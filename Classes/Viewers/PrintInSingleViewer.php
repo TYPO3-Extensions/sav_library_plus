@@ -1,4 +1,8 @@
 <?php
+namespace SAV\SavLibraryPlus\Viewers;
+
+use \TYPO3\CMS\Core\Utility\GeneralUtility;
+
 /***************************************************************
 *  Copyright notice
 *
@@ -29,7 +33,7 @@
  * @version $ID:$
  */
  
-class Tx_SavLibraryPlus_Viewers_PrintInSingleViewer extends Tx_SavLibraryPlus_Viewers_ListViewer {
+class PrintInSingleViewer extends ListViewer {
 
   /**
    * The template file
@@ -54,7 +58,7 @@ class Tx_SavLibraryPlus_Viewers_PrintInSingleViewer extends Tx_SavLibraryPlus_Vi
    */
   protected function getItemTemplate() {
     // Creates the template configuration manager
-    $templateConfigurationManager = t3lib_div::makeInstance('Tx_SavLibraryPlus_Managers_TemplateConfigurationManager');
+    $templateConfigurationManager = GeneralUtility::makeInstance('SAV\\SavLibraryPlus\\Managers\\TemplateConfigurationManager');
     $templateConfigurationManager->injectTemplateConfiguration($this->getLibraryConfigurationManager()->getSpecialViewTemplateConfiguration());
     $itemTemplate = $templateConfigurationManager->getItemTemplate(); 
     
@@ -94,7 +98,7 @@ class Tx_SavLibraryPlus_Viewers_PrintInSingleViewer extends Tx_SavLibraryPlus_Vi
 
     	// Gets the crypted full field name
       $fullFieldName =  $this->getController()->getQuerier()->buildFullFieldName($matches['fieldName'][$matchKey]);  
-      $cryptedFullFieldName = Tx_SavLibraryPlus_Controller_AbstractController::cryptTag($fullFieldName);
+      $cryptedFullFieldName = \SAV\SavLibraryPlus\Controller\AbstractController::cryptTag($fullFieldName);
      
       // Processes the field
       if ($matches['separator'][$matchKey]) {

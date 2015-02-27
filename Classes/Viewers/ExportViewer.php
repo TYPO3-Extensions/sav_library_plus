@@ -1,4 +1,8 @@
 <?php
+namespace SAV\SavLibraryPlus\Viewers;
+
+use \TYPO3\CMS\Core\Utility\GeneralUtility;
+
 /***************************************************************
 *  Copyright notice
 *
@@ -29,7 +33,7 @@
  * @version $ID:$
  */
  
-class Tx_SavLibraryPlus_Viewers_ExportViewer extends Tx_SavLibraryPlus_Viewers_AbstractViewer {
+class ExportViewer extends AbstractViewer {
 
   /**
    * The template file
@@ -49,15 +53,15 @@ class Tx_SavLibraryPlus_Viewers_ExportViewer extends Tx_SavLibraryPlus_Viewers_A
   	
   	// Builds the item configuration
   	$itemConfiguration = array(
-  		'foreign_table' => Tx_SavLibraryPlus_Queriers_ExportSelectQuerier::$exportTableName,
+  		'foreign_table' => \SAV\SavLibraryPlus\Queriers\ExportSelectQuerier::$exportTableName,
   		'whereselect' => 'cid=' . intval($this->getController()->getExtensionConfigurationManager()->getExtensionContentObject()->data['uid']),
   		'orderselect' => 'name',
   		'overridestartingpoint' => 1,
   	);
   	
     // Builds the querier
-    $querierClassName = 'Tx_SavLibraryPlus_Queriers_ForeignTableSelectQuerier';
-    $querier = t3lib_div::makeInstance($querierClassName);
+    $querierClassName = 'SAV\\SavLibraryPlus\\Queriers\\ForeignTableSelectQuerier';
+    $querier = GeneralUtility::makeInstance($querierClassName);
     $querier->injectController($this->getController());
     $querier->buildQueryConfigurationForForeignTable($itemConfiguration);
     $querier->injectQueryConfiguration();
@@ -69,7 +73,7 @@ class Tx_SavLibraryPlus_Viewers_ExportViewer extends Tx_SavLibraryPlus_Viewers_A
     // Builds the option for the configuration selector
     $optionsConfiguration = array(0 => '');
     foreach ($rows as $row) {
-    	$optionsConfiguration[$row['uid']] = $row[Tx_SavLibraryPlus_Queriers_ExportSelectQuerier::$exportTableName . '.name'];
+    	$optionsConfiguration[$row['uid']] = $row[\SAV\SavLibraryPlus\Queriers\ExportSelectQuerier::$exportTableName . '.name'];
     }
    
     // Adds the options for the configuration to the view configuration
@@ -91,8 +95,9 @@ class Tx_SavLibraryPlus_Viewers_ExportViewer extends Tx_SavLibraryPlus_Viewers_A
 		$this->addToViewConfiguration('general',   
       array(
         'extensionKey' => $this->getController()->getExtensionConfigurationManager()->getExtensionKey(),
-        'formName' => Tx_SavLibraryPlus_Controller_AbstractController::getFormName(), 
+        'formName' => \SAV\SavLibraryPlus\Controller\AbstractController::getFormName(), 
         'userIsAllowedToExportData' => $this->getController()->getUserManager()->userIsAllowedToExportData(), 
+        'userIsAllowedToExportDataWithQuery' => $this->getController()->getUserManager()->userIsAllowedToExportDataWithQuery(), 
       	'execIsAllowed' => $this->getController()->getExtensionConfigurationManager()->getAllowExec(),      
       )
     );

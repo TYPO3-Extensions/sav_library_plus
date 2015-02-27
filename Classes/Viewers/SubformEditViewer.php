@@ -1,4 +1,8 @@
 <?php
+namespace SAV\SavLibraryPlus\Viewers;
+
+use \TYPO3\CMS\Core\Utility\GeneralUtility;
+
 /***************************************************************
 *  Copyright notice
 *
@@ -29,7 +33,7 @@
  * @version $ID:$
  */
  
-class Tx_SavLibraryPlus_Viewers_SubformEditViewer extends Tx_SavLibraryPlus_Viewers_EditViewer {
+class SubformEditViewer extends EditViewer {
 
   /**
    * The template file
@@ -62,8 +66,12 @@ class Tx_SavLibraryPlus_Viewers_SubformEditViewer extends Tx_SavLibraryPlus_View
 
     // Processes the rows
     $configurationRows = array();
-    $rowsCount = $this->getController()->getQuerier()->getRowsCount();
-
+    if ($this->errorsInNewRecord()) {
+      $rowsCount = 1;	
+    } else {
+      $rowsCount = $this->getController()->getQuerier()->getRowsCount();
+    }
+    
     for ($rowKey=0; $rowKey < $rowsCount; $rowKey++) {
       $this->getController()->getQuerier()->setCurrentRowId($rowKey);
 
@@ -74,8 +82,12 @@ class Tx_SavLibraryPlus_Viewers_SubformEditViewer extends Tx_SavLibraryPlus_View
       // Processes the fields
       foreach ($this->folderFieldsConfiguration as $fieldConfigurationKey => $fieldConfiguration) {
         // Adds the item name
-        $uid = $this->getController()->getQuerier()->getFieldValueFromCurrentRow('uid');
-        $itemName = Tx_SavLibraryPlus_Controller_AbstractController::getFormName() . '[' . $fieldConfigurationKey . '][' . intval($uid) . ']';
+        if ($this->errorsInNewRecord()) {       
+          $uid = 0;
+        } else {
+          $uid = $this->getController()->getQuerier()->getFieldValueFromCurrentRow('uid');    
+    		}         
+        $itemName = \SAV\SavLibraryPlus\Controller\AbstractController::getFormName() . '[' . $fieldConfigurationKey . '][' . intval($uid) . ']';
         $this->folderFieldsConfiguration[$fieldConfigurationKey]['itemName'] = $itemName;
      
         // Processes the field
@@ -107,7 +119,7 @@ class Tx_SavLibraryPlus_Viewers_SubformEditViewer extends Tx_SavLibraryPlus_View
       array(
         'lastPageInSubform' => $lastPageInSubform,
         'pagesInSubform' => $pagesInSubform,
-        'formName' => Tx_SavLibraryPlus_Controller_AbstractController::getFormName(),      
+        'formName' => \SAV\SavLibraryPlus\Controller\AbstractController::getFormName(),      
       )
     );
 
@@ -115,5 +127,16 @@ class Tx_SavLibraryPlus_Viewers_SubformEditViewer extends Tx_SavLibraryPlus_View
     return $this->renderView();
   }
 
+  /**
+   * Checks if errors occured in a new record
+   *
+   * @param none
+   *
+   * @return boolean
+   */
+  public function errorsInNewRecord() {  
+  	$updateQuerier = $this->getController()->getQuerier()->getUpdateQuerier();   
+  	return $this->getController()->getQuerier()->errorDuringUpdate() && $updateQuerier !== NULL && $updateQuerier->isNewRecord();
+  }
 }
 ?>

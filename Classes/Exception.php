@@ -1,4 +1,6 @@
 <?php
+namespace SAV\SavLibraryPlus;
+
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
  *                                                                        *
@@ -14,7 +16,7 @@
 
 /**
  */
-class Tx_SavLibraryPlus_Exception extends Exception {
+class Exception extends \Exception {
 
 }
 

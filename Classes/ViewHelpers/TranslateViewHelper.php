@@ -1,4 +1,7 @@
 <?php
+namespace SAV\SavLibraryPlus\ViewHelpers;
+
+use \TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -49,7 +52,7 @@
  * // if the key is not found, the output is "default value"
  * </output>
  */
-class Tx_SavLibraryPlus_ViewHelpers_TranslateViewHelper extends Tx_Fluid_Core_ViewHelper_AbstractViewHelper {
+class TranslateViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper {
 
 	/**
 	 * Translate a given key or use the tag body as default.
@@ -67,11 +70,11 @@ class Tx_SavLibraryPlus_ViewHelpers_TranslateViewHelper extends Tx_Fluid_Core_Vi
 
     // The library is the default extension
     if ($extension === NULL) {
-      $extension = Tx_SavLibraryPlus_Controller_AbstractController::LIBRARY_NAME;
+      $extension = \SAV\SavLibraryPlus\Controller\AbstractController::LIBRARY_NAME;
     }
 
     // Translates the key
-		$value = Tx_Extbase_Utility_Localization::translate($key, $extension, $arguments);
+		$value = \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($key, $extension, $arguments);
 
 		if ($value === NULL) {
 			$value = $default !== NULL ? $default : $key;

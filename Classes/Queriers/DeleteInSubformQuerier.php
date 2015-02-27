@@ -1,4 +1,8 @@
 <?php
+namespace SAV\SavLibraryPlus\Queriers;
+
+use \TYPO3\CMS\Core\Utility\GeneralUtility;
+
 /***************************************************************
 *  Copyright notice
 *
@@ -29,7 +33,7 @@
  * @version $ID:$
  */
  
-class Tx_SavLibraryPlus_Queriers_DeleteInSubformQuerier extends Tx_SavLibraryPlus_Queriers_AbstractQuerier {
+class DeleteInSubformQuerier extends AbstractQuerier {
 
 	/**
    * Executes the query
@@ -42,12 +46,12 @@ class Tx_SavLibraryPlus_Queriers_DeleteInSubformQuerier extends Tx_SavLibraryPlu
   
     // Checks if the user is authenticated
     if($this->getController()->getUserManager()->userIsAuthenticated() === FALSE) {
-      Tx_SavLibraryPlus_Controller_FlashMessages::addError('fatal.notAuthenticated');
+      \SAV\SavLibraryPlus\Controller\FlashMessages::addError('fatal.notAuthenticated');
       return;
     }
 
     // Gets the subform field key
-    $subformFieldKey = Tx_SavLibraryPlus_Managers_UriManager::getSubformFieldKey();
+    $subformFieldKey = \SAV\SavLibraryPlus\Managers\UriManager::getSubformFieldKey();
     
     // Gets the kickstarter configuration for the subform field key
     $viewIdentifier = $this->getController()->getLibraryConfigurationManager()->getViewIdentifier('EditView');    
@@ -55,13 +59,13 @@ class Tx_SavLibraryPlus_Queriers_DeleteInSubformQuerier extends Tx_SavLibraryPlu
     $kickstarterFieldConfiguration = $this->getController()->getLibraryConfigurationManager()->searchFieldConfiguration($viewConfiguration, $subformFieldKey);
 
     // Creates the field configuration manager
-    $fieldConfigurationManager = t3lib_div::makeInstance('Tx_SavLibraryPlus_Managers_FieldConfigurationManager');
+    $fieldConfigurationManager = GeneralUtility::makeInstance('SAV\\SavLibraryPlus\\Managers\\FieldConfigurationManager');
     $fieldConfigurationManager->injectController($this->getController());
     $fieldConfigurationManager->injectKickstarterFieldConfiguration($kickstarterFieldConfiguration);
     $fieldConfiguration = $fieldConfigurationManager->getFieldConfiguration();
 
     // Gets the subform foreign uid
-    $subformUidForeign = Tx_SavLibraryPlus_Managers_UriManager::getSubformUidForeign();
+    $subformUidForeign = \SAV\SavLibraryPlus\Managers\UriManager::getSubformUidForeign();
 
     // Updates the deleted flag in the foreign table
     $this->setDeletedField($fieldConfiguration['foreign_table'], $subformUidForeign);
@@ -69,7 +73,7 @@ class Tx_SavLibraryPlus_Queriers_DeleteInSubformQuerier extends Tx_SavLibraryPlu
     if (empty($fieldConfiguration['norelation'])) {
 
 	    // Gets the subform local uid
-	    $subformUidLocal = Tx_SavLibraryPlus_Managers_UriManager::getSubformUidLocal();
+	    $subformUidLocal = \SAV\SavLibraryPlus\Managers\UriManager::getSubformUidLocal();
 
 	    // Deletes the record in the relation
 	    $this->deleteRecordsInRelationManyToMany($fieldConfiguration['MM'], $subformUidForeign, 'uid_foreign');
@@ -87,12 +91,12 @@ class Tx_SavLibraryPlus_Queriers_DeleteInSubformQuerier extends Tx_SavLibraryPlu
     }
         
     // Updates the page in subform value if needed
-    $pageInSubform = Tx_SavLibraryPlus_Managers_SessionManager::getSubformFieldFromSession($subformFieldKey, 'pageInSubform');
+    $pageInSubform = \SAV\SavLibraryPlus\Managers\SessionManager::getSubformFieldFromSession($subformFieldKey, 'pageInSubform');
     $pageInSubform = ($pageInSubform ? $pageInSubform : 0);
       
 		if ($pageInSubform >0 && $rowsCount <= $pageInSubform*$fieldConfiguration['maxsubformitems']) {
-	    $pageInSubform = Tx_SavLibraryPlus_Managers_SessionManager::getSubformFieldFromSession($subformFieldKey, 'pageInSubform');
-	    Tx_SavLibraryPlus_Managers_SessionManager::setSubformFieldFromSession($subformFieldKey, 'pageInSubform', $pageInSubform - 1);		
+	    $pageInSubform = \SAV\SavLibraryPlus\Managers\SessionManager::getSubformFieldFromSession($subformFieldKey, 'pageInSubform');
+	    \SAV\SavLibraryPlus\Managers\SessionManager::setSubformFieldFromSession($subformFieldKey, 'pageInSubform', $pageInSubform - 1);		
 		}
 	}
 

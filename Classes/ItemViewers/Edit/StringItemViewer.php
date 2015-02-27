@@ -1,4 +1,8 @@
 <?php
+namespace SAV\SavLibraryPlus\ItemViewers\Edit;
+
+use \TYPO3\CMS\Core\Utility\GeneralUtility;
+
 /***************************************************************
 *  Copyright notice
 *
@@ -29,7 +33,7 @@
  * @version $ID:$
  */
  
-class Tx_SavLibraryPlus_ItemViewers_Edit_StringItemViewer extends Tx_SavLibraryPlus_ItemViewers_Edit_AbstractItemViewer {
+class StringItemViewer extends AbstractItemViewer {
 
   /**
    * Renders the item.
@@ -60,23 +64,23 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_StringItemViewer extends Tx_SavLibraryP
 		$evalAttributes = explode(',', $this->getItemConfiguration('eval'));
     if (in_array('password', $evalAttributes) === TRUE) {
       // Adds the input password element
-      $content = Tx_SavLibraryPlus_Utility_HtmlElements::htmlInputPasswordElement(
+      $content = \SAV\SavLibraryPlus\Utility\HtmlElements::htmlInputPasswordElement(
         array(
-          Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('name', $this->getItemConfiguration('itemName')),
-          Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('value', stripslashes($value)),
-          Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('size', $this->getItemConfiguration('size')),
-          Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('onchange', 'document.changed=1;'),
+          \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('name', $this->getItemConfiguration('itemName')),
+          \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('value', stripslashes($value)),
+          \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('size', $this->getItemConfiguration('size')),
+          \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('onchange', 'document.changed=1;'),
         )
       );
     } else {
       // Adds the Input text element
-      $content = Tx_SavLibraryPlus_Utility_HtmlElements::htmlInputTextElement(
+      $content = \SAV\SavLibraryPlus\Utility\HtmlElements::htmlInputTextElement(
         array(
-          Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('name', $this->getItemConfiguration('itemName')),
-          Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('value', stripslashes($value)),
-          Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('size', $this->getItemConfiguration('size')),
-          Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('onchange', 'document.changed=1;'),
-          Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttributeIfNotNull('ondblclick', $ondblclick),
+          \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('name', $this->getItemConfiguration('itemName')),
+          \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('value', stripslashes($value)),
+          \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('size', $this->getItemConfiguration('size')),
+          \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('onchange', 'document.changed=1;'),
+          \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttributeIfNotNull('ondblclick', $ondblclick),
         )
       );
     }

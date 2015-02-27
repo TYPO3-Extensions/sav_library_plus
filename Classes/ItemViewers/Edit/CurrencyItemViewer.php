@@ -1,4 +1,8 @@
 <?php
+namespace SAV\SavLibraryPlus\ItemViewers\Edit;
+
+use \TYPO3\CMS\Core\Utility\GeneralUtility;
+
 /***************************************************************
 *  Copyright notice
 *
@@ -29,7 +33,7 @@
  * @package SavLibraryPlus
  * @version $ID:$
  */
-class Tx_SavLibraryPlus_ItemViewers_Edit_CurrencyItemViewer extends Tx_SavLibraryPlus_ItemViewers_Edit_StringItemViewer {
+class CurrencyItemViewer extends StringItemViewer {
 
 }
 ?>

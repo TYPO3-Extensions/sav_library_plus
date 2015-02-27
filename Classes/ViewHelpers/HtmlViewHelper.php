@@ -1,4 +1,5 @@
 <?php
+namespace SAV\SavLibraryPlus\ViewHelpers;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -17,7 +18,7 @@
  * A view helper diplaying HTML.
  *
  */
-class Tx_SavLibraryPlus_ViewHelpers_HtmlViewHelper extends Tx_Fluid_Core_ViewHelper_AbstractViewHelper {
+class HtmlViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper {
 
 	public function render() {
     return html_entity_decode($this->renderChildren());

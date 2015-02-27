@@ -1,4 +1,8 @@
 <?php
+namespace SAV\SavLibraryPlus\Utility;
+
+use \TYPO3\CMS\Core\Utility\GeneralUtility;
+
 /***************************************************************
 *  Copyright notice
 *
@@ -29,7 +33,7 @@
  * @version $ID:$
  */
 
-class Tx_SavLibraryPlus_Utility_HtmlElements {
+class HtmlElements {
 
 	/**
 	 * Adds a HTML attribute

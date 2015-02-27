@@ -1,0 +1,14 @@
+{namespace sav=Tx_SavLibraryPlus_ViewHelpers}
+    <div class="footer">
+    <f:if condition="{configuration.general.page} > 0">
+      <sav:link.action action="previousPage" additionalParams="{configuration.general.additionalParams}">
+        <f:image class="previousPage" src="{sav:getIcon(fileName:'previous')}" alt="{f:translate(key:'button.previous')}" title="{f:translate(key:'button.previous')}" />
+      </sav:link.action>
+    </f:if>
+    <f:if condition="{configuration.general.page} < {configuration.general.lastPage}">
+      <sav:link.action action="nextPage" additionalParams="{configuration.general.additionalParams}">
+        <f:image class="nextPage" src="{sav:getIcon(fileName:'next')}" alt="{f:translate(key:'button.next')}" title="{f:translate(key:'button.next')}" />
+      </sav:link.action>
+    </f:if>
+    </div>
+

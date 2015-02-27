@@ -1,0 +1,40 @@
+{namespace sav=Tx_SavLibraryPlus_ViewHelpers}
+    <div class="footer">
+    <f:if condition="{configuration.general.lastPageInSubform} > 0">
+      <f:if condition="{configuration.general.showFirstLastButtons}">    
+      <sav:link.action action="firstPageInSubformInEditMode" additionalParams="{configuration.general.additionalParams}" noCacheHash="1" arguments="{subformUidLocal:configuration.general.subformUidLocal,subformFieldKey:configuration.general.subformFieldKey}">
+        <f:image class="backwardFirstPage" src="{sav:getIcon(fileName:'backwardFirstPage')}" alt="{sav:translate(key:'button.backwardFirstPage')}" title="{sav:translate(key:'button.backwardFirstPage')}" />
+      </sav:link.action>
+      </f:if>
+      <f:if condition="{configuration.general.pageInSubform} > 0">
+        <f:then>
+        <sav:link.action action="previousPageInSubformInEditMode" additionalParams="{configuration.general.additionalParams}" noCacheHash="1" arguments="{subformFieldKey:configuration.general.subformFieldKey}">
+          <f:image class="backwardPage" src="{sav:getIcon(fileName:'backwardPage')}" alt="{sav:translate(key:'button.backwardPage')}" title="{sav:translate(key:'button.backwardPage')}" />
+        </sav:link.action>
+        </f:then>
+        <f:else>
+          <f:image class="backwardPage" src="{sav:getIcon(fileName:'backwardPageNotPossible')}" alt="{sav:translate(key:'button.backwardPageNotPossible')}" title="{sav:translate(key:'button.backwardPageNotPossible')}" />
+        </f:else>
+      </f:if>
+      <f:for each="{configuration.general.pagesInSubform}" as="page" key="pageKey">
+        <sav:link.action action="changePageInSubformInEditMode" additionalParams="{configuration.general.additionalParams}" noCacheHash="1" arguments="{pageInSubform:pageKey,subformFieldKey:configuration.general.subformFieldKey}" class="{f:if(condition:'{configuration.general.pageInSubform} == {pageKey}',then:'selected',else:'notSelected')}">
+          {page}
+        </sav:link.action>
+      </f:for>
+      <f:if condition="{configuration.general.pageInSubform} < {configuration.general.lastPageInSubform}">
+        <f:then>
+        <sav:link.action action="nextPageInSubformInEditMode" additionalParams="{configuration.general.additionalParams}" noCacheHash="1" arguments="{subformFieldKey:configuration.general.subformFieldKey}">
+          <f:image class="forwardPage" src="{sav:getIcon(fileName:'forwardPage')}" alt="{sav:translate(key:'button.forwardPage')}" title="{sav:translate(key:'button.forwardPage')}" />
+        </sav:link.action>
+        </f:then>
+        <f:else>
+          <f:image class="forwardPage" src="{sav:getIcon(fileName:'forwardPageNotPossible')}" alt="{sav:translate(key:'button.forwardPageNotPossible')}" title="{sav:translate(key:'button.forwardPageNotPossible')}" />
+        </f:else>
+      </f:if>
+      <f:if condition="{configuration.general.showFirstLastButtons}">      
+      <sav:link.action action="lastPageInSubformInEditMode" additionalParams="{configuration.general.additionalParams}" noCacheHash="1" arguments="{subformUidLocal:configuration.general.subformUidLocal,subformFieldKey:configuration.general.subformFieldKey}">
+        <f:image class="forwardLastPage" src="{sav:getIcon(fileName:'forwardLastPage')}" alt="{sav:translate(key:'button.forwardLastPage')}" title="{sav:translate(key:'button.forwardLastPage')}" />
+      </sav:link.action>
+      </f:if>
+    </f:if>
+    </div>

@@ -1,4 +1,7 @@
 <?php
+namespace SAV\SavLibraryPlus\ViewHelpers;
+
+use \TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /***************************************************************
 *  Copyright notice
@@ -32,7 +35,7 @@
  * @scope prototype
  * @entity
  */
-class Tx_SavLibraryPlus_ViewHelpers_GetIconViewHelper extends Tx_Fluid_Core_ViewHelper_AbstractViewHelper {
+class GetIconViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper {
 
 	/**
 	 * Renders the content.
@@ -45,7 +48,7 @@ class Tx_SavLibraryPlus_ViewHelpers_GetIconViewHelper extends Tx_Fluid_Core_View
 	public function render($fileName) {
 
     // Checks if the file Name exists in the SAV Library Plus
-    $filePath = Tx_SavLibraryPlus_Managers_LibraryConfigurationManager::getIconPath($fileName);
+    $filePath = \SAV\SavLibraryPlus\Managers\LibraryConfigurationManager::getIconPath($fileName);
 
     if (file_exists($filePath)) {
       return $filePath;

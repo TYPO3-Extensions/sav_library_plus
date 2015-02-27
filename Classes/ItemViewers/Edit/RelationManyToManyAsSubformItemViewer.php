@@ -1,4 +1,8 @@
 <?php
+namespace SAV\SavLibraryPlus\ItemViewers\Edit;
+
+use \TYPO3\CMS\Core\Utility\GeneralUtility;
+
 /***************************************************************
 *  Copyright notice
 *
@@ -29,7 +33,7 @@
  * @version $ID:$
  */
  
-class Tx_SavLibraryPlus_ItemViewers_Edit_RelationManyToManyAsSubformItemViewer extends Tx_SavLibraryPlus_ItemViewers_Edit_AbstractItemViewer {
+class RelationManyToManyAsSubformItemViewer extends AbstractItemViewer {
 
   /**
    * Renders the item.
@@ -44,27 +48,27 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_RelationManyToManyAsSubformItemViewer e
 
     // Builds the crypted field Name
     $fullFieldName = $this->getItemConfiguration('tableName') . '.' . $this->getItemConfiguration('fieldName');
-    $cryptedFullFieldName = Tx_SavLibraryPlus_Controller_AbstractController::cryptTag($fullFieldName);
+    $cryptedFullFieldName = \SAV\SavLibraryPlus\Controller\AbstractController::cryptTag($fullFieldName);
 
     // Creates the controller
-    $controller =  t3lib_div::makeInstance('Tx_SavLibraryPlus_Controller_Controller');
+    $controller =  GeneralUtility::makeInstance('SAV\\SavLibraryPlus\\Controller\\Controller');
     $extensionConfigurationManager = $controller->getExtensionConfigurationManager();
 	  $extensionConfigurationManager->injectExtension($this->getController()->getExtensionConfigurationManager()->getExtension());
-	  $extensionConfigurationManager->injectTypoScriptConfiguration(Tx_SavLibraryPlus_Managers_ExtensionConfigurationManager::getTypoScriptConfiguration());
+	  $extensionConfigurationManager->injectTypoScriptConfiguration(\SAV\SavLibraryPlus\Managers\ExtensionConfigurationManager::getTypoScriptConfiguration());
     $controller->initialize();
     
     // Gets the maximum item number in the subform (must be called before the querier to process deprecated maxsubitems attribute)
     $maxSubformItems = $this->getMaximumItemsInSubform();
 
     // Builds the querier
-    $querierClassName = 'Tx_SavLibraryPlus_Queriers_ForeignTableSelectQuerier';
-    $querier = t3lib_div::makeInstance($querierClassName);
+    $querierClassName = 'SAV\\SavLibraryPlus\\Queriers\\ForeignTableSelectQuerier';
+    $querier = GeneralUtility::makeInstance($querierClassName);
     $controller->injectQuerier($querier);
     $querier->injectController($controller);
     $querier->injectUpdateQuerier($this->getController()->getQuerier()->getUpdateQuerier());
     $querier->injectParentQuerier($this->getController()->getQuerier());
     $this->itemConfiguration['uidLocal'] = $this->itemConfiguration['uid'];
-    $pageInSubform = Tx_SavLibraryPlus_Managers_SessionManager::getSubformFieldFromSession($cryptedFullFieldName, 'pageInSubform');
+    $pageInSubform = \SAV\SavLibraryPlus\Managers\SessionManager::getSubformFieldFromSession($cryptedFullFieldName, 'pageInSubform');
     $pageInSubform = ($pageInSubform ? $pageInSubform : 0);
     $this->itemConfiguration['pageInSubform'] = $pageInSubform;
 		// Builds the query
@@ -87,11 +91,11 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_RelationManyToManyAsSubformItemViewer e
     }
 
     // Processes the query
-    if (Tx_SavLibraryPlus_Managers_UriManager::getFormAction() == 'newInSubform' && Tx_SavLibraryPlus_Managers_UriManager::getSubformFieldKey() == $cryptedFullFieldName) {
-			if (Tx_SavLibraryPlus_Managers_UriManager::getSubformUidLocal() == $this->itemConfiguration['uidLocal']) {
+    if (\SAV\SavLibraryPlus\Managers\UriManager::getFormAction() == 'newInSubform' && \SAV\SavLibraryPlus\Managers\UriManager::getSubformFieldKey() == $cryptedFullFieldName) {
+			if (\SAV\SavLibraryPlus\Managers\UriManager::getSubformUidLocal() == $this->itemConfiguration['uidLocal']) {
 	      $isNewInSubform = TRUE;
 	      $querier->addEmptyRow();
-      } else {
+      } else {     
       	return '';
       }      
     } else {
@@ -100,22 +104,23 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_RelationManyToManyAsSubformItemViewer e
     }
 
     // Calls the viewer
-    $viewerClassName = 'Tx_SavLibraryPlus_Viewers_SubformEditViewer';
-    $viewer = t3lib_div::makeInstance($viewerClassName);
+    $viewerClassName = 'SAV\\SavLibraryPlus\\Viewers\\SubformEditViewer';
+    $viewer = GeneralUtility::makeInstance($viewerClassName);
+    $viewer->setIsNewView($isNewInSubform);
     $controller->injectViewer($viewer);
     $viewer->injectController($controller);
     $subformConfiguration = $this->getItemConfiguration('subform');
     
     if ($subformConfiguration === NULL) {
-      Tx_SavLibraryPlus_Controller_FlashMessages::addError('error.noFieldSelectedInSubForm');
+      \SAV\SavLibraryPlus\Controller\FlashMessages::addError('error.noFieldSelectedInSubForm');
     }
     $viewer->injectLibraryViewConfiguration($subformConfiguration);
     
     // Adds the hidden element
-    $htmlArray[] = Tx_SavLibraryPlus_Utility_HtmlElements::htmlInputHiddenElement(
+    $htmlArray[] = \SAV\SavLibraryPlus\Utility\HtmlElements::htmlInputHiddenElement(
       array (
-        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('name', $this->getItemConfiguration('itemName')),
-        Tx_SavLibraryPlus_Utility_HtmlElements::htmlAddAttribute('value', $this->getItemConfiguration('value')),
+        \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('name', $this->getItemConfiguration('itemName')),
+        \SAV\SavLibraryPlus\Utility\HtmlElements::htmlAddAttribute('value', $this->getItemConfiguration('value')),
       )
     );
 
@@ -136,7 +141,7 @@ class Tx_SavLibraryPlus_ItemViewers_Edit_RelationManyToManyAsSubformItemViewer e
     $viewer->addToViewConfiguration('general',
       array (
       	'newButtonIsAllowed' => $newButtonIsAllowed,
-        'deleteButtonIsAllowed' => ($isNewInSubform === FALSE) && $deleteButtonIsAllowed,
+        'deleteButtonIsAllowed' => ($isNewInSubform === FALSE) && $deleteButtonIsAllowed && !$viewer->errorsInNewRecord(),
         'upDownButtonIsAllowed' => ($isNewInSubform === FALSE) && $upDownButtonIsAllowed,
         'saveButtonIsAllowed' => ($isNewInSubform === FALSE) && $saveButtonIsAllowed,
         'subformFieldKey' => $cryptedFullFieldName,
