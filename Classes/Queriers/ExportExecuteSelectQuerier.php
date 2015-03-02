@@ -417,7 +417,7 @@ class ExportExecuteSelectQuerier extends ExportSelectQuerier {
 			$filePath = $this->getTemporaryFilesPath();      
 
       // Loads the XML source
-      $xml = new DOMDocument;
+      $xml = new \DOMDocument;
       libxml_use_internal_errors(TRUE);
       if (@$xml->load($filePath . $xmlfileName) === FALSE) {   
       	$extensionConfigurationManager = $this->getController()->getExtensionConfigurationManager();   
@@ -439,14 +439,14 @@ class ExportExecuteSelectQuerier extends ExportSelectQuerier {
       }
 
       // Loads the xslt file
-      $xsl = new DOMDocument;
+      $xsl = new \DOMDocument;
       if (@$xsl->load($xsltFile) === FALSE) {
 				\SAV\SavLibraryPlus\Controller\FlashMessages::addError('error.incorrectXsltFile', array($xsltFile));
         return FALSE;
       }
 
       // Configures the transformer
-      $proc = new XSLTProcessor;
+      $proc = new \XSLTProcessor;
       $proc->importStyleSheet($xsl); // attach the xsl rules
 
       // Writes the result directly

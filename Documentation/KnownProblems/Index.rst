@@ -16,7 +16,7 @@
 Known problems
 ==============
 
-Remember that “It's not abug, it's amissingfeature”. If you find some,
+Remember that “It's not a bug, it's a missing feature”. If you find some,
 please use the bug tracker on the TYPO3 Forge ( `SAV Library Plus
 <http://forge.typo3.org/projects/extension-sav_library_plus>`_ ).
 
