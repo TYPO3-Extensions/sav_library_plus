@@ -64,7 +64,7 @@ class ListInEditModeViewer extends ListViewer {
 
     // Sets the delete button flag
     $deleteButtonOnlyForCreationUser = $this->getController()->getExtensionConfigurationManager()->getDeleteButtonOnlyForCreationUser();
-    $deleteButtonIsAllowed = !$noDeleteButton && !($deleteButtonOnlyForCreationUser && $this->row['cruser_id'] != $GLOBALS['TSFE']->fe_user->user['uid']);
+    $deleteButtonIsAllowed = !$noDeleteButton && !($deleteButtonOnlyForCreationUser && $this->getController()->getQuerier()->getFieldValueFromCurrentRow('cruser_id') != $GLOBALS['TSFE']->fe_user->user['uid']);
 
     // Adds the button to the configuration
     $additionalListItemConfiguration = array(
